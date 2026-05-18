@@ -112,7 +112,12 @@ class RecoverCompleteControllerTest extends AppIntegrationTestCase
             '',
             false
         );
-        // Check that all admins got notified, as well as the user
+        $this->assertEmailIsNotInQueue([
+            'email' => $user->username,
+            'template' => 'AD/recover_complete',
+        ]);
+
+        // Check that all other admins got notified
         foreach ($admins as $admin) {
             $this->assertEmailInBatchContains(
                 "{$user->profile->first_name} ({$user->username}) just completed an account recovery.",

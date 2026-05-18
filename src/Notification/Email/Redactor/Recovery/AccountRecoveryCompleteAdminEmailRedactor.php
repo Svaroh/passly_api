@@ -80,6 +80,10 @@ class AccountRecoveryCompleteAdminEmailRedactor implements SubscribedEmailRedact
             ->where(['Users.id !=' => $user->id]);
 
         foreach ($admins as $admin) {
+            if ($admin->id === $user->id) {
+                continue;
+            }
+
             $emailCollection->addEmail($this->createAccountRecoveryAdminEmail($admin, $user, $clientIp, $userAgent));
         }
 
