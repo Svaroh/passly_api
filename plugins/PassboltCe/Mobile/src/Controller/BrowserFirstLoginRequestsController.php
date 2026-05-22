@@ -32,7 +32,7 @@ class BrowserFirstLoginRequestsController extends AppController
             'view',
             'setAccount',
             'setChallenge',
-            'setResponse',
+            'setLoginResponse',
             'complete',
         ]);
 
@@ -95,7 +95,7 @@ class BrowserFirstLoginRequestsController extends AppController
      * @param string $id Request id.
      * @return void
      */
-    public function setResponse(string $id): void
+    public function setLoginResponse(string $id): void
     {
         $service = new BrowserFirstLoginRequestService();
         $request = $service->setResponse($id, $this->request->getData());

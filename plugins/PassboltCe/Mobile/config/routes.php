@@ -76,7 +76,7 @@ $routes->plugin('Passbolt/Mobile', ['path' => '/mobile'], function (RouteBuilder
 
     $routes->connect('/browser-first-login/requests/{id}/response', [
         'controller' => 'BrowserFirstLoginRequests',
-        'action' => 'setResponse',
+        'action' => 'setLoginResponse',
     ])->setMethods(['POST'])->setPass(['id']);
 
     $routes->connect('/browser-first-login/requests/{id}/complete', [

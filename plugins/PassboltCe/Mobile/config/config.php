@@ -25,7 +25,7 @@ return [
                                 'view',
                                 'setAccount',
                                 'setChallenge',
-                                'setResponse',
+                                'setLoginResponse',
                                 'complete',
                             ],
                         ],
