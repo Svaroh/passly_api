@@ -17,6 +17,20 @@ return [
         'plugins' => [
             'mobile' => [
                 'version' => '1.0.0',
+                'security' => [
+                    'csrfProtection' => [
+                        'unlockedActions' => [
+                            'BrowserFirstLoginRequests' => [
+                                'create',
+                                'view',
+                                'setAccount',
+                                'setChallenge',
+                                'setResponse',
+                                'complete',
+                            ],
+                        ],
+                    ],
+                ],
             ],
         ],
     ],

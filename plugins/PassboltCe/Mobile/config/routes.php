@@ -47,4 +47,40 @@ $routes->plugin('Passbolt/Mobile', ['path' => '/mobile'], function (RouteBuilder
     $routes->connect('/transfers/{id}', ['prefix' => 'Transfers', 'controller' => 'TransfersView', 'action' => 'view'])
         ->setMethods(['GET'])
         ->setPass(['id']);
+
+    /**
+     * Browser first login relay.
+     *
+     * The browser owns the web session cookie. Android owns the private key.
+     * These endpoints relay only the short-lived GPGAuth challenge/response.
+     */
+    $routes->connect('/browser-first-login/requests', [
+        'controller' => 'BrowserFirstLoginRequests',
+        'action' => 'create',
+    ])->setMethods(['POST']);
+
+    $routes->connect('/browser-first-login/requests/{id}/view', [
+        'controller' => 'BrowserFirstLoginRequests',
+        'action' => 'view',
+    ])->setMethods(['POST'])->setPass(['id']);
+
+    $routes->connect('/browser-first-login/requests/{id}/account', [
+        'controller' => 'BrowserFirstLoginRequests',
+        'action' => 'setAccount',
+    ])->setMethods(['POST'])->setPass(['id']);
+
+    $routes->connect('/browser-first-login/requests/{id}/challenge', [
+        'controller' => 'BrowserFirstLoginRequests',
+        'action' => 'setChallenge',
+    ])->setMethods(['POST'])->setPass(['id']);
+
+    $routes->connect('/browser-first-login/requests/{id}/response', [
+        'controller' => 'BrowserFirstLoginRequests',
+        'action' => 'setResponse',
+    ])->setMethods(['POST'])->setPass(['id']);
+
+    $routes->connect('/browser-first-login/requests/{id}/complete', [
+        'controller' => 'BrowserFirstLoginRequests',
+        'action' => 'complete',
+    ])->setMethods(['POST'])->setPass(['id']);
 });
