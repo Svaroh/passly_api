@@ -31,7 +31,6 @@ class BrowserFirstLoginRequestsController extends AppController
             'create',
             'view',
             'setAccount',
-            'setChallenge',
             'setLoginResponse',
             'complete',
         ]);
@@ -77,20 +76,7 @@ class BrowserFirstLoginRequestsController extends AppController
     }
 
     /**
-     * Set the browser GPGAuth encrypted challenge.
-     *
-     * @param string $id Request id.
-     * @return void
-     */
-    public function setChallenge(string $id): void
-    {
-        $service = new BrowserFirstLoginRequestService();
-        $request = $service->setChallenge($id, $this->request->getData());
-        $this->success(__('The operation was successful.'), $request);
-    }
-
-    /**
-     * Set the Android decrypted one-time login token result.
+     * Set the Android-encrypted private-key payload.
      *
      * @param string $id Request id.
      * @return void

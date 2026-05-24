@@ -53,14 +53,6 @@ class V51235AddBrowserFirstLoginRequests extends AbstractMigration
                 'limit' => 40,
                 'null' => true,
             ])
-            ->addColumn('encrypted_user_auth_token', 'text', [
-                'default' => null,
-                'null' => true,
-            ])
-            ->addColumn('user_token_result', 'text', [
-                'default' => null,
-                'null' => true,
-            ])
             ->addColumn('expires', 'datetime', [
                 'default' => null,
                 'limit' => null,

@@ -52,7 +52,8 @@ $routes->plugin('Passbolt/Mobile', ['path' => '/mobile'], function (RouteBuilder
      * Browser first login relay.
      *
      * The browser owns the web session cookie. Android owns the private key.
-     * These endpoints relay only the short-lived GPGAuth challenge/response.
+     * These endpoints relay only an Android-encrypted private-key payload for
+     * first browser setup.
      */
     $routes->connect('/browser-first-login/requests', [
         'controller' => 'BrowserFirstLoginRequests',
@@ -67,11 +68,6 @@ $routes->plugin('Passbolt/Mobile', ['path' => '/mobile'], function (RouteBuilder
     $routes->connect('/browser-first-login/requests/{id}/account', [
         'controller' => 'BrowserFirstLoginRequests',
         'action' => 'setAccount',
-    ])->setMethods(['POST'])->setPass(['id']);
-
-    $routes->connect('/browser-first-login/requests/{id}/challenge', [
-        'controller' => 'BrowserFirstLoginRequests',
-        'action' => 'setChallenge',
     ])->setMethods(['POST'])->setPass(['id']);
 
     $routes->connect('/browser-first-login/requests/{id}/response', [

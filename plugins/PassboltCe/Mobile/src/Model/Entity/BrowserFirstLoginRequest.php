@@ -21,14 +21,13 @@ use Cake\ORM\Entity;
 /**
  * Browser first-login pairing request.
  *
- * This relay intentionally stores no private key and no passphrase. It only
- * carries the short-lived GPGAuth login challenge and one-time login response.
+ * This relay intentionally stores no cleartext private key and no passphrase.
+ * It carries only the Android-encrypted private key payload.
  */
 class BrowserFirstLoginRequest extends Entity
 {
     public const STATUS_PENDING = 'pending';
     public const STATUS_ACCOUNT_SELECTED = 'account_selected';
-    public const STATUS_CHALLENGE_READY = 'challenge_ready';
     public const STATUS_RESPONSE_READY = 'response_ready';
     public const STATUS_COMPLETE = 'complete';
     public const STATUS_CANCELLED = 'cancelled';
@@ -36,7 +35,6 @@ class BrowserFirstLoginRequest extends Entity
     public const STATUSES = [
         self::STATUS_PENDING,
         self::STATUS_ACCOUNT_SELECTED,
-        self::STATUS_CHALLENGE_READY,
         self::STATUS_RESPONSE_READY,
         self::STATUS_COMPLETE,
         self::STATUS_CANCELLED,
@@ -48,8 +46,7 @@ class BrowserFirstLoginRequest extends Entity
         'status' => false,
         'user_id' => false,
         'user_key_fingerprint' => false,
-        'encrypted_user_auth_token' => false,
-        'user_token_result' => false,
+        'encrypted_private_key' => false,
         'expires' => false,
         'created' => false,
         'modified' => false,

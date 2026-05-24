@@ -129,26 +129,7 @@ class BrowserFirstLoginRequestService
     }
 
     /**
-     * Set the encrypted GPGAuth challenge from the browser.
-     *
-     * @param string $id Request id.
-     * @param array $data Request data.
-     * @return \Passbolt\Mobile\Model\Entity\BrowserFirstLoginRequest
-     */
-    public function setChallenge(string $id, array $data): BrowserFirstLoginRequest
-    {
-        $request = $this->getAuthorized($id, $this->getSecret($data));
-        $this->assertStatus($request, [BrowserFirstLoginRequest::STATUS_ACCOUNT_SELECTED]);
-        $this->assertRequiredString($data, 'encrypted_user_auth_token');
-
-        return $this->saveFields($request, [
-            'status' => BrowserFirstLoginRequest::STATUS_CHALLENGE_READY,
-            'encrypted_user_auth_token' => $data['encrypted_user_auth_token'],
-        ]);
-    }
-
-    /**
-     * Set the Android decrypted one-time login token result.
+     * Set the Android-encrypted private-key payload.
      *
      * @param string $id Request id.
      * @param array $data Request data.
@@ -157,12 +138,12 @@ class BrowserFirstLoginRequestService
     public function setResponse(string $id, array $data): BrowserFirstLoginRequest
     {
         $request = $this->getAuthorized($id, $this->getSecret($data));
-        $this->assertStatus($request, [BrowserFirstLoginRequest::STATUS_CHALLENGE_READY]);
-        $this->assertRequiredString($data, 'user_token_result');
+        $this->assertStatus($request, [BrowserFirstLoginRequest::STATUS_ACCOUNT_SELECTED]);
+        $this->assertRequiredString($data, 'encrypted_private_key');
 
         return $this->saveFields($request, [
             'status' => BrowserFirstLoginRequest::STATUS_RESPONSE_READY,
-            'user_token_result' => $data['user_token_result'],
+            'encrypted_private_key' => $data['encrypted_private_key'],
         ]);
     }
 
@@ -180,6 +161,7 @@ class BrowserFirstLoginRequestService
 
         return $this->saveFields($request, [
             'status' => BrowserFirstLoginRequest::STATUS_COMPLETE,
+            'encrypted_private_key' => null,
         ]);
     }
 

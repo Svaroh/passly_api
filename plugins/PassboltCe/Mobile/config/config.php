@@ -24,7 +24,6 @@ return [
                                 'create',
                                 'view',
                                 'setAccount',
-                                'setChallenge',
                                 'setLoginResponse',
                                 'complete',
                             ],

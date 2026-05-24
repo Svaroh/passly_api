@@ -74,6 +74,10 @@ class BrowserFirstLoginRequestsTable extends Table
             ->dateTime('expires', ['ymd'], __('The expiry date should be a valid date.'))
             ->requirePresence('expires', 'create', __('An expiry date is required.'));
 
+        $validator
+            ->scalar('encrypted_private_key', __('The encrypted private key should be a scalar value.'))
+            ->allowEmptyString('encrypted_private_key');
+
         return $validator;
     }
 }
