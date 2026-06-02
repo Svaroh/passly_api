@@ -51,9 +51,53 @@ module.exports = function(grunt) {
    * Register project specific grunt tasks
    */
   grunt.registerTask('default', ['dependencies-update', 'styleguide-update']);
-  grunt.registerTask('styleguide-update', ['copy:styleguide', 'copy:passly_brand']);
+  grunt.registerTask('styleguide-update', ['copy:styleguide', 'copy:passly_brand', 'passly-inline-brand']);
   grunt.registerTask('styleguide-watch', ['watch:node-modules-styleguide']);
   grunt.registerTask('dependencies-update', 'copy:dependencies');
+
+  grunt.registerTask('passly-inline-brand', function() {
+    var files = [
+      'api-account-recovery.js',
+      'api-feedback.js',
+      'api-recover.js',
+      'api-setup.js',
+      'api-triage.js'
+    ].map(function(file) {
+      return paths.js + 'app/' + file;
+    });
+    var inlineLogoPattern = /const ([A-Za-z_$][\w$]*)=function\(e\)\{return ([A-Za-z_$][\w$]*)\.createElement\("svg",([A-Za-z_$][\w$]*)\(\{xmlns:"http:\/\/www\.w3\.org\/2000\/svg",width:151,height:27,fill:"none","aria-labelledby":"logo-title logo-description",viewBox:"0 0 151 27"\},e\),.*?This is the logo of passbolt\..*?\)\};/;
+
+    files.forEach(function(file) {
+      if (!grunt.file.exists(file)) {
+        return;
+      }
+
+      var contents = grunt.file.read(file);
+      var replaced = false;
+      contents = contents.replace(inlineLogoPattern, function(match, componentName, reactName, assignName) {
+        replaced = true;
+        var createElement = reactName + '.createElement';
+        return 'const ' + componentName + '=function(e){return ' +
+          createElement + '("svg",' + assignName + '({xmlns:"http://www.w3.org/2000/svg",width:151,height:27,fill:"none","aria-labelledby":"logo-title logo-description",viewBox:"0 0 151 27"},e),' +
+          createElement + '("title",{id:"logo-title"},"Passly logo"),' +
+          createElement + '("desc",{id:"logo-description"},"This is the logo of Passly."),' +
+          createElement + '("path",{fill:"#17413F",d:"M12.5 1L22.273 4.864V18.159L18.295 23.045L12.5 26L6.705 23.045L2.727 18.159V4.864Z"}),' +
+          createElement + '("path",{fill:"#FAFBF7",d:"M7.727 11.568L12.5 7.932L17.273 11.568L12.5 19.295Z"}),' +
+          createElement + '("circle",{cx:7.727,cy:11.568,r:1.705,fill:"#17413F"}),' +
+          createElement + '("circle",{cx:12.5,cy:7.932,r:1.705,fill:"#17413F"}),' +
+          createElement + '("circle",{cx:17.273,cy:11.568,r:1.705,fill:"#17413F"}),' +
+          createElement + '("circle",{cx:12.5,cy:19.295,r:1.705,fill:"#17413F"}),' +
+          createElement + '("path",{fill:"none",stroke:"#8BBF45",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:.91,d:"M7.727 11.568L12.5 7.932L17.273 11.568M7.727 11.568L12.5 19.295L17.273 11.568"}),' +
+          createElement + '("text",{x:31,y:20.5,fontFamily:"Arial, Avenir Next, Segoe UI, sans-serif",fontSize:18,fontWeight:700,fill:"var(--icon-color)"},"Passly"))};';
+      });
+
+      if (replaced) {
+        grunt.file.write(file, contents);
+      } else if (contents.indexOf('This is the logo of passbolt.') !== -1) {
+        grunt.fail.warn('Unable to replace inline Passbolt logo in ' + file);
+      }
+    });
+  });
 
   /**
    * Tasks definition
@@ -90,7 +134,7 @@ module.exports = function(grunt) {
           src: [
             // Default Avatars
             'avatar/**',
-            // Passbolt logos
+            // Passly logos
             'logo/logo.png', 'logo/logo.svg', 'logo/logo_white.svg',
             // Image for inputs and controls
             'controls/check_black.svg',
