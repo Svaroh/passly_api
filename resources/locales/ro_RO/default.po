@@ -1111,7 +1111,7 @@ msgstr "{0} a făcut modificări pentru mai multe resurse"
 msgid "{0} shared several items with you"
 msgstr "{0} ți-a distribuit mai multe elemente"
 
-msgid "{0} just activated their account on passbolt"
+msgid "{0} just activated their account on passly"
 msgstr "{0} tocmai și-a activat contul în Passbolt"
 
 msgid "{0} commented on {1}"
@@ -1486,7 +1486,7 @@ msgstr "Puteți elimina setarea \\\"passbolt.registration.public\\\"."
 msgid "Passbolt is configured to force SSL use."
 msgstr "Passbolt este configurat să forțeze folosirea SSL."
 
-msgid "Passbolt is not configured to force SSL use."
+msgid "Passly is not configured to force SSL use."
 msgstr "Passbolt nu este configurat să forțeze folosirea SSL."
 
 msgid "Set passbolt.ssl.force to true in {0}."
@@ -2554,7 +2554,7 @@ msgstr "Ați creat un folder nou"
 msgid "Name: {0}"
 msgstr "Nume: {0}"
 
-msgid "View it in passbolt"
+msgid "View it in passly"
 msgstr "Vizualizați-le în Passbolt"
 
 msgid "You deleted a folder"
@@ -2563,7 +2563,7 @@ msgstr "Ați șters un folder"
 msgid "{0} deleted a folder"
 msgstr "{0} a șters un folder"
 
-msgid "Log in passbolt"
+msgid "Log in passly"
 msgstr "Accesează Passbolt"
 
 msgid "{0} shared a folder with you"
@@ -2578,10 +2578,10 @@ msgstr "{0} a modificat un folder"
 msgid "{0} folders were affected."
 msgstr ""
 
-msgid "It would be too much to list them here, but you can go check them on passbolt."
+msgid "It would be too much to list them here, but you can go check them on passly."
 msgstr "Ar fi prea mult să le enumerăm aici, dar le puteți vizualiza pe site-ul Passbolt."
 
-msgid "View them in passbolt"
+msgid "View them in passly"
 msgstr "Vizualizați-le în Passbolt"
 
 msgid "The user signature could not be verified."
@@ -3928,7 +3928,7 @@ msgstr "Setările de expirare a parolei au fost actualizate."
 msgid "{0} resources were affected."
 msgstr "{0} resurse au fost afectate."
 
-msgid "Change them in passbolt"
+msgid "Change them in passly"
 msgstr "Modificați-le în Passbolt"
 
 msgid "You have been requested to change them"
@@ -3946,7 +3946,7 @@ msgstr "Vă rugăm să le rotiți pentru a asigura securitatea continuă."
 msgid "Please rotate it to ensure continued security."
 msgstr "Vă rugăm să o rotiți pentru a asigura securitatea continuă."
 
-msgid "Change it in passbolt "
+msgid "Change it in passly "
 msgstr "Modificați-o în Passbolt "
 
 msgid "Could not retrieve the password policies."
@@ -4201,7 +4201,7 @@ msgstr "Raportul solicitat `{0}` nu există."
 msgid "Description"
 msgstr "Descriere"
 
-msgid "Passbolt report"
+msgid "Passly report"
 msgstr "Raport Passbolt"
 
 msgid "Report name"
@@ -4360,7 +4360,7 @@ msgstr "{0} a modificat setările de auto-înregistrare."
 msgid "You edited the self registration settings."
 msgstr "Ați modificat setările de auto-înregistrare."
 
-msgid "{0} just created an account on passbolt!"
+msgid "{0} just created an account on passly!"
 msgstr "{0} tocmai și-a creat un cont în Passbolt!"
 
 msgid "The email is already registered."
@@ -4594,13 +4594,13 @@ msgstr "Cheia OpenPGP a serverului nu poate fi folosită pentru a decripta setă
 msgid "To fix this problem, you need to configure the SMTP server again."
 msgstr "Pentru a remedia această problemă, trebuie să configurați din nou serverul SMTP."
 
-msgid "Passbolt test email"
+msgid "Passly test email"
 msgstr "E-mail de test Passbolt"
 
 msgid "Congratulations!"
 msgstr "Felicitări!"
 
-msgid "If you receive this email, it means that your passbolt smtp configuration is working fine."
+msgid "If you receive this email, it means that your passly smtp configuration is working fine."
 msgstr "Dacă ați primit acest e-mail, înseamnă că setarea SMTP pentru Passbolt funcționează bine."
 
 msgid "Invalid `passbolt.plugins.smtpSettings.security` configuration values."
@@ -4942,13 +4942,13 @@ msgstr ""
 msgid "Client"
 msgstr "Client"
 
-msgid "Passbolt is not configured."
+msgid "Passly is not configured."
 msgstr "Passbolt nu este configurat."
 
-msgid "Passbolt is not configured yet!"
+msgid "Passly is not configured yet!"
 msgstr "Passbolt nu este încă configurat!"
 
-msgid "If you see this page, it means that passbolt is present on your server but not configured. Click on \"Get Started\" to launch the configuration wizard."
+msgid "If you see this page, it means that passly is present on your server but not configured. Click on \"Get Started\" to launch the configuration wizard."
 msgstr "Dacă vedeți această pagină, înseamnă că Passbolt este prezent pe serverul dvs., dar nu este configurat. Faceți clic pe \"Începeți\" pentru a lansa asistentul de configurare."
 
 msgid "Get Started"
@@ -5017,14 +5017,14 @@ msgstr "Forțați SSL?"
 msgid "Forcing SSL means that passbolt will not accept connections coming from a non secure protocol. If SSL is forced, your server has to be configured for HTTPS. It is highly recommended that you do so."
 msgstr "Forțarea SSL înseamnă că Passbolt nu va accepta conexiuni care provin dintr-un protocol nesigur. Dacă SSL este forțat, serverul dumneavoastră trebuie să fie configurat pentru HTTPS. Este foarte recomandat să faceți acest lucru."
 
-msgid "Passbolt Pro activation."
-msgstr "Activare Passbolt Pro."
+msgid "Passly Pro activation."
+msgstr "Activare Passly Pro."
 
-msgid "Copy paste your Passbolt Pro subscription key here"
-msgstr "Copiați și inserați cheia de abonament Passbolt Pro aici"
+msgid "Copy paste your Passly Pro subscription key here"
+msgstr "Copiați și inserați cheia de abonament Passly Pro aici"
 
-msgid "Welcome to Passbolt Pro! Let's get started with the configuration."
-msgstr "Bine ați venit la Passbolt Pro! Să începem configurarea."
+msgid "Welcome to Passly Pro! Let's get started with the configuration."
+msgstr "Bine ați venit la Passly Pro! Să începem configurarea."
 
 msgid "Nice one! Your environment is ready for passbolt."
 msgstr "Felicitări! Mediul tău este gata pentru Passbolt."
@@ -5056,7 +5056,7 @@ msgstr "Reuşit!"
 msgid "You have completed successfully the configuration procedure, congrats!"
 msgstr "Ai finalizat cu succes procedura de configurare, felicitări!"
 
-msgid "You will soon be redirected to passbolt to complete your account setup."
+msgid "You will soon be redirected to passly to complete your account setup."
 msgstr "Veți fi în curând redirecționat către Passbolt pentru a finaliza configurarea contului."
 
 msgid "You will soon be redirected to the login page."
@@ -5077,7 +5077,7 @@ msgstr "Se instalează"
 msgid "Existing installation?"
 msgstr "Părăsiți instalarea?"
 
-msgid "If you want to use an existing passbolt database, the installer will take care of updating it to the current passbolt version while keeping your data."
+msgid "If you want to use an existing passly database, the installer will take care of updating it to the current passly version while keeping your data."
 msgstr "Dacă doriți să utilizați o bază de date Passbolt existentă, installer-ul va avea grijă ca aceasta să fie actualizată la versiunea curentă Passbolt păstrând în același timp datele dvs."
 
 msgid "As a precaution, do not forget to backup your database before you continue."
@@ -5086,7 +5086,7 @@ msgstr "Ca măsură de precauție, nu uitați să vă salvați baza de date îna
 msgid "Help"
 msgstr "Ajutor"
 
-msgid "Need help? You can find more information on how to install passbolt in the official online help."
+msgid "Need help? You can find more information on how to install passly in the official online help."
 msgstr "Ai nevoie de ajutor? Mai multe informații despre cum să instalezi Passbolt găsești pe site-ul de help online."
 
 msgid "Send test email"
@@ -5107,14 +5107,14 @@ msgstr "Adresa dvs. de e-mail"
 msgid "Why do I need a SMTP server?"
 msgstr "De ce am nevoie de un server SMTP?"
 
-msgid "Passbolt needs an smtp server in order to send invitation emails after an account creation and to send email notifications."
+msgid "Passly needs an smtp server in order to send invitation emails after an account creation and to send email notifications."
 msgstr "Passbolt are nevoie de un server SMTP pentru a trimite e-mail-uri de invitație după crearea unui cont și pentru a trimite ulterior notificări e-mail."
 
 msgid "What subscription key?"
 msgstr "Care cheie pentru abonare?"
 
-msgid "The subscription key is a file that was sent to you when you purchased Passbolt Pro. We need the subscription key in order to activate the Pro features of passbolt."
-msgstr "Cheia de abonare este un fișier care v-a fost trimis când ați achiziționat Passbolt Pro. Avem nevoie de o cheie de abonament pentru a activa caracteristicile Pro Passbolt."
+msgid "The subscription key is a file that was sent to you when you purchased Passly Pro. We need the subscription key in order to activate the Pro features of passly."
+msgstr "Cheia de abonare este un fișier care v-a fost trimis când ați achiziționat Passly Pro. Avem nevoie de o cheie de abonament pentru a activa caracteristicile Pro Passbolt."
 
 msgid "The user id is invalid."
 msgstr "Id-ul utilizatorului este invalid."
@@ -5635,7 +5635,7 @@ msgstr "Contactele organizației dumneavoastră pentru recuperarea contului au e
 msgid "Only administrators can view user logs."
 msgstr "Doar administratorii pot vizualiza log-urile utilizatorilor."
 
-msgid "The user {0} could not be added to group {1} because there is no matching directory entry in passbolt."
+msgid "The user {0} could not be added to group {1} because there is no matching directory entry in passly."
 msgstr "Utilizatorul {0} nu a putut fi adăugat în grupul {1} deoarece contul său a fost șters deja din Passbolt."
 
 msgid "The user {0} could not be added to the group {1} because the membership has been removed in passbolt"
@@ -5647,7 +5647,7 @@ msgstr "Utilizatorul {0} nu a fost sincronizat la lista de membrii existentă pe
 msgid "The user {0} was successfully added to the group {1}."
 msgstr "Utilizatorul {0} a fost adăugat cu succes în grupul {1}."
 
-msgid "The user {0} could not be added to the group {1} because their account was priorly deleted in passbolt."
+msgid "The user {0} could not be added to the group {1} because their account was priorly deleted in passly."
 msgstr "Utilizatorul {0} nu a putut fi adăugat în grupul {1} deoarece contul său a fost șters anterior în Passbolt."
 
 msgid "The user {0} could not be added to the group {1} because they have not yet activated their account."
@@ -5689,10 +5689,10 @@ msgstr "Passbolt {0} {1} nu a fost ștearsă deoarece este marcată ca fiind ign
 msgid "The directory {0} {1} was not deleted because it is ignored."
 msgstr "Directorul {0} {1} nu a fost șters deoarece este ignorat."
 
-msgid "The directory user {0} was already suspended in passbolt."
+msgid "The directory user {0} was already suspended in passly."
 msgstr "Utilizatorul din director {0} a fost deja suspendat în Passbolt."
 
-msgid "The directory {0} {1} was already deleted in passbolt."
+msgid "The directory {0} {1} was already deleted in passly."
 msgstr "Directorul {0} {1} a fost deja șters din Passbolt."
 
 msgid "The user {0} could not be deleted because they are the only owner of one or more passwords."
@@ -5719,7 +5719,7 @@ msgstr "{0} {1} nu a fost sincronizat deoarece Passbolt {0} este marcată ca fii
 msgid "The {0} {1} was not synced because the directory {0} is marked as to be ignored."
 msgstr "{0} {1} nu a fost sincronizat deoarece directorul {0} este marcat ca fiind ignorat."
 
-msgid "The {0} {1} was successfully added to passbolt."
+msgid "The {0} {1} was successfully added to passly."
 msgstr "{0} {1} a fost adăugat cu succes în Passbolt."
 
 msgid "The {0} {1} could not be added because of data validation issues."
@@ -5731,13 +5731,13 @@ msgstr "{0} {1} nu a putut fi adăugat din cauza unei erori interne. Vă rugăm 
 msgid "The previously suspended {0} {1} was not unsuspended."
 msgstr "{0} {1} suspendat anterior nu a fost reactivat."
 
-msgid "The previously deleted {0} {1} was not re-added to passbolt."
+msgid "The previously deleted {0} {1} was not re-added to passly."
 msgstr "{0} {1} șters precedent nu a fost re-adăugat în Passbolt."
 
 msgid "The previously suspended {0} {1} was unsuspended."
 msgstr "{0} {1} suspendat anterior a fost reactivat."
 
-msgid "The previously deleted {0} {1} was re-added to passbolt."
+msgid "The previously deleted {0} {1} was re-added to passly."
 msgstr "{0} {1} șters precedent a fost readăugat în Passbolt."
 
 msgid "The deleted {0} {1} could not be re-added to passbolt because of validation errors."
@@ -5746,7 +5746,7 @@ msgstr "{0} {1} șters nu a putut fi readăugat în Passbolt, din cauza unor ero
 msgid "The deleted {0} {1} could not be re-added to passbolt because of an internal error."
 msgstr "{0} {1} șters nu a putut fi readăugat în Passbolt, din cauza unor erori interne."
 
-msgid "The {0} {1} was mapped with an existing {0} in passbolt."
+msgid "The {0} {1} was mapped with an existing {0} in passly."
 msgstr "{0} {1} a fost asociat cu un {0} existent în Passbolt."
 
 msgid "The {0} {1} could not be mapped with an existing {0} in passbolt because it was created after."
@@ -6787,7 +6787,7 @@ msgstr "Descriere eroare: {0}"
 msgid "To fix this, you as an administrator have to update the Azure SSO credentials."
 msgstr "Pentru a remedia, dumneavoastră, ca administrator, trebuie să actualizați datele de autentificare Azure SSO."
 
-msgid "Update it in passbolt"
+msgid "Update it in passly"
 msgstr "Actualizați-l în Passbolt"
 
 msgid "The client secret expiry date of your Azure AD instance is {0}."
@@ -6937,8 +6937,8 @@ msgstr "Se pare că aveți nevoie de ajutor."
 msgid "We are here for you. You can contact us at sales@passbolt.com"
 msgstr "Noi suntem aici pentru dumneavoastră. Ne puteți contacta la sales@passbolt.com"
 
-msgid "Thanks for choosing Passbolt Pro"
-msgstr "Vă mulțumim că ați ales Passbolt Pro"
+msgid "Thanks for choosing Passly Pro"
+msgstr "Vă mulțumim că ați ales Passly Pro"
 
 msgid "Below are your subscription key details"
 msgstr "Mai jos sunt detaliile cheii dumneavoastră de abonament"
@@ -7126,7 +7126,7 @@ msgstr "Poate pagina a fost ștearsă sau mutată."
 msgid "Health checks"
 msgstr "Verificare stare sistem"
 
-msgid "Passbolt API Status"
+msgid "Passly API Status"
 msgstr "Status API Passbolt"
 
 msgid "Group manager"
@@ -7168,10 +7168,10 @@ msgstr "acasă"
 msgid "login"
 msgstr "autentificare"
 
-msgid "The administrator {0} ({1}) is now deleted from the passbolt organisation."
+msgid "The administrator {0} ({1}) is now deleted from the passly organisation."
 msgstr "Administratorul {0} ({1}) a fost acum șters din organizația Passbolt."
 
-msgid "{0} deleted you from the passbolt organisation."
+msgid "{0} deleted you from the passly organisation."
 msgstr "{0} v-a șters din organizația Passbolt."
 
 msgid "Feel free to get in touch with the administrator at the origin of the operation if you feel this action looks suspicious."
@@ -7183,7 +7183,7 @@ msgstr "Cont suspendat"
 msgid "Your account has been suspended."
 msgstr "Contul tău a fost suspendat."
 
-msgid "You are not able to sign in to passbolt and receive email notifications."
+msgid "You are not able to sign in to passly and receive email notifications."
 msgstr "Nu poți să te autentifici în Passbolt și să primești notificări prin email."
 
 msgid "Other users can still share resources with you and add you to a group."
@@ -7201,7 +7201,7 @@ msgstr "{0} nu mai poate efectua activități de administrare."
 msgid "{0} ({1}) just completed an account recovery. Feel free to get in touch with this user if you feel this action looks suspicious."
 msgstr "{0} ({1}) tocmai a finalizat o recuperare a contului. Puteți lua legătura cu acest utilizator dacă această acțiune vi pare suspectă."
 
-msgid "View user in passbolt"
+msgid "View user in passly"
 msgstr "Vizualizați utilizatorul în Passbolt"
 
 msgid "A new role {0} has been created."
@@ -7225,7 +7225,7 @@ msgstr "Utilizator suspendat"
 msgid "The user {0} has been suspended."
 msgstr "Utilizatorul {0} a fost suspendat."
 
-msgid "This user will not be able to sign in to passbolt and receive email notifications."
+msgid "This user will not be able to sign in to passly and receive email notifications."
 msgstr "Acest utilizator nu se va putea autentifica în Passbolt și nu va primi notificări prin email."
 
 msgid "Other users can share resources and add this user to a group."
@@ -7237,13 +7237,13 @@ msgstr "Verifică suspendarea utilizatorului"
 msgid "Welcome to {0}!"
 msgstr "Bine ați venit la {0}!"
 
-msgid "{0} used the self registration feature to create an account on passbolt."
+msgid "{0} used the self registration feature to create an account on passly."
 msgstr "{0} a folosit funcționalitatea de auto-înregistrare pentru a crea un cont în Passbolt."
 
-msgid "{0} just activated their account on passbolt!"
+msgid "{0} just activated their account on passly!"
 msgstr "{0} tocmai și-a activat contul în Passbolt!"
 
-msgid "The user is now active on passbolt and you can share passwords with them."
+msgid "The user is now active on passly and you can share passwords with them."
 msgstr "Utilizatorul este acum activ în Passbolt și puteți partaja parole cu el."
 
 msgid "This user was invited by you {0}."
@@ -7264,7 +7264,7 @@ msgstr "Vizualizează utilizatorii"
 msgid "Welcome back!"
 msgstr "Bine ați revenit!"
 
-msgid "You just requested to recover your passbolt account on this device."
+msgid "You just requested to recover your passly account on this device."
 msgstr "Tocmai ați solicitat să recuperați contul Passbolt pe acest dispozitiv."
 
 msgid "Make sure you have a backup of your secret key handy."
@@ -7279,16 +7279,16 @@ msgstr "începe recuperarea"
 msgid "You just completed an account recovery. Feel free to get in touch with an admin if you feel this action looks suspicious."
 msgstr "Tocmai ați finalizat recuperarea contului. Vă rugăm să contactați un administrator dacă această acțiune vi pare suspectă."
 
-msgid "{0} just created an account for you on passbolt!"
+msgid "{0} just created an account for you on passly!"
 msgstr "{0} tocmai a creat un cont pentru tine în Passbolt!"
 
 msgid "Welcome {0}"
 msgstr "Bine ați venit {0}"
 
-msgid "{0} just invited you to join passbolt at {1}"
+msgid "{0} just invited you to join passly at {1}"
 msgstr "{0} tocmai te-a invitat să te alături Passbolt la {1}"
 
-msgid "Passbolt is an open source password manager."
+msgid "Passly is an open source password manager."
 msgstr "Passbolt este un manager de parole open source."
 
 msgid "It is designed to allow sharing credentials securely with your team!"
@@ -7300,10 +7300,10 @@ msgstr "Haideți să începem. Durează doar cinci minute!"
 msgid "get started"
 msgstr "începeți"
 
-msgid "You just created your account on passbolt!"
+msgid "You just created your account on passly!"
 msgstr "Tocmai ți-ai creat contul în Passbolt!"
 
-msgid "You just opened an account on passbolt at {0}."
+msgid "You just opened an account on passly at {0}."
 msgstr "Tocmai ai deschis un cont în Passbolt la {0}."
 
 msgid "Get started"
@@ -7330,7 +7330,7 @@ msgstr "Modifică membrii grupului"
 msgid "{0} deleted the user {1}"
 msgstr "{0} a șters utilizatorul {1}"
 
-msgid "The user {0} {1} ({2}) is now deleted from your organisation in passbolt."
+msgid "The user {0} {1} ({2}) is now deleted from your organisation in passly."
 msgstr "Utilizatorul {0} {1} ({2}) este acum șters din organizația dvs. în Passbolt."
 
 msgid "This user was a member of the following group(s) you manage:"
@@ -7378,16 +7378,16 @@ msgstr "Nu mai sunteți autorizat să modificați membrii acestui grup."
 msgid "{0} group memberships were affected."
 msgstr "{0} statut-uri de membru au fost afectate."
 
-msgid "It would be too much to list them here, but you can get more information on passbolt."
+msgid "It would be too much to list them here, but you can get more information on passly."
 msgstr "Ar fi prea mult să le enumerăm aici, dar puteți obține mai multe informații pe site-ul Passbolt."
 
-msgid "go to passbolt"
+msgid "go to passly"
 msgstr "accesează Passbolt"
 
 msgid "{0} deleted {1} groups you were a member of."
 msgstr "{0} a șters {1} grupuri din care erai membru."
 
-msgid "log in passbolt"
+msgid "log in passly"
 msgstr "accesează Passbolt"
 
 msgid "Username: {0}"

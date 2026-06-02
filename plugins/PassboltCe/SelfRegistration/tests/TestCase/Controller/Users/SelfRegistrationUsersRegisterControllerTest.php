@@ -79,13 +79,13 @@ class SelfRegistrationUsersRegisterControllerTest extends AppIntegrationTestCase
         $this->assertSame(1, UserFactory::find()->where(compact('username'))->all()->count());
 
         $this->assertEmailQueueCount($nAdmins + 1);
-        $emailSubject = "$firstName just created an account on passbolt!";
-        $emailContent = "$firstName $lastName used the self registration feature to create an account on passbolt.";
+        $emailSubject = "$firstName just created an account on passly!";
+        $emailContent = "$firstName $lastName used the self registration feature to create an account on passly.";
         foreach ($admins as $otherAdmin) {
             $this->assertEmailInBatchContains($emailSubject, $otherAdmin->username);
             $this->assertEmailInBatchContains($emailContent, $otherAdmin->username);
         }
-        $this->assertEmailInBatchContains('You just created your account on passbolt!', $username);
+        $this->assertEmailInBatchContains('You just created your account on passly!', $username);
     }
 
     public function testSelfRegistrationUsersRegisterController_ExistingDeletedUserWithSameUsername()

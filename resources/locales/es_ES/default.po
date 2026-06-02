@@ -1111,7 +1111,7 @@ msgstr "{0} ha hecho cambios en varios recursos"
 msgid "{0} shared several items with you"
 msgstr "{0} ha compartido varios elementos contigo"
 
-msgid "{0} just activated their account on passbolt"
+msgid "{0} just activated their account on passly"
 msgstr "{0} acaba de activar su cuenta en passbolt"
 
 msgid "{0} commented on {1}"
@@ -1486,7 +1486,7 @@ msgstr "Puede eliminar la configuración \"passbolt.registration.public\"."
 msgid "Passbolt is configured to force SSL use."
 msgstr "Passbolt está configurado para forzar el uso del SSL."
 
-msgid "Passbolt is not configured to force SSL use."
+msgid "Passly is not configured to force SSL use."
 msgstr "Passbolt no está configurado para forzar el uso del SSL."
 
 msgid "Set passbolt.ssl.force to true in {0}."
@@ -2554,7 +2554,7 @@ msgstr "Se ha creado una nueva carpeta"
 msgid "Name: {0}"
 msgstr "Nombre: {0}"
 
-msgid "View it in passbolt"
+msgid "View it in passly"
 msgstr "Verla en Passbolt"
 
 msgid "You deleted a folder"
@@ -2563,7 +2563,7 @@ msgstr "Se ha eliminado una carpeta"
 msgid "{0} deleted a folder"
 msgstr "{0} eliminó una carpeta"
 
-msgid "Log in passbolt"
+msgid "Log in passly"
 msgstr "Iniciar sesión passbolt"
 
 msgid "{0} shared a folder with you"
@@ -2578,10 +2578,10 @@ msgstr "{0} editó una carpeta"
 msgid "{0} folders were affected."
 msgstr ""
 
-msgid "It would be too much to list them here, but you can go check them on passbolt."
+msgid "It would be too much to list them here, but you can go check them on passly."
 msgstr "Sería demasiado enumerarlos aquí, pero puede ir a verificarlos en passbolt."
 
-msgid "View them in passbolt"
+msgid "View them in passly"
 msgstr "Verlas en Passbolt"
 
 msgid "The user signature could not be verified."
@@ -3928,7 +3928,7 @@ msgstr "La configuración de caducidad de las contraseñas ha sido actualizada."
 msgid "{0} resources were affected."
 msgstr "{0} recursos fueron afectados."
 
-msgid "Change them in passbolt"
+msgid "Change them in passly"
 msgstr "Cambiarlas en Passbolt"
 
 msgid "You have been requested to change them"
@@ -3946,7 +3946,7 @@ msgstr "Por favor, rótelas para garantizar una seguridad continua."
 msgid "Please rotate it to ensure continued security."
 msgstr "Por favor, rótela para garantizar una seguridad continua."
 
-msgid "Change it in passbolt "
+msgid "Change it in passly "
 msgstr "Cambiarla en Passbolt "
 
 msgid "Could not retrieve the password policies."
@@ -4201,7 +4201,7 @@ msgstr "El informe solicitado `{0}` no existe."
 msgid "Description"
 msgstr "Descripción"
 
-msgid "Passbolt report"
+msgid "Passly report"
 msgstr "Informe Passbolt"
 
 msgid "Report name"
@@ -4360,7 +4360,7 @@ msgstr "{0} editó los ajustes del auto-registro."
 msgid "You edited the self registration settings."
 msgstr "Se ha editado los ajustes del auto-registro."
 
-msgid "{0} just created an account on passbolt!"
+msgid "{0} just created an account on passly!"
 msgstr "¡{0} acaba de crear una cuenta en Passbolt!"
 
 msgid "The email is already registered."
@@ -4594,13 +4594,13 @@ msgstr "No se puede usar la clave OpenPGP del servidor para descifrar la configu
 msgid "To fix this problem, you need to configure the SMTP server again."
 msgstr "Para solucionar este problema, necesita configurar el servidor SMTP de nuevo."
 
-msgid "Passbolt test email"
+msgid "Passly test email"
 msgstr "Correo electrónico de prueba de Passbolt"
 
 msgid "Congratulations!"
 msgstr "¡Felicidades!"
 
-msgid "If you receive this email, it means that your passbolt smtp configuration is working fine."
+msgid "If you receive this email, it means that your passly smtp configuration is working fine."
 msgstr "Si recibe este correo electrónico, significa que su configuración smtp de passbolt funciona bien."
 
 msgid "Invalid `passbolt.plugins.smtpSettings.security` configuration values."
@@ -4942,13 +4942,13 @@ msgstr "Secreto del cliente"
 msgid "Client"
 msgstr "Cliente"
 
-msgid "Passbolt is not configured."
+msgid "Passly is not configured."
 msgstr "Passbolt no está configurado."
 
-msgid "Passbolt is not configured yet!"
+msgid "Passly is not configured yet!"
 msgstr "Passbolt aún no está configurado!"
 
-msgid "If you see this page, it means that passbolt is present on your server but not configured. Click on \"Get Started\" to launch the configuration wizard."
+msgid "If you see this page, it means that passly is present on your server but not configured. Click on \"Get Started\" to launch the configuration wizard."
 msgstr "Si ve esta página, significa que passbolt está presente en su servidor pero no está configurado. Haga clic en \"Empezar\" para iniciar el asistente de configuración."
 
 msgid "Get Started"
@@ -5017,14 +5017,14 @@ msgstr "¿Forzar SSL?"
 msgid "Forcing SSL means that passbolt will not accept connections coming from a non secure protocol. If SSL is forced, your server has to be configured for HTTPS. It is highly recommended that you do so."
 msgstr "Forzar SSL significa que passbolt no aceptará conexiones provenientes de un protocolo no seguro. Si SSL es forzado, su servidor tiene que ser configurado para HTTPS. Es altamente recomendable que lo haga."
 
-msgid "Passbolt Pro activation."
-msgstr "Activación de Passbolt Pro."
+msgid "Passly Pro activation."
+msgstr "Activación de Passly Pro."
 
-msgid "Copy paste your Passbolt Pro subscription key here"
-msgstr "Copie y pegue su clave de suscripción de Passbolt Pro aquí"
+msgid "Copy paste your Passly Pro subscription key here"
+msgstr "Copie y pegue su clave de suscripción de Passly Pro aquí"
 
-msgid "Welcome to Passbolt Pro! Let's get started with the configuration."
-msgstr "¡Bienvenido a Passbolt Pro! Comencemos con la configuración."
+msgid "Welcome to Passly Pro! Let's get started with the configuration."
+msgstr "¡Bienvenido a Passly Pro! Comencemos con la configuración."
 
 msgid "Nice one! Your environment is ready for passbolt."
 msgstr "¡Perfecto! Su entorno está listo para la aprobación."
@@ -5056,7 +5056,7 @@ msgstr "¡Éxito!"
 msgid "You have completed successfully the configuration procedure, congrats!"
 msgstr "Ha completado con éxito el procedimiento de configuración, ¡felicidades!"
 
-msgid "You will soon be redirected to passbolt to complete your account setup."
+msgid "You will soon be redirected to passly to complete your account setup."
 msgstr "Pronto será redirigido a Passbolt para completar la configuración de su cuenta."
 
 msgid "You will soon be redirected to the login page."
@@ -5077,7 +5077,7 @@ msgstr "Instalando"
 msgid "Existing installation?"
 msgstr "¿Instalación existente?"
 
-msgid "If you want to use an existing passbolt database, the installer will take care of updating it to the current passbolt version while keeping your data."
+msgid "If you want to use an existing passly database, the installer will take care of updating it to the current passly version while keeping your data."
 msgstr "Si desea utilizar una base de datos de Passbolt existente, el instalador se encargará de actualizarla a la versión actual de Passbolt mientras conserva sus datos."
 
 msgid "As a precaution, do not forget to backup your database before you continue."
@@ -5086,7 +5086,7 @@ msgstr "Como precaución, no olvide hacer una copia de seguridad de su base de d
 msgid "Help"
 msgstr "Ayuda"
 
-msgid "Need help? You can find more information on how to install passbolt in the official online help."
+msgid "Need help? You can find more information on how to install passly in the official online help."
 msgstr "¿Necesita ayuda? Puede encontrar más información sobre cómo instalar passbolt en la ayuda oficial en línea."
 
 msgid "Send test email"
@@ -5107,14 +5107,14 @@ msgstr "Su correo electrónico"
 msgid "Why do I need a SMTP server?"
 msgstr "¿Por qué necesito un servidor SMTP?"
 
-msgid "Passbolt needs an smtp server in order to send invitation emails after an account creation and to send email notifications."
+msgid "Passly needs an smtp server in order to send invitation emails after an account creation and to send email notifications."
 msgstr "Passbolt necesita un servidor SMTP para enviar mensajes de invitación después de la creación de una cuenta y para enviar notificaciones por correo electrónico."
 
 msgid "What subscription key?"
 msgstr "¿Qué clave de suscripción?"
 
-msgid "The subscription key is a file that was sent to you when you purchased Passbolt Pro. We need the subscription key in order to activate the Pro features of passbolt."
-msgstr "La clave de suscripción es un archivo que se le envió cuando compró Passbolt Pro. Necesitamos la clave de suscripción para activar las características Pro de Passbolt."
+msgid "The subscription key is a file that was sent to you when you purchased Passly Pro. We need the subscription key in order to activate the Pro features of passly."
+msgstr "La clave de suscripción es un archivo que se le envió cuando compró Passly Pro. Necesitamos la clave de suscripción para activar las características Pro de Passbolt."
 
 msgid "The user id is invalid."
 msgstr "El id de usuario no es válido."
@@ -5635,7 +5635,7 @@ msgstr "Los contactos de recuperación de su organización han revisado y rechaz
 msgid "Only administrators can view user logs."
 msgstr "Solo los administradores pueden ver los registros de usuarios."
 
-msgid "The user {0} could not be added to group {1} because there is no matching directory entry in passbolt."
+msgid "The user {0} could not be added to group {1} because there is no matching directory entry in passly."
 msgstr "El usuario {0} no se pudo agregar al grupo {1} porque no coincide con ninguna entrada de directorio en passbolt."
 
 msgid "The user {0} could not be added to the group {1} because the membership has been removed in passbolt"
@@ -5647,7 +5647,7 @@ msgstr "El usuario {0} no se sincronizó con la membresía existente para el gru
 msgid "The user {0} was successfully added to the group {1}."
 msgstr "El usuario {0} se agregó correctamente al grupo {1}."
 
-msgid "The user {0} could not be added to the group {1} because their account was priorly deleted in passbolt."
+msgid "The user {0} could not be added to the group {1} because their account was priorly deleted in passly."
 msgstr "El usuario {0} no pudo ser añadido al grupo {1} porque su cuenta fue previamente eliminada en Passbolt."
 
 msgid "The user {0} could not be added to the group {1} because they have not yet activated their account."
@@ -5689,10 +5689,10 @@ msgstr "Passbolt {0} {1} no se eliminó porque está marcado como ignorado."
 msgid "The directory {0} {1} was not deleted because it is ignored."
 msgstr "El directorio {0} {1} no se ha eliminado porque ha sido ignorado."
 
-msgid "The directory user {0} was already suspended in passbolt."
+msgid "The directory user {0} was already suspended in passly."
 msgstr "El usuario de directorio {0} ya ha sido suspendido en Passbolt."
 
-msgid "The directory {0} {1} was already deleted in passbolt."
+msgid "The directory {0} {1} was already deleted in passly."
 msgstr "El directorio {0} {1} ya ha sido eliminado en passbolt."
 
 msgid "The user {0} could not be deleted because they are the only owner of one or more passwords."
@@ -5719,7 +5719,7 @@ msgstr "El {0} {1} no se sincronizó porque passbolt {0} está marcado como igno
 msgid "The {0} {1} was not synced because the directory {0} is marked as to be ignored."
 msgstr "El {0} {1} no se sincronizó porque el directorio {0} está marcado como ignorado."
 
-msgid "The {0} {1} was successfully added to passbolt."
+msgid "The {0} {1} was successfully added to passly."
 msgstr "El {0} {1} se agregó con éxito al passbolt."
 
 msgid "The {0} {1} could not be added because of data validation issues."
@@ -5731,13 +5731,13 @@ msgstr "No se pudo agregar {0} {1} debido a un error interno. Por favor, intént
 msgid "The previously suspended {0} {1} was not unsuspended."
 msgstr "El {0} {1} previamente suspendido no ha sido activado."
 
-msgid "The previously deleted {0} {1} was not re-added to passbolt."
+msgid "The previously deleted {0} {1} was not re-added to passly."
 msgstr "El {0} {1} previamente eliminado no se volvió a agregar a passbolt."
 
 msgid "The previously suspended {0} {1} was unsuspended."
 msgstr "El {0} {1} previamente suspendido ha sido activado."
 
-msgid "The previously deleted {0} {1} was re-added to passbolt."
+msgid "The previously deleted {0} {1} was re-added to passly."
 msgstr "El {0} {1} previamente eliminado se volvió a agregar a passbolt."
 
 msgid "The deleted {0} {1} could not be re-added to passbolt because of validation errors."
@@ -5746,7 +5746,7 @@ msgstr "El {0} {1} eliminado no se pudo volver a agregar a passbolt debido a err
 msgid "The deleted {0} {1} could not be re-added to passbolt because of an internal error."
 msgstr "El {0} {1} eliminado no se pudo volver a agregar a passbolt debido a un error interno."
 
-msgid "The {0} {1} was mapped with an existing {0} in passbolt."
+msgid "The {0} {1} was mapped with an existing {0} in passly."
 msgstr "El {0} {1} se asignó con un {0} existente en passbolt."
 
 msgid "The {0} {1} could not be mapped with an existing {0} in passbolt because it was created after."
@@ -6787,7 +6787,7 @@ msgstr "Descripción del error: {0}"
 msgid "To fix this, you as an administrator have to update the Azure SSO credentials."
 msgstr "Para solucionar esto, usted como administrador tiene que actualizar las credenciales del SSO de Azure."
 
-msgid "Update it in passbolt"
+msgid "Update it in passly"
 msgstr "Actualizarlo en Passbolt"
 
 msgid "The client secret expiry date of your Azure AD instance is {0}."
@@ -6937,8 +6937,8 @@ msgstr "Parece que podría usar algo de ayuda."
 msgid "We are here for you. You can contact us at sales@passbolt.com"
 msgstr "Estamos aquí para usted. Puede contactar con nosotros en sales@passbolt.com"
 
-msgid "Thanks for choosing Passbolt Pro"
-msgstr "Gracias por elegir Passbolt Pro"
+msgid "Thanks for choosing Passly Pro"
+msgstr "Gracias por elegir Passly Pro"
 
 msgid "Below are your subscription key details"
 msgstr "A continuación se muestran los detalles de su clave de suscripción"
@@ -7126,8 +7126,8 @@ msgstr "Tal vez la página fue eliminada o movida."
 msgid "Health checks"
 msgstr "Comprobaciones de salud"
 
-msgid "Passbolt API Status"
-msgstr "Passbolt API Status"
+msgid "Passly API Status"
+msgstr "Passly API Status"
 
 msgid "Group manager"
 msgstr "Administrador de grupo"
@@ -7168,10 +7168,10 @@ msgstr "inicio"
 msgid "login"
 msgstr "entrar"
 
-msgid "The administrator {0} ({1}) is now deleted from the passbolt organisation."
+msgid "The administrator {0} ({1}) is now deleted from the passly organisation."
 msgstr "El administrador {0} ({1}) ha sido eliminado de la organización de Passbolt."
 
-msgid "{0} deleted you from the passbolt organisation."
+msgid "{0} deleted you from the passly organisation."
 msgstr "{0} le ha eliminado de la organización de Passbolt."
 
 msgid "Feel free to get in touch with the administrator at the origin of the operation if you feel this action looks suspicious."
@@ -7183,7 +7183,7 @@ msgstr "Cuenta suspendida"
 msgid "Your account has been suspended."
 msgstr "Su cuenta ha sido suspendida."
 
-msgid "You are not able to sign in to passbolt and receive email notifications."
+msgid "You are not able to sign in to passly and receive email notifications."
 msgstr "No puede iniciar sesión en Passbolt ni recibir notificaciones por correo electrónico."
 
 msgid "Other users can still share resources with you and add you to a group."
@@ -7201,7 +7201,7 @@ msgstr "{0} ya no puede realizar tareas de administración."
 msgid "{0} ({1}) just completed an account recovery. Feel free to get in touch with this user if you feel this action looks suspicious."
 msgstr "{0} ({1}) acaba de completar una recuperación de cuenta. Siéntase libre de ponerse en contacto con este usuario si cree que esta acción parece sospechosa."
 
-msgid "View user in passbolt"
+msgid "View user in passly"
 msgstr "Ver usuario en passbolt"
 
 msgid "A new role {0} has been created."
@@ -7225,7 +7225,7 @@ msgstr "Usuario suspendido"
 msgid "The user {0} has been suspended."
 msgstr "El usuario {0} ha sido suspendido."
 
-msgid "This user will not be able to sign in to passbolt and receive email notifications."
+msgid "This user will not be able to sign in to passly and receive email notifications."
 msgstr "Este usuario no podrá iniciar sesión en Passbolt ni recibir notificaciones por correo electrónico."
 
 msgid "Other users can share resources and add this user to a group."
@@ -7237,13 +7237,13 @@ msgstr "Comprobar suspensión del usuario"
 msgid "Welcome to {0}!"
 msgstr "¡Bienvenido a {0}!"
 
-msgid "{0} used the self registration feature to create an account on passbolt."
+msgid "{0} used the self registration feature to create an account on passly."
 msgstr "{0} ha usado la función de auto-registro para crear una cuenta en Passbolt."
 
-msgid "{0} just activated their account on passbolt!"
+msgid "{0} just activated their account on passly!"
 msgstr "{0} acaba de activar su cuenta en passbolt!"
 
-msgid "The user is now active on passbolt and you can share passwords with them."
+msgid "The user is now active on passly and you can share passwords with them."
 msgstr "El usuario está ahora activo en passbolt y puedes compartir contraseñas con él."
 
 msgid "This user was invited by you {0}."
@@ -7264,7 +7264,7 @@ msgstr "Ver usuarios"
 msgid "Welcome back!"
 msgstr "¡Bienvenido de nuevo!"
 
-msgid "You just requested to recover your passbolt account on this device."
+msgid "You just requested to recover your passly account on this device."
 msgstr "Ha solicitado recuperar su cuenta de Passbolt en este dispositivo."
 
 msgid "Make sure you have a backup of your secret key handy."
@@ -7279,16 +7279,16 @@ msgstr "iniciar recuperación"
 msgid "You just completed an account recovery. Feel free to get in touch with an admin if you feel this action looks suspicious."
 msgstr "Acaba de completar una recuperación de cuenta. Siéntase libre de ponerse en contacto con un administrador si cree que esta acción parece sospechosa."
 
-msgid "{0} just created an account for you on passbolt!"
+msgid "{0} just created an account for you on passly!"
 msgstr "¡{0} acaba de crear una cuenta para ti en passbolt!"
 
 msgid "Welcome {0}"
 msgstr "Bienvenido {0}"
 
-msgid "{0} just invited you to join passbolt at {1}"
+msgid "{0} just invited you to join passly at {1}"
 msgstr "{0} te acaba de invitar a unirte a passbolt en {1}"
 
-msgid "Passbolt is an open source password manager."
+msgid "Passly is an open source password manager."
 msgstr "Passbolt es un gestor de contraseñas de código abierto."
 
 msgid "It is designed to allow sharing credentials securely with your team!"
@@ -7300,10 +7300,10 @@ msgstr "¡Tomemos los próximos cinco minutos para empezar!"
 msgid "get started"
 msgstr "empezar"
 
-msgid "You just created your account on passbolt!"
+msgid "You just created your account on passly!"
 msgstr "¡Acaba de crear su cuenta en Passbolt!"
 
-msgid "You just opened an account on passbolt at {0}."
+msgid "You just opened an account on passly at {0}."
 msgstr "Acabas de abrir una cuenta de passbolt en {0}."
 
 msgid "Get started"
@@ -7330,7 +7330,7 @@ msgstr "Editar miembros del grupo"
 msgid "{0} deleted the user {1}"
 msgstr "{0} eliminó al usuario {1}"
 
-msgid "The user {0} {1} ({2}) is now deleted from your organisation in passbolt."
+msgid "The user {0} {1} ({2}) is now deleted from your organisation in passly."
 msgstr "El usuario {0} {1} ({2}) se ha eliminado de su organización en pasaporte."
 
 msgid "This user was a member of the following group(s) you manage:"
@@ -7378,16 +7378,16 @@ msgstr "Ya no tiene autorización para editar los miembros de este grupo."
 msgid "{0} group memberships were affected."
 msgstr "{0} miembros del grupo se vieron afectados."
 
-msgid "It would be too much to list them here, but you can get more information on passbolt."
+msgid "It would be too much to list them here, but you can get more information on passly."
 msgstr "Sería demasiado enumerarlos aquí, pero usted puede obtener más información sobre el passbolt."
 
-msgid "go to passbolt"
+msgid "go to passly"
 msgstr "ir a passbolt"
 
 msgid "{0} deleted {1} groups you were a member of."
 msgstr "{0} ha eliminado {1} grupos de los que era miembro."
 
-msgid "log in passbolt"
+msgid "log in passly"
 msgstr "iniciar sesión en passbolt"
 
 msgid "Username: {0}"

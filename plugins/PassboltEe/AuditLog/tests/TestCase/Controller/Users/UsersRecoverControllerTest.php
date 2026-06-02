@@ -37,7 +37,7 @@ class UsersRecoverControllerTest extends LogIntegrationTestCase
 
         $token = AuthenticationTokenFactory::find()->firstOrFail();
         $this->assertEmailIsInQueue(['email' => $username, 'template' => 'AN/user_recover']);
-        $this->assertEmailInBatchContains('You just requested to recover your passbolt account on this device.', $username);
+        $this->assertEmailInBatchContains('You just requested to recover your passly account on this device.', $username);
         $this->assertEmailInBatchContains('/setup/recover/start/' . $user->id . '/' . $token->get('token') . '?case=default', $username);
         $this->assertEmailQueueCount(1);
         $this->assertActionLogsCount(1);
@@ -56,7 +56,7 @@ class UsersRecoverControllerTest extends LogIntegrationTestCase
         $this->assertEmailIsInQueue(['email' => $username, 'template' => 'AN/user_register_self']);
         $this->assertEmailQueueCount(1);
         $link = '<a href="' . Router::url('/', true) . '">' . Router::url('/', true) . '</a>';
-        $this->assertEmailInBatchContains("You just opened an account on passbolt at {$link}.", $username, '', false);
+        $this->assertEmailInBatchContains("You just opened an account on passly at {$link}.", $username, '', false);
         $this->assertActionLogsCount(1);
         $this->assertEntitiesHistoryCount(0);
     }

@@ -456,7 +456,7 @@ class GroupSyncActionAddTest extends DirectorySyncDeprecatedIntegrationTestCase
     }
 
     /**
-     * Scenario: The same group was already synced successfully, then could not be synced, then deleted in passbolt.
+     * Scenario: The same group was already synced successfully, then could not be synced, then deleted in passly.
      * Expected result: Group should be re-created and the directory entry should have been updated.
      *
      * @group DirectorySync
@@ -495,7 +495,7 @@ class GroupSyncActionAddTest extends DirectorySyncDeprecatedIntegrationTestCase
     }
 
     /**
-     * Scenario: The same group was already synced successfully, then deleted in passbolt.
+     * Scenario: The same group was already synced successfully, then deleted in passly.
      * Expected result: Group should be marked as ignored and directory entry should be deleted.
      *
      * @group DirectorySync
@@ -627,7 +627,7 @@ class GroupSyncActionAddTest extends DirectorySyncDeprecatedIntegrationTestCase
     }
 
     /**
-     * Scenario: The same group was already synced successfully, then deleted in passbolt.
+     * Scenario: The same group was already synced successfully, then deleted in passly.
      * Expected result: Should be ignored, entry group should be deleted and an ignore report should be generated.
      *
      * @group DirectorySync
@@ -696,7 +696,7 @@ class GroupSyncActionAddTest extends DirectorySyncDeprecatedIntegrationTestCase
     }
 
     /**
-     * Scenario: The same group was already synced successfully, then deleted in passbolt.
+     * Scenario: The same group was already synced successfully, then deleted in passly.
      * Expected result: Should be ignored, entry should be marked as error and an ignore report should be generated.
      *
      * @group DirectorySync

@@ -420,12 +420,12 @@ abstract class SyncAction
         }
         if ($entity instanceof User && $this->directoryOrgSettings->isDeleteUserBehaviorDisable()) {
             $msg = __(
-                'The directory user {0} was already suspended in passbolt.',
+                'The directory user {0} was already suspended in passly.',
                 $this->getEntityName($entity)
             );
         } else {
             $msg = __(
-                'The directory {0} {1} was already deleted in passbolt.',
+                'The directory {0} {1} was already deleted in passly.',
                 $this->getSingularLoweredEntityType(),
                 $this->getEntityName($entity)
             );
@@ -644,7 +644,7 @@ abstract class SyncAction
             $reportData = $entity = $this->createEntity($data, $entry);
             $status = Alias::STATUS_SUCCESS;
             $msg = __(
-                'The {0} {1} was successfully added to passbolt.',
+                'The {0} {1} was successfully added to passly.',
                 $this->getSingularLoweredEntityType(),
                 $this->getNameFromData($data)
             );
@@ -699,7 +699,7 @@ abstract class SyncAction
                 );
             } else {
                 $msg = __(
-                    'The previously deleted {0} {1} was not re-added to passbolt.',
+                    'The previously deleted {0} {1} was not re-added to passly.',
                     $this->getSingularLoweredEntityType(),
                     $this->getEntityName($existingEntity)
                 );
@@ -725,7 +725,7 @@ abstract class SyncAction
                 $reportData = $entity = $this->createEntity($data, $entry);
                 $status = Alias::STATUS_SUCCESS;
                 $msg = __(
-                    'The previously deleted {0} {1} was re-added to passbolt.',
+                    'The previously deleted {0} {1} was re-added to passly.',
                     $this->getSingularLoweredEntityType(),
                     $this->getEntityName($existingEntity)
                 );
@@ -769,7 +769,7 @@ abstract class SyncAction
                 $this->DirectoryEntries->updateForeignKey($entry, $existingEntity->id);
                 $this->addReportItem(new ActionReport(
                     __(
-                        'The {0} {1} was mapped with an existing {0} in passbolt.',
+                        'The {0} {1} was mapped with an existing {0} in passly.',
                         $this->getSingularLoweredEntityType(),
                         $this->getEntityName($existingEntity)
                     ),

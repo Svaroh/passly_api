@@ -1,12 +1,12 @@
 {
-    "name": "passbolt/passbolt_api",
-    "description": "Open source password manager for teams",
-    "homepage": "https://www.passbolt.com",
+    "name": "svaroh/passly_api",
+    "description": "Passly open source password manager API for teams",
+    "homepage": "https://github.com/Svaroh/passly_api",
     "type": "application",
     "license": "AGPL-3.0-or-later",
     "keywords": [
         "password",
-        "passbolt"
+        "passly"
     ],
     "config": {
         "optimize-autoloader": true,
@@ -23,14 +23,18 @@
     },
     "authors": [
         {
+            "name": "Svaroh Team",
+            "homepage": "https://github.com/Svaroh"
+        },
+        {
             "name": "Passbolt Team",
             "homepage": "https://www.passbolt.com/credits"
         }
     ],
     "support": {
-        "bugs": "https://github.com/passbolt/passbolt/issues",
+        "bugs": "https://github.com/Svaroh/passly_api/issues",
         "help": "https://www.passbolt.com/help",
-        "source": "https://github.com/passbolt/passbolt"
+        "source": "https://github.com/Svaroh/passly_api"
     },
     "repositories": [
         {

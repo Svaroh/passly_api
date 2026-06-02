@@ -53,5 +53,5 @@ echo $this->element('Email/module/user_info', compact('userAgent', 'clientIp'));
 
 echo $this->element('Email/module/button', [
     'url' => Router::url('/app/administration/password-expiry', true),
-    'text' => __('View them in passbolt'),
+    'text' => __('View them in passly'),
 ]);

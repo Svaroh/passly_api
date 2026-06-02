@@ -33,7 +33,7 @@ echo $this->element('Email/module/avatar',[
 ]);
 
 $text = __('{0} group memberships were affected.', $count) . ' ';
-$text .= __('It would be too much to list them here, but you can get more information on passbolt.');
+$text .= __('It would be too much to list them here, but you can get more information on passly.');
 
 echo $this->element('Email/module/text', [
     'text' => $text
@@ -41,5 +41,5 @@ echo $this->element('Email/module/text', [
 
 echo $this->element('Email/module/button', [
     'url' => Router::url("/", true),
-    'text' => __('go to passbolt')
+    'text' => __('go to passly')
 ]);

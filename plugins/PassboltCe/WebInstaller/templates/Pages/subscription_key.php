@@ -2,7 +2,7 @@
 use Cake\Routing\Router;
 $this->Html->script('web_installer/key_chooser', ['block' => 'scriptBottom']);
 ?>
-<?= $this->element('header', ['title' => __('Passbolt Pro activation.')]) ?>
+<?= $this->element('header', ['title' => __('Passly Pro activation.')]) ?>
 <div class="panel main ">
     <!-- wizard steps -->
     <div class="panel left">
@@ -16,7 +16,7 @@ $this->Html->script('web_installer/key_chooser', ['block' => 'scriptBottom']);
                 <div class="col7">
                         <div class="row">
                             <div class="col12">
-                                <h2><?= __('Copy paste your Passbolt Pro subscription key here'); ?></h2>
+                                <h2><?= __('Copy paste your Passly Pro subscription key here'); ?></h2>
                                 <?= $this->Flash->render() ?>
                                 <div class="input textarea gpgkey">
                                     <?= $this->Form->control('subscription_key', ['type' => 'textarea', 'class' => ['key-content']]); ?>

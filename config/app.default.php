@@ -275,7 +275,7 @@ return [
         'default' => [
             'transport' => env('EMAIL_DEFAULT_TRANSPORT', 'default'),
             'from' => [
-                env('EMAIL_DEFAULT_FROM', 'you@localhost.test') => env('EMAIL_DEFAULT_FROM_NAME', 'Passbolt')
+                env('EMAIL_DEFAULT_FROM', 'you@localhost.test') => env('EMAIL_DEFAULT_FROM_NAME', 'Passly')
             ],
             //'charset' => 'utf-8',
             //'headerCharset' => 'utf-8',

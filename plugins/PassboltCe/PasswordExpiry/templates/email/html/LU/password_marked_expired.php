@@ -49,5 +49,5 @@ echo $this->element('Email/module/text', [
 
 echo $this->element('Email/module/button', [
     'url' => Router::url('/app/passwords/view/' . $resourceId, true),
-    'text' => __('Change it in passbolt '),
+    'text' => __('Change it in passly '),
 ]);

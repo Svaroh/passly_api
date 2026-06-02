@@ -30,7 +30,7 @@ $reportCreator = Purifier::clean($reportCreator);
 ?>
 <div class="row report-header">
     <div class="col6 creator-info">
-        <h1><?= __('Passbolt report'); ?></h1>
+        <h1><?= __('Passly report'); ?></h1>
         <ul>
             <li>
                 <span class="label"><?= __('Report name'); ?>:</span>

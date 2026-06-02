@@ -58,7 +58,7 @@ class UserSyncActionAddCaseSensitiveTest extends DirectorySyncDeprecatedIntegrat
         $reports = $this->action->execute();
         $message = $reports[0]->getMessage();
         $this->assertSame(
-            "The user $username was mapped with an existing user in passbolt.",
+            "The user $username was mapped with an existing user in passly.",
             $message,
         );
         $this->assertSame(2, UserFactory::count());
@@ -81,7 +81,7 @@ class UserSyncActionAddCaseSensitiveTest extends DirectorySyncDeprecatedIntegrat
         $reports = $this->action->execute();
         $message = $reports[0]->getMessage();
         $this->assertSame(
-            'The user john@passbolt.com was successfully added to passbolt.',
+            'The user john@passbolt.com was successfully added to passly.',
             $message,
         );
         $this->assertSame(3, UserFactory::count());

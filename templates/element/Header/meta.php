@@ -17,7 +17,7 @@ use Cake\Routing\Router;
 ?>
 <?= $this->element('Header/banner'); ?>
     <meta name="description" content="<?= Configure::read('passbolt.meta.description'); ?>">
-    <meta name="keywords" content="Passbolt, password manager, online password manager, open source password manager">
+    <meta name="keywords" content="Passly, password manager, online password manager, open source password manager">
     <meta name="robots" content="<?= Configure::read('passbolt.meta.robots'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon" href="<?= Router::url('/favicon.ico', true); ?>" />

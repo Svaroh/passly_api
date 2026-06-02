@@ -148,7 +148,7 @@ class AllSyncActionDisableUserTest extends DirectorySyncIntegrationTestCase
         // The groups_users association should not be deleted
         // TODO: uncomment this assertion, which is failing because the arrange part is not complete
 //        $this->assertNotNull(GroupsUserFactory::get($group->groups_users[0]->id));
-        $expectedReportMessage = "The directory user $userToDisable->username was already suspended in passbolt.";
+        $expectedReportMessage = "The directory user $userToDisable->username was already suspended in passly.";
         /** @var \Passbolt\DirectorySync\Actions\Reports\ActionReport $report */
         $report = $result['users']->offsetGet(0);
         $this->assertSame($expectedReportMessage, $report->getMessage());

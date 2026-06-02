@@ -62,7 +62,7 @@ class SmtpSettingsEmailControllerTest extends AppIntegrationTestCase
         $this->assertMailContainsAt(0, 'Congratulations!');
         $this->assertMailContainsAt(
             0,
-            'If you receive this email, it means that your passbolt smtp configuration is working fine.'
+            'If you receive this email, it means that your passly smtp configuration is working fine.'
         );
         $debug = $trace;
         $response = $this->getResponseBodyAsArray();

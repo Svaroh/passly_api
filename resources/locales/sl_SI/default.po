@@ -1111,7 +1111,7 @@ msgstr "{0} je naredil spremembe na več virih"
 msgid "{0} shared several items with you"
 msgstr "{0} je delil več elementov z vami"
 
-msgid "{0} just activated their account on passbolt"
+msgid "{0} just activated their account on passly"
 msgstr "{0} je ravnokar aktiviral svoj račun na passboltu"
 
 msgid "{0} commented on {1}"
@@ -1486,7 +1486,7 @@ msgstr "Lahko odstranite nastavitev \"passbolt.registration.public\"."
 msgid "Passbolt is configured to force SSL use."
 msgstr "Passbolt je konfiguriran tako, da zahteva uporabo SSL."
 
-msgid "Passbolt is not configured to force SSL use."
+msgid "Passly is not configured to force SSL use."
 msgstr "Passbolt ni konfiguriran za obvezno uporabo SSL."
 
 msgid "Set passbolt.ssl.force to true in {0}."
@@ -2554,7 +2554,7 @@ msgstr "Ustvarili ste novo mapo"
 msgid "Name: {0}"
 msgstr "Ime: {0}"
 
-msgid "View it in passbolt"
+msgid "View it in passly"
 msgstr "Ogled v Passbolt"
 
 msgid "You deleted a folder"
@@ -2563,7 +2563,7 @@ msgstr "Izbrišli ste mapo"
 msgid "{0} deleted a folder"
 msgstr "{0} je izbrisal mapo"
 
-msgid "Log in passbolt"
+msgid "Log in passly"
 msgstr "Prijavi se v passbolt"
 
 msgid "{0} shared a folder with you"
@@ -2578,10 +2578,10 @@ msgstr "{0} je uredil mapo"
 msgid "{0} folders were affected."
 msgstr ""
 
-msgid "It would be too much to list them here, but you can go check them on passbolt."
+msgid "It would be too much to list them here, but you can go check them on passly."
 msgstr "Bilo bi preveč, da jih tu naštejem, vendar jih lahko preverite na passbolt."
 
-msgid "View them in passbolt"
+msgid "View them in passly"
 msgstr "Ogled v Passbolt"
 
 msgid "The user signature could not be verified."
@@ -3928,7 +3928,7 @@ msgstr "Nastavitve poteka gesel so bile posodobljene."
 msgid "{0} resources were affected."
 msgstr "{0} virov je bilo prizadetih."
 
-msgid "Change them in passbolt"
+msgid "Change them in passly"
 msgstr "Spremeni v Passbolt"
 
 msgid "You have been requested to change them"
@@ -3946,7 +3946,7 @@ msgstr "Prosimo, zamenjajte jih, da zagotovite nadaljnjo varnost."
 msgid "Please rotate it to ensure continued security."
 msgstr "Prosimo, zamenjajte ga, da zagotovite nadaljnjo varnost."
 
-msgid "Change it in passbolt "
+msgid "Change it in passly "
 msgstr "Spremeni v Passboltu"
 
 msgid "Could not retrieve the password policies."
@@ -4201,7 +4201,7 @@ msgstr "Zahtevano poročilo `{0}` ne obstaja."
 msgid "Description"
 msgstr "Opis"
 
-msgid "Passbolt report"
+msgid "Passly report"
 msgstr "Poročilo Passbolt"
 
 msgid "Report name"
@@ -4360,7 +4360,7 @@ msgstr "{0} je uredil nastavitve samoregistracije."
 msgid "You edited the self registration settings."
 msgstr "Uredili ste nastavitve samoregistracije."
 
-msgid "{0} just created an account on passbolt!"
+msgid "{0} just created an account on passly!"
 msgstr "{0} je pravkar ustvaril račun na passbolt!"
 
 msgid "The email is already registered."
@@ -4594,13 +4594,13 @@ msgstr "Z OpenPGP ključem strežnika ni bilo mogoče dešifrirati SMTP nastavit
 msgid "To fix this problem, you need to configure the SMTP server again."
 msgstr "Za rešitev te težave morate ponovno konfigurirati SMTP strežnik."
 
-msgid "Passbolt test email"
+msgid "Passly test email"
 msgstr "Passbolt testni e-poštni naslov"
 
 msgid "Congratulations!"
 msgstr "Čestitke!"
 
-msgid "If you receive this email, it means that your passbolt smtp configuration is working fine."
+msgid "If you receive this email, it means that your passly smtp configuration is working fine."
 msgstr "Če ste prejeli to e-pošto, pomeni, da je vaša konfiguracija smtp za passbolt deluje pravilno."
 
 msgid "Invalid `passbolt.plugins.smtpSettings.security` configuration values."
@@ -4942,13 +4942,13 @@ msgstr "Geslo klienta"
 msgid "Client"
 msgstr "Stranka"
 
-msgid "Passbolt is not configured."
+msgid "Passly is not configured."
 msgstr "Passbolt ni konfiguriran."
 
-msgid "Passbolt is not configured yet!"
+msgid "Passly is not configured yet!"
 msgstr "Passbolt še ni konfiguriran!"
 
-msgid "If you see this page, it means that passbolt is present on your server but not configured. Click on \"Get Started\" to launch the configuration wizard."
+msgid "If you see this page, it means that passly is present on your server but not configured. Click on \"Get Started\" to launch the configuration wizard."
 msgstr "Če vidite to stran, pomeni, da je passbolt prisoten na vašem strežniku, vendar ni konfiguriran. Kliknite \"Začni\" za zagon konfiguracijskega čarovnika."
 
 msgid "Get Started"
@@ -5017,14 +5017,14 @@ msgstr "Prisiliti SSL?"
 msgid "Forcing SSL means that passbolt will not accept connections coming from a non secure protocol. If SSL is forced, your server has to be configured for HTTPS. It is highly recommended that you do so."
 msgstr "Prisiliti SSL pomeni, da Passbolt ne sprejme povezav, ki prihajajo iz nevarovanega HTTP protokola. Če je SSL prisiljen, mora biti vaš strežnik konfiguriran za HTTPS. Močno priporočamo, da to storite."
 
-msgid "Passbolt Pro activation."
-msgstr "Aktivacija Passbolt Pro."
+msgid "Passly Pro activation."
+msgstr "Aktivacija Passly Pro."
 
-msgid "Copy paste your Passbolt Pro subscription key here"
-msgstr "Kopirajte in prilepite svoj ključ naročnine Passbolt Pro tukaj"
+msgid "Copy paste your Passly Pro subscription key here"
+msgstr "Kopirajte in prilepite svoj ključ naročnine Passly Pro tukaj"
 
-msgid "Welcome to Passbolt Pro! Let's get started with the configuration."
-msgstr "Dobrodošli v Passbolt Pro! Začnimo z nastavitvijo."
+msgid "Welcome to Passly Pro! Let's get started with the configuration."
+msgstr "Dobrodošli v Passly Pro! Začnimo z nastavitvijo."
 
 msgid "Nice one! Your environment is ready for passbolt."
 msgstr "Odlično! Vaše okolje je pripravljeno za passbolt."
@@ -5056,7 +5056,7 @@ msgstr "Uspeh!"
 msgid "You have completed successfully the configuration procedure, congrats!"
 msgstr "Uspešno ste zaključili postopek konfiguracije, čestitamo!"
 
-msgid "You will soon be redirected to passbolt to complete your account setup."
+msgid "You will soon be redirected to passly to complete your account setup."
 msgstr "Kmalu boste preusmerjeni na passbolt za dokončanje nastavitve svojega računa."
 
 msgid "You will soon be redirected to the login page."
@@ -5077,7 +5077,7 @@ msgstr "Nameščanje"
 msgid "Existing installation?"
 msgstr "Obstoječa namestitev?"
 
-msgid "If you want to use an existing passbolt database, the installer will take care of updating it to the current passbolt version while keeping your data."
+msgid "If you want to use an existing passly database, the installer will take care of updating it to the current passly version while keeping your data."
 msgstr "Če želite uporabiti obstoječo Passbolt zbirko podatkov, bo namestitveni program poskrbel za posodobitev na trenutno različico Passbolt in pri tem ohranil vaše podatke."
 
 msgid "As a precaution, do not forget to backup your database before you continue."
@@ -5086,7 +5086,7 @@ msgstr "Za vsak slučaj ne pozabite na varnostno kopiranje podatkovne zbirke, pr
 msgid "Help"
 msgstr "Pomoč"
 
-msgid "Need help? You can find more information on how to install passbolt in the official online help."
+msgid "Need help? You can find more information on how to install passly in the official online help."
 msgstr "Potrebujete pomoč? Več informacij o namestitvi passbolt najdete v uradni spletni pomoči."
 
 msgid "Send test email"
@@ -5107,14 +5107,14 @@ msgstr "Vaš e-poštni naslov"
 msgid "Why do I need a SMTP server?"
 msgstr "Zakaj potrebujem SMTP strežnik?"
 
-msgid "Passbolt needs an smtp server in order to send invitation emails after an account creation and to send email notifications."
+msgid "Passly needs an smtp server in order to send invitation emails after an account creation and to send email notifications."
 msgstr "Passbolt potrebuje SMTP strežnik za pošiljanje vabil po ustvarjanju računov in za pošiljanje e-poštnih obvestil."
 
 msgid "What subscription key?"
 msgstr "Kateri je naročniški ključ?"
 
-msgid "The subscription key is a file that was sent to you when you purchased Passbolt Pro. We need the subscription key in order to activate the Pro features of passbolt."
-msgstr "Naročniški ključ je datoteka, ki vam je bila poslana, ko ste kupili Passbolt Pro. Za aktivacijo funkcij Passbolt Pro potrebujemo naročniški ključ."
+msgid "The subscription key is a file that was sent to you when you purchased Passly Pro. We need the subscription key in order to activate the Pro features of passly."
+msgstr "Naročniški ključ je datoteka, ki vam je bila poslana, ko ste kupili Passly Pro. Za aktivacijo funkcij Passly Pro potrebujemo naročniški ključ."
 
 msgid "The user id is invalid."
 msgstr "Uporabniški ID je neveljaven."
@@ -5635,7 +5635,7 @@ msgstr "Vaši organizacijski stiki za obnovo so pregledali in zavrnili vašo zah
 msgid "Only administrators can view user logs."
 msgstr "Samo administratorji lahko vidijo dnevnike uporabnikov."
 
-msgid "The user {0} could not be added to group {1} because there is no matching directory entry in passbolt."
+msgid "The user {0} could not be added to group {1} because there is no matching directory entry in passly."
 msgstr "Uporabnika {0} ni bilo mogoče dodati v skupino {1}, ker ni ustreznega vnosa v imeniku v Passbolt."
 
 msgid "The user {0} could not be added to the group {1} because the membership has been removed in passbolt"
@@ -5647,7 +5647,7 @@ msgstr "Uporabnik {0} ni bil sinhroniziran z obstoječim članstvom za skupino {
 msgid "The user {0} was successfully added to the group {1}."
 msgstr "Uporabnik {0} je bil uspešno dodan v skupino {1}."
 
-msgid "The user {0} could not be added to the group {1} because their account was priorly deleted in passbolt."
+msgid "The user {0} could not be added to the group {1} because their account was priorly deleted in passly."
 msgstr "Uporabnika {0} ni bilo mogoče dodati v skupino {1}, ker je bil njegov račun predhodno izbrisan v Passboltu."
 
 msgid "The user {0} could not be added to the group {1} because they have not yet activated their account."
@@ -5689,10 +5689,10 @@ msgstr "Passbolt {0} {1} ni bil izbrisan, ker je označen za ignoriranje."
 msgid "The directory {0} {1} was not deleted because it is ignored."
 msgstr "Imenik {0} {1} ni bil izbrisan, ker je označen za ignoriranje."
 
-msgid "The directory user {0} was already suspended in passbolt."
+msgid "The directory user {0} was already suspended in passly."
 msgstr "Uporabnik imenika {0} je bil v sistemu passbolt že suspendiran."
 
-msgid "The directory {0} {1} was already deleted in passbolt."
+msgid "The directory {0} {1} was already deleted in passly."
 msgstr "Imenik {0} {1} je bil v Passbolt že izbrisan."
 
 msgid "The user {0} could not be deleted because they are the only owner of one or more passwords."
@@ -5719,7 +5719,7 @@ msgstr "{0} {1} ni bil sinhroniziran, ker je Passbolt {0} označen za ignoriranj
 msgid "The {0} {1} was not synced because the directory {0} is marked as to be ignored."
 msgstr "{0} {1} ni bil sinhroniziran, ker je {0} imenika označen za ignoriranje."
 
-msgid "The {0} {1} was successfully added to passbolt."
+msgid "The {0} {1} was successfully added to passly."
 msgstr "{0} {1} je bil uspešno dodan v Passbolt."
 
 msgid "The {0} {1} could not be added because of data validation issues."
@@ -5731,13 +5731,13 @@ msgstr "{0} {1} ni bilo mogoče dodati zaradi notranje napake. Poskusite pozneje
 msgid "The previously suspended {0} {1} was not unsuspended."
 msgstr "Prej suspendiran {0} {1} ni bil obnovljen."
 
-msgid "The previously deleted {0} {1} was not re-added to passbolt."
+msgid "The previously deleted {0} {1} was not re-added to passly."
 msgstr "Prej izbrisani {0} {1} ni bil ponovno dodan v Passbolt."
 
 msgid "The previously suspended {0} {1} was unsuspended."
 msgstr "Prej suspendiran {0} {1} je bil obnovljen."
 
-msgid "The previously deleted {0} {1} was re-added to passbolt."
+msgid "The previously deleted {0} {1} was re-added to passly."
 msgstr "Prej izbrisani {0} {1} je bil ponovno dodan v Passbolt."
 
 msgid "The deleted {0} {1} could not be re-added to passbolt because of validation errors."
@@ -5746,7 +5746,7 @@ msgstr "Izbrisani {0} {1} ni bilo mogoče ponovno dodati v Passbolt zaradi napak
 msgid "The deleted {0} {1} could not be re-added to passbolt because of an internal error."
 msgstr "Izbrisani {0} {1} ni bilo mogoče ponovno dodati v Passbolt zaradi notranje napake."
 
-msgid "The {0} {1} was mapped with an existing {0} in passbolt."
+msgid "The {0} {1} was mapped with an existing {0} in passly."
 msgstr "{0} {1} je bil preslikan z obstoječim {0} v Passbolt."
 
 msgid "The {0} {1} could not be mapped with an existing {0} in passbolt because it was created after."
@@ -6787,7 +6787,7 @@ msgstr "Opis napake: {0}"
 msgid "To fix this, you as an administrator have to update the Azure SSO credentials."
 msgstr "Za odpravo morate kot skrbnik posodobiti poverilnice Azure SSO."
 
-msgid "Update it in passbolt"
+msgid "Update it in passly"
 msgstr "Posodobite jih v Passbolt"
 
 msgid "The client secret expiry date of your Azure AD instance is {0}."
@@ -6937,8 +6937,8 @@ msgstr "Videti je, da bi vam prišla prav pomoč."
 msgid "We are here for you. You can contact us at sales@passbolt.com"
 msgstr "Tu smo za vas. Kontaktirate nas lahko na sales@passbolt.com"
 
-msgid "Thanks for choosing Passbolt Pro"
-msgstr "Hvala, ker ste izbrali Passbolt Pro"
+msgid "Thanks for choosing Passly Pro"
+msgstr "Hvala, ker ste izbrali Passly Pro"
 
 msgid "Below are your subscription key details"
 msgstr "Spodaj so podrobnosti vašega naročniškega ključa"
@@ -7126,7 +7126,7 @@ msgstr "Morda je stran izbrisana ali prestavljena."
 msgid "Health checks"
 msgstr "Stanje zdravja"
 
-msgid "Passbolt API Status"
+msgid "Passly API Status"
 msgstr "Stanje Passbolt API"
 
 msgid "Group manager"
@@ -7168,10 +7168,10 @@ msgstr "domov"
 msgid "login"
 msgstr "prijava"
 
-msgid "The administrator {0} ({1}) is now deleted from the passbolt organisation."
+msgid "The administrator {0} ({1}) is now deleted from the passly organisation."
 msgstr "Skrbnik {0} ({1}) je zdaj izbrisan iz organizacije Passbolt."
 
-msgid "{0} deleted you from the passbolt organisation."
+msgid "{0} deleted you from the passly organisation."
 msgstr "{0} vas je izbrisal iz organizacije Passbolt."
 
 msgid "Feel free to get in touch with the administrator at the origin of the operation if you feel this action looks suspicious."
@@ -7183,7 +7183,7 @@ msgstr "Račun onemogočen"
 msgid "Your account has been suspended."
 msgstr "Vaš račun je bil onemogočen."
 
-msgid "You are not able to sign in to passbolt and receive email notifications."
+msgid "You are not able to sign in to passly and receive email notifications."
 msgstr "Ne morete se prijaviti v Passbolt in prejemati e-poštnih obvestil."
 
 msgid "Other users can still share resources with you and add you to a group."
@@ -7201,7 +7201,7 @@ msgstr "{0} ne more več izvajati skrbniških opravil."
 msgid "{0} ({1}) just completed an account recovery. Feel free to get in touch with this user if you feel this action looks suspicious."
 msgstr "{0} ({1}) je pravkar zaključil obnovitev računa. Če menite, da je to dejanje sumljivo, lahko stopite v stik s tem uporabnikom."
 
-msgid "View user in passbolt"
+msgid "View user in passly"
 msgstr "Oglejte si uporabnika v passboltu"
 
 msgid "A new role {0} has been created."
@@ -7225,7 +7225,7 @@ msgstr "Uporabnik onemogočen"
 msgid "The user {0} has been suspended."
 msgstr "Uporabnik {0} je bil onemogočen."
 
-msgid "This user will not be able to sign in to passbolt and receive email notifications."
+msgid "This user will not be able to sign in to passly and receive email notifications."
 msgstr "Ta uporabnik se ne bo mogel prijaviti v Passbolt in prejemati e-poštnih obvestil."
 
 msgid "Other users can share resources and add this user to a group."
@@ -7237,13 +7237,13 @@ msgstr "Preveri onemogočanje uporabnika"
 msgid "Welcome to {0}!"
 msgstr "Dobrodošli v {0}!"
 
-msgid "{0} used the self registration feature to create an account on passbolt."
+msgid "{0} used the self registration feature to create an account on passly."
 msgstr "{0} je uporabil funkcijo samoregistracije za ustvarjanje računa na passboltu."
 
-msgid "{0} just activated their account on passbolt!"
+msgid "{0} just activated their account on passly!"
 msgstr "{0} je pravkar aktiviral svoj račun na passbolt!"
 
-msgid "The user is now active on passbolt and you can share passwords with them."
+msgid "The user is now active on passly and you can share passwords with them."
 msgstr "Uporabnik je sedaj aktiven na passbolt in lahko z njim delite gesla."
 
 msgid "This user was invited by you {0}."
@@ -7264,7 +7264,7 @@ msgstr "Poglej uporabnike"
 msgid "Welcome back!"
 msgstr "Dobrodošli nazaj!"
 
-msgid "You just requested to recover your passbolt account on this device."
+msgid "You just requested to recover your passly account on this device."
 msgstr "Pravkar ste zahtevali obnovo svojega računa Passbolt na tej napravi."
 
 msgid "Make sure you have a backup of your secret key handy."
@@ -7279,16 +7279,16 @@ msgstr "začni obnovo"
 msgid "You just completed an account recovery. Feel free to get in touch with an admin if you feel this action looks suspicious."
 msgstr "Pravkar ste dokončali obnovo računa. Prosto stori kontakt z administratorjem, če vam to dejanje zdi sumljivo."
 
-msgid "{0} just created an account for you on passbolt!"
+msgid "{0} just created an account for you on passly!"
 msgstr "{0} je pravkar ustvaril račun zate na passbolt!"
 
 msgid "Welcome {0}"
 msgstr "Dobrodošli {0}"
 
-msgid "{0} just invited you to join passbolt at {1}"
+msgid "{0} just invited you to join passly at {1}"
 msgstr "{0} vabi vas, da se pridružite passbolt na {1}"
 
-msgid "Passbolt is an open source password manager."
+msgid "Passly is an open source password manager."
 msgstr "Passbolt je odprtokodni upravljalnik gesel."
 
 msgid "It is designed to allow sharing credentials securely with your team!"
@@ -7300,10 +7300,10 @@ msgstr "Povzemo naslednjih pet minut, da vas pripravimo za začetek!"
 msgid "get started"
 msgstr "začni"
 
-msgid "You just created your account on passbolt!"
+msgid "You just created your account on passly!"
 msgstr "Pravkar ste ustvarili svoj račun na passbolt!"
 
-msgid "You just opened an account on passbolt at {0}."
+msgid "You just opened an account on passly at {0}."
 msgstr "Pravkar ste odprli račun na passbolt na {0}."
 
 msgid "Get started"
@@ -7330,7 +7330,7 @@ msgstr "Uredi člane skupine"
 msgid "{0} deleted the user {1}"
 msgstr "{0} je izbrisal uporabnika {1}"
 
-msgid "The user {0} {1} ({2}) is now deleted from your organisation in passbolt."
+msgid "The user {0} {1} ({2}) is now deleted from your organisation in passly."
 msgstr "Uporabnik {0} {1} ({2}) je zdaj izbrisan iz vaše organizacije v passbolt."
 
 msgid "This user was a member of the following group(s) you manage:"
@@ -7378,16 +7378,16 @@ msgstr "Niste več pooblaščeni za urejanje članov te skupine."
 msgid "{0} group memberships were affected."
 msgstr "{0} članstva v skupini so bila prizadeta."
 
-msgid "It would be too much to list them here, but you can get more information on passbolt."
+msgid "It would be too much to list them here, but you can get more information on passly."
 msgstr "Bilo bi preveč, da jih tu naštejem, vendar več informacij lahko dobite na passbolt."
 
-msgid "go to passbolt"
+msgid "go to passly"
 msgstr "pojdi na passbolt"
 
 msgid "{0} deleted {1} groups you were a member of."
 msgstr "{0} je izbrisal {1} skupine, katere član ste bili."
 
-msgid "log in passbolt"
+msgid "log in passly"
 msgstr "prijavite se v passbolt"
 
 msgid "Username: {0}"

@@ -46,7 +46,7 @@ class SubscriptionKeyControllerTest extends WebInstallerIntegrationTestCase
         $this->get('/install/subscription');
         $data = $this->_getBodyAsString();
         $this->assertResponseOk();
-        $this->assertStringContainsString('Passbolt Pro activation.', $data);
+        $this->assertStringContainsString('Passly Pro activation.', $data);
     }
 
     public function testWebInstallerSubscriptionKeyPostSuccess()

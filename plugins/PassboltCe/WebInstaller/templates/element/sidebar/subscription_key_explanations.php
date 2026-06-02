@@ -1,6 +1,6 @@
 <div class="sidebar-help">
     <h3><?php echo __('What subscription key?'); ?></h3>
-    <p><?php echo __('The subscription key is a file that was sent to you when you purchased Passbolt Pro. We need the subscription key in order to activate the Pro features of passbolt.'); ?></p>
+    <p><?php echo __('The subscription key is a file that was sent to you when you purchased Passly Pro. We need the subscription key in order to activate the Pro features of passly.'); ?></p>
     <a class="button medium"" href="https://help.passbolt.com" target="_blank" rel="noopener noreferrer">
         <span class="svg-icon life-ring icon-only">
             <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">

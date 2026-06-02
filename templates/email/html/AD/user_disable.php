@@ -35,7 +35,7 @@ echo $this->element('Email/module/avatar',[
 
 $text = '<h3>' . __('User suspended') . '</h3><br/>';
 $text .= __('The user {0} has been suspended.', $userFullName) . ' ';
-$text .= __('This user will not be able to sign in to passbolt and receive email notifications.') . ' ';
+$text .= __('This user will not be able to sign in to passly and receive email notifications.') . ' ';
 $text .= __('Other users can share resources and add this user to a group.');
 
 echo $this->element('Email/module/text', [

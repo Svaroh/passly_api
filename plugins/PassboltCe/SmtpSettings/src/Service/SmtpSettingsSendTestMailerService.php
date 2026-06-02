@@ -57,7 +57,7 @@ class SmtpSettingsSendTestMailerService
         $this->email
             ->setFrom([$this->smtpSettings['sender_email'] => $this->smtpSettings['sender_name']])
             ->setTo($this->smtpSettings[self::EMAIL_TEST_TO])
-            ->setSubject(__('Passbolt test email'))
+            ->setSubject(__('Passly test email'))
             ->deliver($this->getDefaultMessage());
     }
 
@@ -140,7 +140,7 @@ class SmtpSettingsSendTestMailerService
     protected function getDefaultMessage(): string
     {
         return __('Congratulations!') . "\n" .
-            __('If you receive this email, it means that your passbolt smtp configuration is working fine.');
+            __('If you receive this email, it means that your passly smtp configuration is working fine.');
     }
 
     /**

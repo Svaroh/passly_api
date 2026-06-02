@@ -93,7 +93,7 @@ class SelfRegistrationAdminEmailRedactor implements SubscribedEmailRedactorInter
         return (new LocaleService())->translateString(
             $recipient->locale,
             function () use ($userFirstName) {
-                return __('{0} just created an account on passbolt!', $userFirstName);
+                return __('{0} just created an account on passly!', $userFirstName);
             }
         );
     }

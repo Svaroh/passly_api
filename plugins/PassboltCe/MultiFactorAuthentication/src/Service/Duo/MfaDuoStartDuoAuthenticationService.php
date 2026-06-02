@@ -133,8 +133,8 @@ class MfaDuoStartDuoAuthenticationService
     }
 
     /**
-     * Create the authentication token to use when Duo will respond with a callback to passbolt. It will allow to authenticate the
-     * user to passbolt.
+     * Create the authentication token to use when Duo will respond with a callback to passly. It will allow to authenticate the
+     * user to passly.
      *
      * @param \App\Utility\UserAccessControl $uac The user access control.
      * @param string|null $redirect The redirect path to store along the token. The user will be redirected to this

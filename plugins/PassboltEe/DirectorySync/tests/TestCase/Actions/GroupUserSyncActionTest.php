@@ -422,7 +422,7 @@ class GroupUserSyncActionTest extends DirectorySyncDeprecatedIntegrationTestCase
             'model' => Alias::MODEL_GROUPS,
             'status' => Alias::STATUS_SUCCESS,
             'type' => Alias::MODEL_GROUPS,
-            'message' => 'The group newgroup was successfully added to passbolt.',
+            'message' => 'The group newgroup was successfully added to passly.',
         ];
         $this->assertReport($reports[0], $expectedGroupReport);
 
@@ -815,7 +815,7 @@ class GroupUserSyncActionTest extends DirectorySyncDeprecatedIntegrationTestCase
     }
 
     /**
-     * Scenario: A groupUser exists in ldap and has already been synced, but has been deleted in passbolt.
+     * Scenario: A groupUser exists in ldap and has already been synced, but has been deleted in passly.
      * Expected result: do nothing, send ignore report
      *
      * @group DirectorySync

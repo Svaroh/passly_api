@@ -53,5 +53,5 @@ echo $this->element('Email/module/user_info', compact('userAgent', 'clientIp'));
 
 echo $this->element('Email/module/button', [
     'url' => Router::url('/', true),
-    'text' => __('Log in passbolt'),
+    'text' => __('Log in passly'),
 ]);

@@ -197,7 +197,7 @@ class IntegrationUsersTest extends ScimApiIntegrationTestCase
      * ----------
      * the user was never synchronized with Azure.
      * ---------
-     * In this scenario we recreate the user in passbolt.
+     * In this scenario we recreate the user in passly.
      * Because it’s possible in passbolt to recreate a user if the username was previously used in the past.
      * In any case the new user doesn’t have access to previous user data.
      */
@@ -578,7 +578,7 @@ class IntegrationUsersTest extends ScimApiIntegrationTestCase
      * This active (boolean) attribute is mapped in passbolt to the disabled field in user table (datetime|null).
      *
      * After 30 days (or if manually done before) Azure deletes the user permanently,
-     * at this time a DELETE request to remove the user completely is sent to passbolt.
+     * at this time a DELETE request to remove the user completely is sent to passly.
      */
     public function testDelete_UserExistInPassbolt()
     {

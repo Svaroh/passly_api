@@ -151,7 +151,7 @@ class AdminUserSetupCompleteEmailRedactor implements SubscribedEmailRedactorInte
         $subject = (new LocaleService())->translateString(
             $admin->locale,
             function () use ($profile) {
-                return __('{0} just activated their account on passbolt', $profile->first_name);
+                return __('{0} just activated their account on passly', $profile->first_name);
             }
         );
         $invitedWhen = (new LocaleService())->translateString(

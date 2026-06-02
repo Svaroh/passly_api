@@ -41,5 +41,5 @@ echo $this->element('Email/module/text', [
 
 echo $this->element('Email/module/button', [
     'url' => Router::url('/app/users/view/' . $user['id'] , true),
-    'text' => __('View user in passbolt')
+    'text' => __('View user in passly')
 ]);

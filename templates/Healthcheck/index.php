@@ -28,7 +28,7 @@ $healthcheckHelper = new HealthcheckHtmlHelper();
 <div class="grid grid-responsive-12">
     <div class="row">
         <div class="col8">
-            <h1><?php echo __('Passbolt API Status') ?></h1>
+            <h1><?php echo __('Passly API Status') ?></h1>
             <?php
             foreach ($body as $domain => $checkResults) {
                 echo '<h3>' . $domain . '</h3>';
@@ -47,7 +47,7 @@ $healthcheckHelper = new HealthcheckHtmlHelper();
         <div class="col4 last" style="margin-top:2.8em;">
             <div class="sidebar-help transparent">
                 <h3>What is this page?</h3>
-                <p>This page is available to help administrators diagnose if something is wrong with a passbolt installation and help keeping it secure.</p>
+                <p>This page is available to help administrators diagnose if something is wrong with a passly installation and help keeping it secure.</p>
                 <p>It is also possible to perform a health check using the command line tools as follow:</p>
                 <code>
         <pre>
@@ -59,7 +59,7 @@ sudo su -s /bin/bash -c "./bin/cake passbolt \
 
             <div class="sidebar-help transparent">
                 <h3>Something wrong?</h3>
-                <p>Hang in there! You can find more information on how to install and update passbolt in the official online help.</p>
+                <p>Hang in there! You can find more information on how to install and update passly in the official online help.</p>
                 <a class="button medium"" href="https://help.passbolt.com" target="_blank" rel="noopener noreferrer">
                     <span class="svg-icon life-ring icon-only">
                         <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">

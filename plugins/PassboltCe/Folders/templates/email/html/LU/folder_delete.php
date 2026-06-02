@@ -46,5 +46,5 @@ echo $this->element('Email/module/text', [
 
 echo $this->element('Email/module/button', [
     'url' => Router::url('/', true),
-    'text' => __('Log in passbolt'),
+    'text' => __('Log in passly'),
 ]);

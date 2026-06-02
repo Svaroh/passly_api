@@ -50,12 +50,12 @@ echo $this->element('Email/module/avatar', [
 
 if ($recipient['id'] !== $user['id']) {
     $text = __(
-        'The administrator {0} ({1}) is now deleted from the passbolt organisation.',
+        'The administrator {0} ({1}) is now deleted from the passly organisation.',
         $userFullName,
         Purifier::clean($user['username'])
     );
 } else {
-    $text = __('{0} deleted you from the passbolt organisation.', $operatorFullName);
+    $text = __('{0} deleted you from the passly organisation.', $operatorFullName);
 }
 
 $text .= ' ';
@@ -66,6 +66,6 @@ echo $this->element('Email/module/text', ['text' => $text]);
 if ($recipient['id'] !== $user['id']) {
     echo $this->element('Email/module/button', [
         'url' => Router::url('/', true),
-        'text' => __('Log in passbolt'),
+        'text' => __('Log in passly'),
     ]);
 }

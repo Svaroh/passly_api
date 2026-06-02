@@ -57,5 +57,5 @@ if ($showSecret) {
 }
 echo $this->element('Email/module/button', [
     'url' => Router::url("/app/passwords/view/{$resource['id']}", true),
-    'text' => __('View it in passbolt')
+    'text' => __('View it in passly')
 ]);

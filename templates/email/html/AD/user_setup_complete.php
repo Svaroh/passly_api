@@ -41,13 +41,13 @@ echo $this->element('Email/module/avatar', [
         'user' => $user,
         'datetime' => $user['modified'],
         'text' => __(
-            '{0} just activated their account on passbolt!',
+            '{0} just activated their account on passly!',
             Purifier::clean($user['profile']['first_name']),
         )
     ])
 ]);
 
-$text = ' ' . __('The user is now active on passbolt and you can share passwords with them.');
+$text = ' ' . __('The user is now active on passly and you can share passwords with them.');
 $text .= ' ';
 if ($invitedByYou) {
     $text .= __('This user was invited by you {0}.', $invitedWhen);

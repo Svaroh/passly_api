@@ -50,5 +50,5 @@ echo $this->element('Email/module/text', ['text' => $text]);
 
 echo $this->element('Email/module/button', [
     'url' => Router::url('/app/administration/sso', true),
-    'text' => __('Update it in passbolt'),
+    'text' => __('Update it in passly'),
 ]);

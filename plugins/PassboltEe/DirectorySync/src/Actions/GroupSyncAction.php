@@ -323,7 +323,7 @@ class GroupSyncAction extends SyncAction
             if ($directoryGroupUserEntry === null) {
                 // If a DN was returned by the directory, but cannot be resolved with our entries, we notify the admin.
                 $this->addReportItem(new ActionReport(
-                    __('The user {0} could not be added to group {1} because there is no matching directory entry in passbolt.', $userDn, $group->name),//phpcs:ignore
+                    __('The user {0} could not be added to group {1} because there is no matching directory entry in passly.', $userDn, $group->name),//phpcs:ignore
                     Alias::MODEL_GROUPS_USERS,
                     Alias::ACTION_CREATE,
                     Alias::STATUS_IGNORE,
@@ -494,7 +494,7 @@ class GroupSyncAction extends SyncAction
                 $isNotActive = !empty(Hash::extract($errors, 'user_id.user_is_active'));
                 $isDeleted = !empty(Hash::extract($errors, 'user_id.user_is_not_soft_deleted'));
                 if (($isNotActive && $isDeleted) || $isDeleted) {
-                    $msg = __('The user {0} could not be added to the group {1} because their account was priorly deleted in passbolt.', $user->username, $group->name);//phpcs:ignore
+                    $msg = __('The user {0} could not be added to the group {1} because their account was priorly deleted in passly.', $user->username, $group->name);//phpcs:ignore
                 } elseif ($isNotActive) {
                     $msg = __('The user {0} could not be added to the group {1} because they have not yet activated their account.', $user->username, $group->name);//phpcs:ignore
                 } else {
@@ -537,7 +537,7 @@ class GroupSyncAction extends SyncAction
 
             // If users are deleted or active, we just ignore the entry.
             if ($u->deleted) {
-                $msg = __('The user {0} could not be added to the group {1} because their account was priorly deleted in passbolt.', $u->username, $group->name); //phpcs:ignore
+                $msg = __('The user {0} could not be added to the group {1} because their account was priorly deleted in passly.', $u->username, $group->name); //phpcs:ignore
                 $this->addReportItem(new ActionReport(
                     $msg,
                     Alias::MODEL_GROUPS_USERS,

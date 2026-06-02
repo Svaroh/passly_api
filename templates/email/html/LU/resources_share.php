@@ -36,7 +36,7 @@ echo $this->element('Email/module/avatar',[
 ]);
 
 $text = __('{0} resources were shared with you.', $count) . ' ';
-$text .= __('It would be too much to list them here, but you can go check them on passbolt.');
+$text .= __('It would be too much to list them here, but you can go check them on passly.');
 
 echo $this->element('Email/module/text', [
     'text' => $text
@@ -44,5 +44,5 @@ echo $this->element('Email/module/text', [
 
 echo $this->element('Email/module/button', [
     'url' => Router::url('/app/passwords', true),
-    'text' => __('View them in passbolt')
+    'text' => __('View them in passly')
 ]);

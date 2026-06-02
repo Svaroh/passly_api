@@ -15,7 +15,7 @@
 use Cake\Core\Configure;
 use Cake\Routing\Router;
 
-$this->assign('title', __('Passbolt is not configured.'));
+$this->assign('title', __('Passly is not configured.'));
 $this->Html->css('themes/default/api_webinstaller.min.css?v=' . Configure::read('passbolt.version'), ['block' => 'css', 'fullBase' => true]);
 
 $this->assign('page_classes', 'setup start');
@@ -25,8 +25,8 @@ $this->assign('page_classes', 'setup start');
     <div class="grid grid-responsive-12">
         <div class="row">
             <div class="col12 last intro">
-                <h1><?= __('Passbolt is not configured yet!') ?></h1>
-                <h2><?= __('If you see this page, it means that passbolt is present on your server but not configured. Click on "Get Started" to launch the configuration wizard.') ?></h2>
+                <h1><?= __('Passly is not configured yet!') ?></h1>
+                <h2><?= __('If you see this page, it means that passly is present on your server but not configured. Click on "Get Started" to launch the configuration wizard.') ?></h2>
                 <p>&nbsp;</p>
                 <p>
                     <a href="<?= Router::url('/install/system_check') ?>" class="button primary big">

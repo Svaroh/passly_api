@@ -1,6 +1,6 @@
 <div class="sidebar-help">
     <h3><?php echo __('Help'); ?></h3>
-    <p><?php echo __('Need help? You can find more information on how to install passbolt in the official online help.'); ?></p>
+    <p><?php echo __('Need help? You can find more information on how to install passly in the official online help.'); ?></p>
     <a class="button medium" href="https://help.passbolt.com" target="_blank" rel="noopener noreferrer">
         <span class="svg-icon life-ring">
             <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">

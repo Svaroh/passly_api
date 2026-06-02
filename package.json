@@ -1,21 +1,21 @@
 {
-  "name": "passbolt_api",
+  "name": "passly_api",
   "version": "5.0.0",
-  "description": "The backend application for the open source password manager for teams",
+  "description": "The backend application for Passly, the open source password manager for teams",
   "repository": {
-    "url": "https://github.com/passbolt/passbolt_api"
+    "url": "https://github.com/Svaroh/passly_api"
   },
   "engines": {
     "node": ">=16.14.0",
     "npm": ">=8.3.1"
   },
   "keywords": [
-    "passbolt",
-    "API"
+    "API",
+    "passly"
   ],
   "author": "Passbolt SA",
   "license": "AGPL-3.0",
-  "homepage": "https://www.passbolt.com",
+  "homepage": "https://github.com/Svaroh/passly_api",
   "devDependencies": {
     "@babel/runtime": "^7.27.0",
     "@babel/runtime-corejs3": "^7.26.10",

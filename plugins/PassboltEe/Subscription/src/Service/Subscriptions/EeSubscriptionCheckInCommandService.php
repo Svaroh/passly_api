@@ -98,7 +98,7 @@ class EeSubscriptionCheckInCommandService implements SubscriptionCheckInCommandS
         /** @var \App\Model\Table\UsersTable $users */
         $users = TableRegistry::getTableLocator()->get('Users');
 
-        $io->out(__('Thanks for choosing Passbolt Pro'));
+        $io->out(__('Thanks for choosing Passly Pro'));
         $io->out(__('Below are your subscription key details'));
 
         // Customer id output.

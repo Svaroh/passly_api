@@ -46,5 +46,5 @@ echo $this->element('Email/module/text', [
 
 echo $this->element('Email/module/button', [
     'url' => Router::url('/app/passwords/filter/expired', true),
-    'text' => __('View them in passbolt'),
+    'text' => __('View them in passly'),
 ]);

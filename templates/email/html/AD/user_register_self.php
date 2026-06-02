@@ -28,12 +28,12 @@ echo $this->element('Email/module/avatar',[
     'text' => $this->element('Email/module/avatar_text', [
         'user' => $user,
         'datetime' => $user['created'],
-        'text' => __('{0} just created an account on passbolt!', $userFirstName)
+        'text' => __('{0} just created an account on passly!', $userFirstName)
     ])
 ]);
 
 $text = '<h3>' . __('Welcome to {0}!', $userFirstName) . '</h3><br/>';
-$text .= __('{0} used the self registration feature to create an account on passbolt.', $userFullName);
+$text .= __('{0} used the self registration feature to create an account on passly.', $userFullName);
 
 echo $this->element('Email/module/text', [
     'text' => $text
@@ -41,5 +41,5 @@ echo $this->element('Email/module/text', [
 
 echo $this->element('Email/module/button', [
     'url' => Router::url('/app/users/view/' . $user['id'] , true),
-    'text' => __('View user in passbolt')
+    'text' => __('View user in passly')
 ]);

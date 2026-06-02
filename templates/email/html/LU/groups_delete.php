@@ -34,7 +34,7 @@ echo $this->element('Email/module/avatar',[
 
 $text = __('{0} deleted {1} groups you were a member of.', Purifier::clean($admin['profile']['first_name']), $count) . ' ';
 $text .= __('All passwords that were shared only with this group were also deleted.') . ' ';
-$text .= __('It would be too much to list them here, but you can get more information on passbolt.') ;
+$text .= __('It would be too much to list them here, but you can get more information on passly.') ;
 
 echo $this->element('Email/module/text', [
     'text' => $text
@@ -42,5 +42,5 @@ echo $this->element('Email/module/text', [
 
 echo $this->element('Email/module/button', [
     'url' => Router::url('/', true),
-    'text' => __('log in passbolt')
+    'text' => __('log in passly')
 ]);

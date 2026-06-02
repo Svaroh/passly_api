@@ -1111,7 +1111,7 @@ msgstr "{0} atliko kelių išteklių pakeitimus"
 msgid "{0} shared several items with you"
 msgstr "{0} pasidalino su jumis keliais elementais"
 
-msgid "{0} just activated their account on passbolt"
+msgid "{0} just activated their account on passly"
 msgstr "{0} ką tik suaktyvino savo paskyrą naudodami „passbolt“"
 
 msgid "{0} commented on {1}"
@@ -1486,7 +1486,7 @@ msgstr "Galite pašalinti nustatymą \"passbolt.registration.public\"."
 msgid "Passbolt is configured to force SSL use."
 msgstr "„Passbolt“ sukonfigūruotas priverstiniam SSL naudojimui."
 
-msgid "Passbolt is not configured to force SSL use."
+msgid "Passly is not configured to force SSL use."
 msgstr "„Passbolt“ nesukonfigūruotas priverstiniam SSL naudojimui."
 
 msgid "Set passbolt.ssl.force to true in {0}."
@@ -2554,7 +2554,7 @@ msgstr "Sukūrėte naują aplanką"
 msgid "Name: {0}"
 msgstr "Vardas: {0}"
 
-msgid "View it in passbolt"
+msgid "View it in passly"
 msgstr "Peržiūrėkite „passbolt'e“"
 
 msgid "You deleted a folder"
@@ -2563,7 +2563,7 @@ msgstr "Ištrynėte aplanką"
 msgid "{0} deleted a folder"
 msgstr "{0} ištrynė aplanką"
 
-msgid "Log in passbolt"
+msgid "Log in passly"
 msgstr "Prisijungti \"Passbolt\""
 
 msgid "{0} shared a folder with you"
@@ -2578,10 +2578,10 @@ msgstr "{0} redagavo aplanką"
 msgid "{0} folders were affected."
 msgstr ""
 
-msgid "It would be too much to list them here, but you can go check them on passbolt."
+msgid "It would be too much to list them here, but you can go check them on passly."
 msgstr "Būtų per daug juos čia išvardyti, bet galite juos patikrinti \"passbolt'e\"."
 
-msgid "View them in passbolt"
+msgid "View them in passly"
 msgstr "Peržiūrėkite juos „Passbolt“"
 
 msgid "The user signature could not be verified."
@@ -3928,7 +3928,7 @@ msgstr "Slaptažodžio galiojimo nustatymai buvo atnaujinti."
 msgid "{0} resources were affected."
 msgstr "Buvo paveikti {0} ištekliai(-ių)."
 
-msgid "Change them in passbolt"
+msgid "Change them in passly"
 msgstr "Pakeiskite juos „Passbolt“"
 
 msgid "You have been requested to change them"
@@ -3946,7 +3946,7 @@ msgstr "Prašome juos pakeisti, kad užtikrintumėte tolesnį saugumą."
 msgid "Please rotate it to ensure continued security."
 msgstr "Prašome jį pakeisti, kad išliktų saugu."
 
-msgid "Change it in passbolt "
+msgid "Change it in passly "
 msgstr "Pakeiskite jį \"passbolt'e\" "
 
 msgid "Could not retrieve the password policies."
@@ -4201,7 +4201,7 @@ msgstr "Prašoma ataskaita „{0}“ neegzistuoja."
 msgid "Description"
 msgstr "Domenas"
 
-msgid "Passbolt report"
+msgid "Passly report"
 msgstr "Passbolt ataskaita"
 
 msgid "Report name"
@@ -4360,7 +4360,7 @@ msgstr "{0} redagavo savarankiškos registracijos nustatymus."
 msgid "You edited the self registration settings."
 msgstr "You edited the self registration settings."
 
-msgid "{0} just created an account on passbolt!"
+msgid "{0} just created an account on passly!"
 msgstr "{0} ką tik sukūrė paskyrą \"passbolt\"! "
 
 msgid "The email is already registered."
@@ -4594,13 +4594,13 @@ msgstr "OpenPGP serverio raktas negali būti naudojamas duomenų bazėje saugomi
 msgid "To fix this problem, you need to configure the SMTP server again."
 msgstr "Norėdami išspręsti šią problemą, turite dar kartą sukonfigūruoti SMTP serverį."
 
-msgid "Passbolt test email"
+msgid "Passly test email"
 msgstr "Passbol bandomasis el. paštas"
 
 msgid "Congratulations!"
 msgstr "Sveikinimai!"
 
-msgid "If you receive this email, it means that your passbolt smtp configuration is working fine."
+msgid "If you receive this email, it means that your passly smtp configuration is working fine."
 msgstr "Jei gavote šį el. laišką, tai reiškia, kad jūsų \"passbolt\" smtp konfigūracija veikia gerai."
 
 msgid "Invalid `passbolt.plugins.smtpSettings.security` configuration values."
@@ -4942,13 +4942,13 @@ msgstr ""
 msgid "Client"
 msgstr "Klientas"
 
-msgid "Passbolt is not configured."
+msgid "Passly is not configured."
 msgstr "\"Passbolt\" nesukonfigūruotas."
 
-msgid "Passbolt is not configured yet!"
+msgid "Passly is not configured yet!"
 msgstr "Passbolt dar nesukonfigūruotas!"
 
-msgid "If you see this page, it means that passbolt is present on your server but not configured. Click on \"Get Started\" to launch the configuration wizard."
+msgid "If you see this page, it means that passly is present on your server but not configured. Click on \"Get Started\" to launch the configuration wizard."
 msgstr "Jei matote šį puslapį, tai reiškia, kad jūsų serveryje yra „passbolt“, bet jis nesukonfigūruotas. Paspauskite „Pradėti“, kad paleistumėte konfigūracijos vedlį."
 
 msgid "Get Started"
@@ -5017,14 +5017,14 @@ msgstr "Priversti SSL?"
 msgid "Forcing SSL means that passbolt will not accept connections coming from a non secure protocol. If SSL is forced, your server has to be configured for HTTPS. It is highly recommended that you do so."
 msgstr "Priverstinis SSL reiškia, kad „passbolt“ nepriims ryšių, gaunamų iš nesaugaus protokolo. Jei SSL yra priverstinis, jūsų serveris turi būti sukonfigūruotas HTTPS. Labai rekomenduojama tai padaryti."
 
-msgid "Passbolt Pro activation."
-msgstr "\"Passbolt Pro\" aktyvavimas."
+msgid "Passly Pro activation."
+msgstr "\"Passly Pro\" aktyvavimas."
 
-msgid "Copy paste your Passbolt Pro subscription key here"
-msgstr "Nukopijuokite ir įklijuokite savo \"Passbolt Pro\" prenumeratos raktą čia"
+msgid "Copy paste your Passly Pro subscription key here"
+msgstr "Nukopijuokite ir įklijuokite savo \"Passly Pro\" prenumeratos raktą čia"
 
-msgid "Welcome to Passbolt Pro! Let's get started with the configuration."
-msgstr "Sveiki atvykę į Passbolt Pro! Pradėkime nuo konfigūracijos."
+msgid "Welcome to Passly Pro! Let's get started with the configuration."
+msgstr "Sveiki atvykę į Passly Pro! Pradėkime nuo konfigūracijos."
 
 msgid "Nice one! Your environment is ready for passbolt."
 msgstr "Geras! Jūsų aplinka paruošta slaptažodžiui."
@@ -5056,7 +5056,7 @@ msgstr "Sėkmė!"
 msgid "You have completed successfully the configuration procedure, congrats!"
 msgstr "Sėkmingai baigėte konfigūravimo procedūrą, sveikiname!"
 
-msgid "You will soon be redirected to passbolt to complete your account setup."
+msgid "You will soon be redirected to passly to complete your account setup."
 msgstr "Netrukus būsite nukreipti į \"passbolt\", kad užbaigtumėte paskyros sąranką."
 
 msgid "You will soon be redirected to the login page."
@@ -5077,7 +5077,7 @@ msgstr "Instaliuojama"
 msgid "Existing installation?"
 msgstr "Esama instaliacija?"
 
-msgid "If you want to use an existing passbolt database, the installer will take care of updating it to the current passbolt version while keeping your data."
+msgid "If you want to use an existing passly database, the installer will take care of updating it to the current passly version while keeping your data."
 msgstr "Jei norite naudoti esamą slaptažodžio duomenų bazę, diegimo programa pasirūpins jos atnaujinimu į dabartinę slaptažodžio versiją išsaugodama jūsų duomenis."
 
 msgid "As a precaution, do not forget to backup your database before you continue."
@@ -5086,7 +5086,7 @@ msgstr "Atsargumo sumetimais prieš tęsdami nepamirškite pasidaryti atsarginė
 msgid "Help"
 msgstr "Pagalba"
 
-msgid "Need help? You can find more information on how to install passbolt in the official online help."
+msgid "Need help? You can find more information on how to install passly in the official online help."
 msgstr "Reikia pagalbos? Daugiau informacijos apie tai, kaip įdiegti Passbolt, rasite oficialiame internetiniame žinyne."
 
 msgid "Send test email"
@@ -5107,14 +5107,14 @@ msgstr "Jūsų elektroninio pašto adresas"
 msgid "Why do I need a SMTP server?"
 msgstr "Kodėl man reikia SMTP serverio?"
 
-msgid "Passbolt needs an smtp server in order to send invitation emails after an account creation and to send email notifications."
+msgid "Passly needs an smtp server in order to send invitation emails after an account creation and to send email notifications."
 msgstr "„Passbolt“ reikalingas smtp serveris, kad sukūrus paskyrą būtų išsiųsti kvietimai ir el. pašto pranešimai."
 
 msgid "What subscription key?"
 msgstr "Koks prenumeratos raktas?"
 
-msgid "The subscription key is a file that was sent to you when you purchased Passbolt Pro. We need the subscription key in order to activate the Pro features of passbolt."
-msgstr "Prenumeratos raktas yra failas, kuris buvo išsiųstas jums įsigijus \"Passbolt Pro\". Mums reikia prenumeratos rakto, kad galėtume suaktyvinti „Passbolt Pro“ funkcijas."
+msgid "The subscription key is a file that was sent to you when you purchased Passly Pro. We need the subscription key in order to activate the Pro features of passly."
+msgstr "Prenumeratos raktas yra failas, kuris buvo išsiųstas jums įsigijus \"Passly Pro\". Mums reikia prenumeratos rakto, kad galėtume suaktyvinti „Passly Pro“ funkcijas."
 
 msgid "The user id is invalid."
 msgstr "Vartotojo id neteisingas."
@@ -5635,7 +5635,7 @@ msgstr "Organizacijos atkūrimo kontaktai peržiūrėjo ir atmetė jūsų paskyr
 msgid "Only administrators can view user logs."
 msgstr "Tik administratoriai gali peržiūrėti naudotojų žurnalus."
 
-msgid "The user {0} could not be added to group {1} because there is no matching directory entry in passbolt."
+msgid "The user {0} could not be added to group {1} because there is no matching directory entry in passly."
 msgstr "Naudotojo {0} nepavyko įtraukti į grupę {1}, nes nėra atitinkamo katalogo įrašo \"passbolt'e\"."
 
 msgid "The user {0} could not be added to the group {1} because the membership has been removed in passbolt"
@@ -5647,7 +5647,7 @@ msgstr "Naudotojas {0} nebuvo sinchronizuotas su esama grupės {1} naryste, nes 
 msgid "The user {0} was successfully added to the group {1}."
 msgstr "Vartotojas {0} sėkmingai įtrauktas į grupę {1}."
 
-msgid "The user {0} could not be added to the group {1} because their account was priorly deleted in passbolt."
+msgid "The user {0} could not be added to the group {1} because their account was priorly deleted in passly."
 msgstr "Naudotojo {0} nepavyko įtraukti į grupę {1}, nes jo paskyra anksčiau buvo ištrinta naudojant „Passbolt“."
 
 msgid "The user {0} could not be added to the group {1} because they have not yet activated their account."
@@ -5689,10 +5689,10 @@ msgstr "Slaptažodis {0} {1} nebuvo ištrintas, nes pažymėtas kaip ignoruojama
 msgid "The directory {0} {1} was not deleted because it is ignored."
 msgstr "Katalogas {0} {1} nebuvo ištrintas, nes jo nepaisoma."
 
-msgid "The directory user {0} was already suspended in passbolt."
+msgid "The directory user {0} was already suspended in passly."
 msgstr "Katalogo naudotojas {0} jau buvo sustabdytas \"passbolt'e\"."
 
-msgid "The directory {0} {1} was already deleted in passbolt."
+msgid "The directory {0} {1} was already deleted in passly."
 msgstr "Katalogas {0} {1} jau buvo ištrintas \"passbolt'e\"."
 
 msgid "The user {0} could not be deleted because they are the only owner of one or more passwords."
@@ -5719,7 +5719,7 @@ msgstr "{0} {1} nebuvo sinchronizuotas, nes slaptažodis {0} pažymėtas kaip ig
 msgid "The {0} {1} was not synced because the directory {0} is marked as to be ignored."
 msgstr "{0} {1} nebuvo sinchronizuotas, nes katalogas {0} pažymėtas kaip ignoruojamas."
 
-msgid "The {0} {1} was successfully added to passbolt."
+msgid "The {0} {1} was successfully added to passly."
 msgstr "{0} {1} sėkmingai pridėtas prie slaptažodžio."
 
 msgid "The {0} {1} could not be added because of data validation issues."
@@ -5731,13 +5731,13 @@ msgstr "{0} {1} nepavyko pridėti dėl vidinės klaidos. Pabandykite dar kartą 
 msgid "The previously suspended {0} {1} was not unsuspended."
 msgstr "Anksčiau sustabdytas {0} {1} nebuvo vėl įjungtas."
 
-msgid "The previously deleted {0} {1} was not re-added to passbolt."
+msgid "The previously deleted {0} {1} was not re-added to passly."
 msgstr "Anksčiau ištrintas {0} {1} nebuvo iš naujo pridėtas prie slaptažodžio."
 
 msgid "The previously suspended {0} {1} was unsuspended."
 msgstr "Anksčiau sustabdytas {0} {1} buvo vėl įjungtas."
 
-msgid "The previously deleted {0} {1} was re-added to passbolt."
+msgid "The previously deleted {0} {1} was re-added to passly."
 msgstr "Anksčiau ištrintas {0} {1} buvo iš naujo pridėtas prie slaptažodžio."
 
 msgid "The deleted {0} {1} could not be re-added to passbolt because of validation errors."
@@ -5746,7 +5746,7 @@ msgstr "Ištrinto {0} {1} nepavyko iš naujo pridėti prie slaptažodžio dėl p
 msgid "The deleted {0} {1} could not be re-added to passbolt because of an internal error."
 msgstr "Ištrinto {0} {1} nepavyko iš naujo pridėti prie slaptažodžio dėl vidinės klaidos."
 
-msgid "The {0} {1} was mapped with an existing {0} in passbolt."
+msgid "The {0} {1} was mapped with an existing {0} in passly."
 msgstr "{0} {1} buvo susietas su esamu {0} slaptažodžiu."
 
 msgid "The {0} {1} could not be mapped with an existing {0} in passbolt because it was created after."
@@ -6787,7 +6787,7 @@ msgstr "Klaidos aprašymas: {0}"
 msgid "To fix this, you as an administrator have to update the Azure SSO credentials."
 msgstr "Norėdami tai ištaisyti, jūs, kaip administratorius, turite atnaujinti Azure SSO prisijungimo duomenis."
 
-msgid "Update it in passbolt"
+msgid "Update it in passly"
 msgstr "Atnaujinkite tai „Passbolt“ sistemoje"
 
 msgid "The client secret expiry date of your Azure AD instance is {0}."
@@ -6937,8 +6937,8 @@ msgstr "Panašu, kad jums praverstų pagalba."
 msgid "We are here for you. You can contact us at sales@passbolt.com"
 msgstr "Mes esame pasiruošę padėti. Su mumis galite susisiekti adresu sales@passbolt.com"
 
-msgid "Thanks for choosing Passbolt Pro"
-msgstr "Ačiū, kad pasirinkote „Passbolt Pro“"
+msgid "Thanks for choosing Passly Pro"
+msgstr "Ačiū, kad pasirinkote „Passly Pro“"
 
 msgid "Below are your subscription key details"
 msgstr "Žemiau pateikiamos jūsų prenumeratos rakto detalės"
@@ -7126,7 +7126,7 @@ msgstr "Galbūt puslapis buvo ištrintas arba perkeltas."
 msgid "Health checks"
 msgstr "Sveikatos patikrinimas"
 
-msgid "Passbolt API Status"
+msgid "Passly API Status"
 msgstr "\"Passbolt\" API (aplikacijų programavimo sąsaja) statusas"
 
 msgid "Group manager"
@@ -7168,10 +7168,10 @@ msgstr "Pradžia"
 msgid "login"
 msgstr "Prisijungti"
 
-msgid "The administrator {0} ({1}) is now deleted from the passbolt organisation."
+msgid "The administrator {0} ({1}) is now deleted from the passly organisation."
 msgstr "Administratorius {0} ({1}) dabar ištrintas iš „Passbolt“ organizacijos."
 
-msgid "{0} deleted you from the passbolt organisation."
+msgid "{0} deleted you from the passly organisation."
 msgstr "{0} ištrynė jus iš „Passbolt“ organizacijos."
 
 msgid "Feel free to get in touch with the administrator at the origin of the operation if you feel this action looks suspicious."
@@ -7183,7 +7183,7 @@ msgstr "Paskyra sustabdyta"
 msgid "Your account has been suspended."
 msgstr "Jūsų paskyra buvo sustabdyta."
 
-msgid "You are not able to sign in to passbolt and receive email notifications."
+msgid "You are not able to sign in to passly and receive email notifications."
 msgstr "Jūs nebegalite prisijungti prie Passbolt ir gauti el. laiškų pranešimų."
 
 msgid "Other users can still share resources with you and add you to a group."
@@ -7201,7 +7201,7 @@ msgstr "{0} nebegali atlikti administravimo užduočių."
 msgid "{0} ({1}) just completed an account recovery. Feel free to get in touch with this user if you feel this action looks suspicious."
 msgstr "{0} ({1}) ką tik užbaigė paskyros atkūrimą. Jei šis veiksmas atrodo įtartinas, nedvejodami susisiekite su šiuo vartotoju."
 
-msgid "View user in passbolt"
+msgid "View user in passly"
 msgstr "Peržiūrėkite vartotoją Passbolt"
 
 msgid "A new role {0} has been created."
@@ -7225,7 +7225,7 @@ msgstr "Vartotojas sustabdytas"
 msgid "The user {0} has been suspended."
 msgstr "Vartotojo {0} paskyra buvo sustabdyta."
 
-msgid "This user will not be able to sign in to passbolt and receive email notifications."
+msgid "This user will not be able to sign in to passly and receive email notifications."
 msgstr "Šis vartotojas nebegalės prisijungti prie Passbolt ir gauti el. laiškų pranešimų."
 
 msgid "Other users can share resources and add this user to a group."
@@ -7237,13 +7237,13 @@ msgstr "Patikrinkite, ar vartotojas sustabdytas"
 msgid "Welcome to {0}!"
 msgstr "Sveiki atvykę į {0}!"
 
-msgid "{0} used the self registration feature to create an account on passbolt."
+msgid "{0} used the self registration feature to create an account on passly."
 msgstr "{0} naudojo savarankiškos registracijos funkciją, kad sukurtų paskyrą naudojant „passbolt“."
 
-msgid "{0} just activated their account on passbolt!"
+msgid "{0} just activated their account on passly!"
 msgstr "{0} ką tik suaktyvino savo paskyrą \"passbolt\"!"
 
-msgid "The user is now active on passbolt and you can share passwords with them."
+msgid "The user is now active on passly and you can share passwords with them."
 msgstr "Dabar vartotojas yra aktyvus „passbolt'e“ ir galite su juo dalintis slaptažodžiais."
 
 msgid "This user was invited by you {0}."
@@ -7264,7 +7264,7 @@ msgstr "Peržiūrėti vartotojus"
 msgid "Welcome back!"
 msgstr "Sveiki sugrįžę!"
 
-msgid "You just requested to recover your passbolt account on this device."
+msgid "You just requested to recover your passly account on this device."
 msgstr "Jūs ką tik paprašėte atkurti „Passbolt“ paskyrą šiame įrenginyje."
 
 msgid "Make sure you have a backup of your secret key handy."
@@ -7279,16 +7279,16 @@ msgstr "pradėti atsigavimą"
 msgid "You just completed an account recovery. Feel free to get in touch with an admin if you feel this action looks suspicious."
 msgstr "Ką tik užbaigėte paskyros atkūrimą. Jei šis veiksmas atrodo įtartinas, nedvejodami susisiekite su administratoriumi."
 
-msgid "{0} just created an account for you on passbolt!"
+msgid "{0} just created an account for you on passly!"
 msgstr "{0} ką tik sukūrė jums paskyrą \"Passbolt'e\"!"
 
 msgid "Welcome {0}"
 msgstr "Sveiki, {0}"
 
-msgid "{0} just invited you to join passbolt at {1}"
+msgid "{0} just invited you to join passly at {1}"
 msgstr "{0} ką tik pakvietė jus prisijungti prie „Passbolt“ adresu {1}"
 
-msgid "Passbolt is an open source password manager."
+msgid "Passly is an open source password manager."
 msgstr "\"Passbolt\" yra atvirojo kodo slaptažodžių tvarkyklė."
 
 msgid "It is designed to allow sharing credentials securely with your team!"
@@ -7300,10 +7300,10 @@ msgstr "Skirkime penkias minutes, kad pradėtume!"
 msgid "get started"
 msgstr "pradėti"
 
-msgid "You just created your account on passbolt!"
+msgid "You just created your account on passly!"
 msgstr "Jūs ką tik sukūrėte savo paskyrą \"Passbolt\"!"
 
-msgid "You just opened an account on passbolt at {0}."
+msgid "You just opened an account on passly at {0}."
 msgstr "Ką tik atidarėte paskyrą naudodamiesi \"Passbolt\" adresu {0}."
 
 msgid "Get started"
@@ -7330,7 +7330,7 @@ msgstr "Redaguoti grupės narius"
 msgid "{0} deleted the user {1}"
 msgstr "{0} ištrynė naudotoją {1}"
 
-msgid "The user {0} {1} ({2}) is now deleted from your organisation in passbolt."
+msgid "The user {0} {1} ({2}) is now deleted from your organisation in passly."
 msgstr "Naudotojas {0} {1} ({2}) dabar ištrintas iš jūsų organizacijos \"Passbolt'e\"."
 
 msgid "This user was a member of the following group(s) you manage:"
@@ -7378,16 +7378,16 @@ msgstr "Jūs nebeturite teisės redaguoti šios grupės narių."
 msgid "{0} group memberships were affected."
 msgstr "Buvo paveiktos {0} grupės narystės."
 
-msgid "It would be too much to list them here, but you can get more information on passbolt."
+msgid "It would be too much to list them here, but you can get more information on passly."
 msgstr "Būtų per daug čia išvardyti, bet galite gauti daugiau informacijos \"Passbolt'e\"."
 
-msgid "go to passbolt"
+msgid "go to passly"
 msgstr "eiti į \"passbolt\""
 
 msgid "{0} deleted {1} groups you were a member of."
 msgstr "{0} ištrynė {1} grupes(-ių), kurių narys buvote."
 
-msgid "log in passbolt"
+msgid "log in passly"
 msgstr "prisijungti \"passbolt\""
 
 msgid "Username: {0}"

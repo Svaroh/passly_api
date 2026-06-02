@@ -6,7 +6,7 @@
                 <strong><?= __('Success!') ?></strong>
                 <?= __('You have completed successfully the configuration procedure, congrats!') ?>
                 <?php if ($createFirstUser) : ?>
-                    <?= __('You will soon be redirected to passbolt to complete your account setup.') ?>
+                    <?= __('You will soon be redirected to passly to complete your account setup.') ?>
                 <?php else : ?>
                     <?= __('You will soon be redirected to the login page.') ?>
                 <?php endif; ?>

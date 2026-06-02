@@ -17,7 +17,7 @@
 use Cake\Routing\RouteBuilder;
 
 /**
- * Enterprise Edition aka Passbolt Pro
+ * Enterprise Edition aka Passly Pro
  *
  * @uses \Passbolt\Reports\Controller\Reports\ReportsViewController::getReport()
  */

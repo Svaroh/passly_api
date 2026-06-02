@@ -58,5 +58,5 @@ echo $this->element('Email/module/user_info', compact('userAgent', 'clientIp'));
 
 echo $this->element('Email/module/button', [
     'url' => Router::url('/app/users/view/' . $user['id'], true),
-    'text' => __('View it in passbolt'),
+    'text' => __('View it in passly'),
 ]);

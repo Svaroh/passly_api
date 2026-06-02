@@ -186,7 +186,7 @@ return [
 
         // Html meta information.
         'meta' => [
-            'title' => env('PASSBOLT_META_TITLE', 'Passbolt'),
+            'title' => env('PASSBOLT_META_TITLE', 'Passly'),
             'description' => env('PASSBOLT_META_DESCRIPTION', 'Open source password manager for teams'),
             // Do you want search engine robots to index your site.
             // Default is set to false.
@@ -242,7 +242,7 @@ return [
                 'url' => env('PASSBOLT_LEGAL_PRIVACYPOLICYURL', '')
             ],
             'terms' => [
-                'url' => env('PASSBOLT_LEGAL_TERMSURL', 'https://www.passbolt.com/terms')
+                'url' => env('PASSBOLT_LEGAL_TERMSURL', 'https://github.com/Svaroh/passly_api')
             ],
         ],
 
