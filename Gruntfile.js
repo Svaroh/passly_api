@@ -51,7 +51,7 @@ module.exports = function(grunt) {
    * Register project specific grunt tasks
    */
   grunt.registerTask('default', ['dependencies-update', 'styleguide-update']);
-  grunt.registerTask('styleguide-update', 'copy:styleguide');
+  grunt.registerTask('styleguide-update', ['copy:styleguide', 'copy:passly_brand']);
   grunt.registerTask('styleguide-watch', ['watch:node-modules-styleguide']);
   grunt.registerTask('dependencies-update', 'copy:dependencies');
 
@@ -185,6 +185,14 @@ module.exports = function(grunt) {
           dest: paths.js + 'app',
           expand: true
         },]
+      },
+      passly_brand: {
+        files: [{
+          cwd: 'resources/brand/passly',
+          src: ['**'],
+          dest: paths.webroot,
+          expand: true
+        }]
       },
       locales: {
         // CakePHP Locale Resources
