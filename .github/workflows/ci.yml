@@ -1,0 +1,543 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "**"
+    tags-ignore:
+      - "**"
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  COMPOSER_ALLOW_SUPERUSER: "1"
+
+jobs:
+  static-analysis-php:
+    name: PHP static analysis
+    if: ${{ vars.TEST_DISABLED != 'true' && vars.TEST_DISABLED != '1' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: curl, gd, gnupg, iconv, intl, ldap, mbstring, openssl, pdo, pdo_mysql, pdo_pgsql, posix
+          tools: composer:v2
+          coverage: none
+
+      - name: Install dependencies
+        run: |
+          composer config --global process-timeout 2000
+          composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Validate composer lock
+        run: composer validate --check-lock --no-check-publish
+
+      - name: PHPStan
+        run: composer stan
+
+      - name: Psalm
+        run: composer psalm
+
+      - name: PHP_CodeSniffer
+        run: composer cs-check
+
+  static-analysis-js:
+    name: JavaScript static analysis
+    if: ${{ vars.TEST_DISABLED != 'true' && vars.TEST_DISABLED != '1' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint lockfile
+        run: npm run lint
+
+  security-check:
+    name: Composer audit
+    if: ${{ vars.TEST_DISABLED != 'true' && vars.TEST_DISABLED != '1' }}
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ !contains(fromJSON('["main","master","develop","release","common"]'), github.ref_name) && !contains(fromJSON('["main","master","develop","release","common"]'), github.base_ref) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: curl, gd, gnupg, iconv, intl, ldap, mbstring, openssl, pdo, pdo_mysql, pdo_pgsql, posix
+          tools: composer:v2
+          coverage: none
+
+      - name: Composer audit
+        run: |
+          composer config --global process-timeout 2000
+          composer audit --locked
+
+  code-quality:
+    name: CodeQL quality scan
+    if: ${{ vars.TEST_DISABLED != 'true' && vars.TEST_DISABLED != '1' }}
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language:
+          - php
+          - javascript-typescript
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-and-quality
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: /language:${{ matrix.language }}
+
+  unit-tests-mysql:
+    name: PHP ${{ matrix.php_version }} / MySQL ${{ matrix.mysql_version }} / suite ${{ matrix.suite }}
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php_version: "8.2"
+            mysql_version: "5.7"
+            suite: "1"
+            protected_only: false
+            experimental: false
+          - php_version: "8.2"
+            mysql_version: "5.7"
+            suite: "2"
+            protected_only: false
+            experimental: false
+          - php_version: "8.2"
+            mysql_version: "8.0"
+            suite: "1"
+            protected_only: true
+            experimental: false
+          - php_version: "8.2"
+            mysql_version: "8.0"
+            suite: "2"
+            protected_only: true
+            experimental: false
+    services:
+      mysql:
+        image: mysql:${{ matrix.mysql_version }}
+        env:
+          MYSQL_USER: user
+          MYSQL_PASSWORD: testing-password
+          MYSQL_ROOT_PASSWORD: testing-password2
+          MYSQL_DATABASE: test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -u root -ptesting-password2"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      APP_FULL_BASE_URL: http://127.0.0.1
+      DEBUG: "true"
+      PASSBOLT_GPG_SERVER_KEY_PUBLIC: config/gpg/unsecure.key
+      PASSBOLT_GPG_SERVER_KEY_PRIVATE: config/gpg/unsecure_private.key
+      PASSBOLT_GPG_SERVER_KEY_FINGERPRINT: 2FC8945833C51946E937F9FED47B0811573EE67E
+      PASSBOLT_REGISTRATION_PUBLIC: "1"
+      PASSBOLT_SELENIUM_ACTIVE: "1"
+      DATASOURCES_DEFAULT_DATABASE: non_existing_database
+      DATASOURCES_DEFAULT_USERNAME: user
+      DATASOURCES_DEFAULT_PASSWORD: testing-password
+      DATASOURCES_DEFAULT_HOST: 127.0.0.1
+      DATASOURCES_TEST_DATABASE: test
+      DATASOURCES_TEST_USERNAME: user
+      DATASOURCES_TEST_PASSWORD: testing-password
+      DATASOURCES_TEST_HOST: 127.0.0.1
+      TEST_DISABLED: ${{ vars.TEST_DISABLED }}
+    steps:
+      - id: gate
+        name: Check matrix gate
+        env:
+          PROTECTED_ONLY: ${{ matrix.protected_only }}
+        run: |
+          protected_ref=false
+          case "${GITHUB_REF_NAME:-}" in
+            main|master|develop|release|common) protected_ref=true ;;
+          esac
+          case "${GITHUB_BASE_REF:-}" in
+            main|master|develop|release|common) protected_ref=true ;;
+          esac
+
+          run=true
+          if [[ "${TEST_DISABLED:-}" == "true" || "${TEST_DISABLED:-}" == "1" ]]; then
+            run=false
+          elif [[ "$PROTECTED_ONLY" == "true" && "$protected_ref" != "true" && "${GITHUB_EVENT_NAME}" != "schedule" ]]; then
+            run=false
+          fi
+
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.run == 'true'
+
+      - name: Setup PHP
+        if: steps.gate.outputs.run == 'true'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php_version }}
+          extensions: curl, gd, gnupg, iconv, intl, ldap, mbstring, openssl, pdo, pdo_mysql, posix
+          tools: composer:v2
+          coverage: none
+
+      - name: Install MySQL client
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y default-mysql-client
+
+      - name: Prepare database
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          until mysqladmin -h "$DATASOURCES_TEST_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" ping --silent; do
+            sleep 1
+          done
+          mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" -e "ALTER USER '$DATASOURCES_TEST_USERNAME'@'%' IDENTIFIED BY '$DATASOURCES_TEST_PASSWORD';"
+          mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" -e "GRANT ALL ON *.* TO '$DATASOURCES_TEST_USERNAME'@'%';"
+          mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" -e "SET GLOBAL log_bin_trust_function_creators = 1;"
+        env:
+          MYSQL_ROOT_PASSWORD: testing-password2
+
+      - name: Install dependencies
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          cp config/app.default.php config/app.php
+          composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare application keys
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          gpg --import config/gpg/unsecure_private.key
+          gpg --import config/gpg/unsecure.key
+          ./bin/cake passbolt create_jwt_keys
+          composer create-split-testsuite -- 2
+
+      - name: Run PHPUnit
+        if: steps.gate.outputs.run == 'true'
+        run: vendor/bin/phpunit --testsuite "${{ matrix.suite }}" -c tmp/tests/testsuitesplit.xml --log-junit unitreport.xml
+
+      - name: Upload JUnit report
+        if: always() && steps.gate.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-mysql-${{ matrix.mysql_version }}-php-${{ matrix.php_version }}-suite-${{ matrix.suite }}
+          path: unitreport.xml
+          if-no-files-found: ignore
+
+  unit-tests-postgres:
+    name: PHP ${{ matrix.php_version }} / PostgreSQL ${{ matrix.postgres_version }} / suite ${{ matrix.suite }}
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php_version: "8.5"
+            postgres_version: "15-alpine"
+            suite: "1"
+            protected_only: false
+            experimental: false
+          - php_version: "8.5"
+            postgres_version: "15-alpine"
+            suite: "2"
+            protected_only: false
+            experimental: false
+          - php_version: "8.3"
+            postgres_version: "13-alpine"
+            suite: "1"
+            protected_only: true
+            experimental: false
+          - php_version: "8.3"
+            postgres_version: "13-alpine"
+            suite: "2"
+            protected_only: true
+            experimental: false
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres_version }}
+        env:
+          POSTGRES_DB: test
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: testing-password
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -h 127.0.0.1 -U user -d test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      APP_FULL_BASE_URL: http://127.0.0.1
+      DEBUG: "true"
+      PASSBOLT_GPG_SERVER_KEY_PUBLIC: config/gpg/unsecure.key
+      PASSBOLT_GPG_SERVER_KEY_PRIVATE: config/gpg/unsecure_private.key
+      PASSBOLT_GPG_SERVER_KEY_FINGERPRINT: 2FC8945833C51946E937F9FED47B0811573EE67E
+      PASSBOLT_REGISTRATION_PUBLIC: "1"
+      PASSBOLT_SELENIUM_ACTIVE: "1"
+      DATASOURCES_DEFAULT_DRIVER: Cake\Database\Driver\Postgres
+      DATASOURCES_DEFAULT_DATABASE: test
+      DATASOURCES_DEFAULT_USERNAME: user
+      DATASOURCES_DEFAULT_PASSWORD: testing-password
+      DATASOURCES_DEFAULT_HOST: 127.0.0.1
+      DATASOURCES_DEFAULT_PORT: "5432"
+      DATASOURCES_DEFAULT_ENCODING: utf8
+      DATASOURCES_TEST_DRIVER: Cake\Database\Driver\Postgres
+      DATASOURCES_TEST_DATABASE: test
+      DATASOURCES_TEST_USERNAME: user
+      DATASOURCES_TEST_PASSWORD: testing-password
+      DATASOURCES_TEST_HOST: 127.0.0.1
+      DATASOURCES_TEST_PORT: "5432"
+      DATASOURCES_TEST_ENCODING: utf8
+      TEST_DISABLED: ${{ vars.TEST_DISABLED }}
+    steps:
+      - id: gate
+        name: Check matrix gate
+        env:
+          PROTECTED_ONLY: ${{ matrix.protected_only }}
+        run: |
+          protected_ref=false
+          case "${GITHUB_REF_NAME:-}" in
+            main|master|develop|release|common) protected_ref=true ;;
+          esac
+          case "${GITHUB_BASE_REF:-}" in
+            main|master|develop|release|common) protected_ref=true ;;
+          esac
+
+          run=true
+          if [[ "${TEST_DISABLED:-}" == "true" || "${TEST_DISABLED:-}" == "1" ]]; then
+            run=false
+          elif [[ "$PROTECTED_ONLY" == "true" && "$protected_ref" != "true" && "${GITHUB_EVENT_NAME}" != "schedule" ]]; then
+            run=false
+          fi
+
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.run == 'true'
+
+      - name: Setup PHP
+        if: steps.gate.outputs.run == 'true'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php_version }}
+          extensions: curl, gd, gnupg, iconv, intl, ldap, mbstring, openssl, pdo, pdo_pgsql, posix
+          tools: composer:v2
+          coverage: none
+
+      - name: Install PostgreSQL client
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Wait for database
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          until pg_isready -h "$DATASOURCES_TEST_HOST" -U "$DATASOURCES_TEST_USERNAME" -d "$DATASOURCES_TEST_DATABASE"; do
+            sleep 1
+          done
+        env:
+          PGPASSWORD: testing-password
+
+      - name: Install dependencies
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          cp config/app.default.php config/app.php
+          composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare application keys
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          gpg --import config/gpg/unsecure_private.key
+          gpg --import config/gpg/unsecure.key
+          ./bin/cake passbolt create_jwt_keys
+          composer create-split-testsuite -- 2
+
+      - name: Run PHPUnit
+        if: steps.gate.outputs.run == 'true'
+        run: vendor/bin/phpunit --testsuite "${{ matrix.suite }}" -c tmp/tests/testsuitesplit.xml --log-junit unitreport.xml
+
+      - name: Upload JUnit report
+        if: always() && steps.gate.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-postgres-${{ matrix.postgres_version }}-php-${{ matrix.php_version }}-suite-${{ matrix.suite }}
+          path: unitreport.xml
+          if-no-files-found: ignore
+
+  unit-tests-mariadb:
+    name: PHP ${{ matrix.php_version }} / MariaDB ${{ matrix.mariadb_version }} / suite ${{ matrix.suite }}
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php_version: "8.2"
+            mariadb_version: "11.5"
+            suite: "1"
+            protected_only: false
+            experimental: true
+          - php_version: "8.2"
+            mariadb_version: "11.5"
+            suite: "2"
+            protected_only: false
+            experimental: true
+          - php_version: "8.3"
+            mariadb_version: "11.5"
+            suite: "1"
+            protected_only: true
+            experimental: true
+          - php_version: "8.3"
+            mariadb_version: "11.5"
+            suite: "2"
+            protected_only: true
+            experimental: true
+    services:
+      mariadb:
+        image: mariadb:${{ matrix.mariadb_version }}
+        env:
+          MARIADB_USER: user
+          MARIADB_PASSWORD: testing-password
+          MARIADB_ROOT_PASSWORD: testing-password2
+          MARIADB_DATABASE: test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mariadb-admin ping -h 127.0.0.1 -u root -ptesting-password2"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      APP_FULL_BASE_URL: http://127.0.0.1
+      DEBUG: "true"
+      PASSBOLT_GPG_SERVER_KEY_PUBLIC: config/gpg/unsecure.key
+      PASSBOLT_GPG_SERVER_KEY_PRIVATE: config/gpg/unsecure_private.key
+      PASSBOLT_GPG_SERVER_KEY_FINGERPRINT: 2FC8945833C51946E937F9FED47B0811573EE67E
+      PASSBOLT_REGISTRATION_PUBLIC: "1"
+      PASSBOLT_SELENIUM_ACTIVE: "1"
+      DATASOURCES_DEFAULT_DATABASE: non_existing_database
+      DATASOURCES_DEFAULT_USERNAME: user
+      DATASOURCES_DEFAULT_PASSWORD: testing-password
+      DATASOURCES_DEFAULT_HOST: 127.0.0.1
+      DATASOURCES_TEST_DATABASE: test
+      DATASOURCES_TEST_USERNAME: user
+      DATASOURCES_TEST_PASSWORD: testing-password
+      DATASOURCES_TEST_HOST: 127.0.0.1
+      TEST_DISABLED: ${{ vars.TEST_DISABLED }}
+    steps:
+      - id: gate
+        name: Check matrix gate
+        env:
+          PROTECTED_ONLY: ${{ matrix.protected_only }}
+        run: |
+          protected_ref=false
+          case "${GITHUB_REF_NAME:-}" in
+            main|master|develop|release|common) protected_ref=true ;;
+          esac
+          case "${GITHUB_BASE_REF:-}" in
+            main|master|develop|release|common) protected_ref=true ;;
+          esac
+
+          run=true
+          if [[ "${TEST_DISABLED:-}" == "true" || "${TEST_DISABLED:-}" == "1" ]]; then
+            run=false
+          elif [[ "$PROTECTED_ONLY" == "true" && "$protected_ref" != "true" && "${GITHUB_EVENT_NAME}" != "schedule" ]]; then
+            run=false
+          fi
+
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.run == 'true'
+
+      - name: Setup PHP
+        if: steps.gate.outputs.run == 'true'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php_version }}
+          extensions: curl, gd, gnupg, iconv, intl, ldap, mbstring, openssl, pdo, pdo_mysql, posix
+          tools: composer:v2
+          coverage: none
+
+      - name: Install MariaDB client
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y default-mysql-client
+
+      - name: Prepare database
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          until mysqladmin -h "$DATASOURCES_TEST_HOST" -u root -p"$MARIADB_ROOT_PASSWORD" ping --silent; do
+            sleep 1
+          done
+          mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MARIADB_ROOT_PASSWORD" -e "ALTER USER '$DATASOURCES_TEST_USERNAME'@'%' IDENTIFIED BY '$DATASOURCES_TEST_PASSWORD';"
+          mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MARIADB_ROOT_PASSWORD" -e "GRANT ALL ON *.* TO '$DATASOURCES_TEST_USERNAME'@'%';"
+          mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MARIADB_ROOT_PASSWORD" -e "SET GLOBAL log_bin_trust_function_creators = 1;"
+        env:
+          MARIADB_ROOT_PASSWORD: testing-password2
+
+      - name: Install dependencies
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          cp config/app.default.php config/app.php
+          composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare application keys
+        if: steps.gate.outputs.run == 'true'
+        run: |
+          gpg --import config/gpg/unsecure_private.key
+          gpg --import config/gpg/unsecure.key
+          ./bin/cake passbolt create_jwt_keys
+          composer create-split-testsuite -- 2
+
+      - name: Run PHPUnit
+        if: steps.gate.outputs.run == 'true'
+        run: vendor/bin/phpunit --testsuite "${{ matrix.suite }}" -c tmp/tests/testsuitesplit.xml --log-junit unitreport.xml
+
+      - name: Upload JUnit report
+        if: always() && steps.gate.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-mariadb-${{ matrix.mariadb_version }}-php-${{ matrix.php_version }}-suite-${{ matrix.suite }}
+          path: unitreport.xml
+          if-no-files-found: ignore

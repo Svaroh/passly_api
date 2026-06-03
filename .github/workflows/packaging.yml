@@ -1,0 +1,80 @@
+name: Packaging Trigger
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to package, for example v5.12.0 or v5.12.0-rc.1
+        required: true
+        type: string
+      packaging_repository:
+        description: GitHub repository that receives repository_dispatch, for example Svaroh/passly_packaging
+        required: false
+        type: string
+      flavour:
+        description: Package flavour
+        required: false
+        default: ce
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  packaging-trigger:
+    name: Dispatch packaging workflow
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref }}
+
+      - name: Resolve release metadata
+        id: release
+        env:
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+          INPUT_FLAVOUR: ${{ github.event.inputs.flavour }}
+          VAR_PASSBOLT_FLAVOUR: ${{ vars.PASSBOLT_FLAVOUR }}
+        run: |
+          tag="${INPUT_TAG:-$GITHUB_REF_NAME}"
+          version="$(bash .github/scripts/tag-cleaner.sh "$tag")"
+          flavour="${INPUT_FLAVOUR:-${VAR_PASSBOLT_FLAVOUR:-ce}}"
+
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "flavour=$flavour" >> "$GITHUB_OUTPUT"
+
+      - name: Dispatch packaging repository
+        env:
+          GH_TOKEN: ${{ secrets.PACKAGING_DISPATCH_TOKEN }}
+          INPUT_PACKAGING_REPOSITORY: ${{ github.event.inputs.packaging_repository }}
+          VAR_PACKAGING_REPOSITORY: ${{ vars.PACKAGING_REPOSITORY }}
+          PASSBOLT_FLAVOUR: ${{ steps.release.outputs.flavour }}
+          PASSBOLT_VERSION: ${{ steps.release.outputs.version }}
+          PASSBOLT_BRANCH: ${{ steps.release.outputs.tag }}
+        run: |
+          packaging_repository="${INPUT_PACKAGING_REPOSITORY:-$VAR_PACKAGING_REPOSITORY}"
+
+          if [[ -z "$packaging_repository" || -z "${GH_TOKEN:-}" ]]; then
+            cat <<'MSG'
+          Packaging dispatch is not configured.
+
+          Set repository variable PACKAGING_REPOSITORY to the target repository
+          and secret PACKAGING_DISPATCH_TOKEN to a token that can dispatch workflows there.
+          MSG
+            exit 0
+          fi
+
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            "/repos/${packaging_repository}/dispatches" \
+            -f event_type=passly-release \
+            -f client_payload[passbolt_flavour]="$PASSBOLT_FLAVOUR" \
+            -f client_payload[passbolt_version]="$PASSBOLT_VERSION" \
+            -f client_payload[passbolt_branch]="$PASSBOLT_BRANCH" \
+            -f client_payload[source_repository]="$GITHUB_REPOSITORY" \
+            -f client_payload[source_sha]="$GITHUB_SHA"

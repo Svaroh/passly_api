@@ -1,19 +1,49 @@
-#name: Create Release
-#
-#on:
-#    push:
-#        tags:
-#            - "v[0-9]+.[0-9]+.[0-9]+"
-#
-#jobs:
-#    build:
-#        name: Create release
-#        runs-on: ubuntu-latest
-#        permissions:
-#            contents: write
-#        steps:
-#            - uses: actions/checkout@v4
-#            - name: Create Release
-#              env:
-#                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#              run: gh release create "${GITHUB_REF#refs/*/}" -t "$(grep name config/version.php | awk -F "'" '{print $4}')" --notes-file RELEASE_NOTES.md
+name: Create Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Stable tag to publish, for example v5.12.0
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Create stable release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve tag
+        id: tag
+        env:
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+        run: |
+          tag="${INPUT_TAG:-$GITHUB_REF_NAME}"
+          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "Tag $tag is not a stable release tag; skipping."
+            exit 0
+          fi
+          echo "publish=true" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        if: steps.tag.outputs.publish == 'true'
+        with:
+          ref: ${{ steps.tag.outputs.tag }}
+
+      - name: Create release
+        if: steps.tag.outputs.publish == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          title="$(sed -n "s/.*'name' => '\([^']*\)'.*/\1/p" config/version.php | head -n 1)"
+          title="${title:-$RELEASE_TAG}"
+          gh release create "$RELEASE_TAG" --title "$title" --notes-file RELEASE_NOTES.md --verify-tag
