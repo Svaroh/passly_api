@@ -77,7 +77,8 @@ jobs:
     name: Composer audit
     if: ${{ vars.TEST_DISABLED != 'true' && vars.TEST_DISABLED != '1' }}
     runs-on: ubuntu-latest
-    continue-on-error: ${{ !contains(fromJSON('["master","develop","release","common"]'), github.ref_name) && !contains(fromJSON('["master","develop","release","common"]'), github.base_ref) }}
+    env:
+      AUDIT_STRICT: ${{ contains(fromJSON('["master","develop","release","common"]'), github.ref_name) || contains(fromJSON('["master","develop","release","common"]'), github.base_ref) }}
     steps:
       - uses: actions/checkout@v4
 
@@ -92,7 +93,13 @@ jobs:
       - name: Composer audit
         run: |
           composer config --global process-timeout 2000
-          composer audit --locked
+          if composer audit --locked; then
+            exit 0
+          fi
+          if [ "${AUDIT_STRICT}" = "true" ]; then
+            exit 1
+          fi
+          echo "::warning title=Composer audit::Composer audit found advisories, but this branch is non-strict. See Dependabot PRs for dependency updates."
 
   code-quality:
     name: CodeQL quality scan
