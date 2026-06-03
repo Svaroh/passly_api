@@ -150,7 +150,7 @@ jobs:
             mysql_version: "8.0"
             suite: "1"
             protected_only: true
-            experimental: false
+            experimental: true
           - php_version: "8.2"
             mysql_version: "8.0"
             suite: "2"
