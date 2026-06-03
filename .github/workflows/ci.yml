@@ -77,7 +77,7 @@ jobs:
     name: Composer audit
     if: ${{ vars.TEST_DISABLED != 'true' && vars.TEST_DISABLED != '1' }}
     runs-on: ubuntu-latest
-    continue-on-error: ${{ !contains(fromJSON('["main","master","develop","release","common"]'), github.ref_name) && !contains(fromJSON('["main","master","develop","release","common"]'), github.base_ref) }}
+    continue-on-error: ${{ !contains(fromJSON('["master","develop","release","common"]'), github.ref_name) && !contains(fromJSON('["master","develop","release","common"]'), github.base_ref) }}
     steps:
       - uses: actions/checkout@v4
 
