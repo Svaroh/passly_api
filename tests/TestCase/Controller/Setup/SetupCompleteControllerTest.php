@@ -83,12 +83,12 @@ class SetupCompleteControllerTest extends AppIntegrationTestCase
         $this->assertEmailIsInQueue([
             'email' => $admin1->username,
             'template' => 'AD/user_setup_complete',
-            'subject' => $user->profile->first_name . ' just activated their account on passbolt',
+            'subject' => $user->profile->first_name . ' just activated their account on passly',
         ]);
         $this->assertEmailIsInQueue([
             'email' => $admin2->username,
             'template' => 'AD/user_setup_complete',
-            'subject' => $user->profile->first_name . ' just activated their account on passbolt',
+            'subject' => $user->profile->first_name . ' just activated their account on passly',
         ]);
         $this->assertEmailQueueCount(2);
     }
@@ -144,12 +144,12 @@ class SetupCompleteControllerTest extends AppIntegrationTestCase
         $this->assertEmailIsInQueue([
             'email' => $admin1->username,
             'template' => 'AD/user_setup_complete',
-            'subject' => $user->profile->first_name . ' just activated their account on passbolt',
+            'subject' => $user->profile->first_name . ' just activated their account on passly',
         ]);
         $this->assertEmailIsInQueue([
             'email' => $admin2->username,
             'template' => 'AD/user_setup_complete',
-            'subject' => $user->profile->first_name . ' just activated their account on passbolt',
+            'subject' => $user->profile->first_name . ' just activated their account on passly',
         ]);
         $this->assertEmailQueueCount(2);
         Configure::write('passbolt.plugins.log.enabled', $logEnabled);

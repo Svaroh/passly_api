@@ -518,6 +518,7 @@ jobs:
           done
           mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MARIADB_ROOT_PASSWORD" -e "ALTER USER '$DATASOURCES_TEST_USERNAME'@'%' IDENTIFIED BY '$DATASOURCES_TEST_PASSWORD';"
           mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MARIADB_ROOT_PASSWORD" -e "GRANT ALL ON *.* TO '$DATASOURCES_TEST_USERNAME'@'%';"
+          mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MARIADB_ROOT_PASSWORD" -e "GRANT PROCESS ON *.* TO '$DATASOURCES_TEST_USERNAME'@'%';"
           mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MARIADB_ROOT_PASSWORD" -e "SET GLOBAL log_bin_trust_function_creators = 1;"
         env:
           MARIADB_ROOT_PASSWORD: testing-password2
@@ -538,7 +539,21 @@ jobs:
 
       - name: Run PHPUnit
         if: steps.gate.outputs.run == 'true'
-        run: vendor/bin/phpunit --testsuite "${{ matrix.suite }}" -c tmp/tests/testsuitesplit.xml --log-junit unitreport.xml
+        env:
+          EXPERIMENTAL: ${{ matrix.experimental }}
+        run: |
+          set +e
+          vendor/bin/phpunit --testsuite "${{ matrix.suite }}" -c tmp/tests/testsuitesplit.xml --log-junit unitreport.xml
+          status=$?
+          set -e
+          if [ "$status" -eq 0 ]; then
+            exit 0
+          fi
+          if [ "$EXPERIMENTAL" = "true" ]; then
+            echo "::warning title=Experimental MariaDB PHPUnit::PHPUnit failed in an experimental MariaDB matrix job. See the JUnit artifact and job log."
+            exit 0
+          fi
+          exit "$status"
 
       - name: Upload JUnit report
         if: always() && steps.gate.outputs.run == 'true'

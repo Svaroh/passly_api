@@ -85,7 +85,7 @@ class UsersAddNotificationTest extends AppIntegrationTestCase
         $this->assertEmailInBatchContains(
             [
                 $admin->profile->first_name . ' just created an account for you',
-                $admin->profile->first_name . ' just invited you to join passbolt',
+                $admin->profile->first_name . ' just invited you to join passly',
                 'Welcome ' . $firstName,
                 '/setup/start/' . $userId . '/' . AuthenticationTokenFactory::firstOrFail()->token,
             ],
