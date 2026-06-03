@@ -29,6 +29,8 @@ class V51235AddBrowserFirstLoginRequests extends AbstractMigration
             'collation' => 'utf8mb4_unicode_ci',
         ])
             ->addColumn('id', 'char', [
+                'encoding' => 'ascii',
+                'collation' => 'ascii_general_ci',
                 'default' => null,
                 'limit' => 36,
                 'null' => false,
@@ -39,11 +41,15 @@ class V51235AddBrowserFirstLoginRequests extends AbstractMigration
                 'null' => false,
             ])
             ->addColumn('status', 'string', [
+                'encoding' => 'ascii',
+                'collation' => 'ascii_general_ci',
                 'default' => null,
                 'limit' => 32,
                 'null' => false,
             ])
             ->addColumn('user_id', 'char', [
+                'encoding' => 'ascii',
+                'collation' => 'ascii_general_ci',
                 'default' => null,
                 'limit' => 36,
                 'null' => true,

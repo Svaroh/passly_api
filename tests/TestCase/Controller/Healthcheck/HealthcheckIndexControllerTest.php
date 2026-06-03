@@ -68,7 +68,7 @@ class HealthcheckIndexControllerTest extends AppIntegrationTestCase
     {
         $this->logInAsAdmin();
         $this->get('/healthcheck');
-        $this->assertResponseContains('Passbolt API Status');
+        $this->assertResponseContains('Passly API Status');
         $this->assertResponseOk();
     }
 
@@ -85,7 +85,7 @@ class HealthcheckIndexControllerTest extends AppIntegrationTestCase
 
         $this->get('/healthcheck');
 
-        $this->assertResponseContains('Passbolt API Status');
+        $this->assertResponseContains('Passly API Status');
         $this->assertResponseContains('Environment');
         $this->assertResponseContains('Config files');
         $this->assertResponseContains('Core config');

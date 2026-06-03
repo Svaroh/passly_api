@@ -23,6 +23,16 @@ use Cake\ORM\Entity;
  *
  * This relay intentionally stores no cleartext private key and no passphrase.
  * It carries only the Android-encrypted private key payload.
+ *
+ * @property string $id
+ * @property string $secret_hash
+ * @property string $status
+ * @property string|null $user_id
+ * @property string|null $user_key_fingerprint
+ * @property string|null $encrypted_private_key
+ * @property \Cake\I18n\DateTime $expires
+ * @property \Cake\I18n\DateTime|null $created
+ * @property \Cake\I18n\DateTime|null $modified
  */
 class BrowserFirstLoginRequest extends Entity
 {

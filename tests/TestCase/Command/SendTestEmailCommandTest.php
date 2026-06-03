@@ -115,7 +115,7 @@ class SendTestEmailCommandTest extends AppTestCase
         $this->assertOutputContains('<info>Trace</info>');
         $this->assertOutputContains('<info> Password: *****</info>');
         $this->assertMailSentToAt(0, [$recipient => $recipient]);
-        $this->assertMailSubjectContainsAt(0, 'Passbolt test email');
+        $this->assertMailSubjectContainsAt(0, 'Passly test email');
         $this->assertMailCount(1);
     }
 
@@ -150,7 +150,7 @@ class SendTestEmailCommandTest extends AppTestCase
                     $email = new Mailer(['transport' => TransportFactory::get('default')]);
                     $email->setFrom([$config['sender_email'] => $config['sender_name']])
                         ->setTo($config[SmtpSettingsSendTestMailerService::EMAIL_TEST_TO])
-                        ->setSubject(__('Passbolt test email'))
+                        ->setSubject(__('Passly test email'))
                         ->deliver('Test');
                 });
             $service->method('getTrace')->willReturn($trace);
@@ -169,7 +169,7 @@ class SendTestEmailCommandTest extends AppTestCase
         $this->assertOutputContains('<info>Trace</info>');
         $this->assertOutputContains('<info> AUTH XOAUTH2 *****</info>');
         $this->assertMailSentToAt(0, [$recipient => $recipient]);
-        $this->assertMailSubjectContainsAt(0, 'Passbolt test email');
+        $this->assertMailSubjectContainsAt(0, 'Passly test email');
         $this->assertMailCount(1);
     }
 

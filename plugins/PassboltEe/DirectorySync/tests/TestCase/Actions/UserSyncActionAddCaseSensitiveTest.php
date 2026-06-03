@@ -123,7 +123,7 @@ class UserSyncActionAddCaseSensitiveTest extends DirectorySyncDeprecatedIntegrat
         $reports = $this->action->execute();
         $message = $reports[0]->getMessage();
         $this->assertStringContainsString(
-            'was successfully added to passbolt',
+            'was successfully added to passly',
             $message,
         );
         $this->assertSame(2, UserFactory::count());

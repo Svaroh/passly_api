@@ -33,7 +33,7 @@ class ErrorControllerTest extends AppIntegrationTestCase
         $resultHtml = $this->_getBodyAsString();
         $this->assertResponseError();
         $this->assertResponseCode(404);
-        $this->assertTextContains('<title>Passbolt | Error</title>', $resultHtml);
+        $this->assertTextContains('<title>Passly | Error</title>', $resultHtml);
         $this->assertTextContains('<h2>Not Found</h2>', $resultHtml);
         $this->assertTextContains('The requested address was not found on this server.', $resultHtml);
     }
@@ -45,7 +45,7 @@ class ErrorControllerTest extends AppIntegrationTestCase
         $this->assertResponseError();
         $this->assertResponseCode(400);
         $resultHtml = $this->_getBodyAsString();
-        $this->assertTextContains('<title>Passbolt | Error</title>', $resultHtml);
+        $this->assertTextContains('<title>Passly | Error</title>', $resultHtml);
         $expectedFilteredMsg = 'Invalid order. ' . h('"1</title></br></br><h1>Defaced</h1>"') . ' is not in the list of allowed order';
         $this->assertTextContains($expectedFilteredMsg, $resultHtml);
     }
@@ -58,7 +58,7 @@ class ErrorControllerTest extends AppIntegrationTestCase
 
         $this->assertResponseCode(500);
         $resultHtml = $this->_getBodyAsString();
-        $this->assertTextContains('<title>Passbolt | Error</title>', $resultHtml);
+        $this->assertTextContains('<title>Passly | Error</title>', $resultHtml);
         $this->assertTextContains('<h2>An Internal Error Has Occurred</h2>', $resultHtml);
     }
 }
