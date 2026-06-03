@@ -28,11 +28,10 @@ class V51235AddBrowserFirstLoginRequests extends AbstractMigration
             'primary_key' => ['id'],
             'collation' => 'utf8mb4_unicode_ci',
         ])
-            ->addColumn('id', 'char', [
+            ->addColumn('id', 'uuid', [
                 'encoding' => 'ascii',
                 'collation' => 'ascii_general_ci',
                 'default' => null,
-                'limit' => 36,
                 'null' => false,
             ])
             ->addColumn('secret_hash', 'char', [
@@ -47,11 +46,10 @@ class V51235AddBrowserFirstLoginRequests extends AbstractMigration
                 'limit' => 32,
                 'null' => false,
             ])
-            ->addColumn('user_id', 'char', [
+            ->addColumn('user_id', 'uuid', [
                 'encoding' => 'ascii',
                 'collation' => 'ascii_general_ci',
                 'default' => null,
-                'limit' => 36,
                 'null' => true,
             ])
             ->addColumn('user_key_fingerprint', 'char', [
