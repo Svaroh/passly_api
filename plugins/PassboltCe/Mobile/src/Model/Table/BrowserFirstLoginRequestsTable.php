@@ -20,6 +20,11 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 use Passbolt\Mobile\Model\Entity\BrowserFirstLoginRequest;
 
+/**
+ * BrowserFirstLoginRequests Model
+ *
+ * @method \Passbolt\Mobile\Model\Entity\BrowserFirstLoginRequest newEntity($data = null, ?array $options = [])
+ */
 class BrowserFirstLoginRequestsTable extends Table
 {
     /**
