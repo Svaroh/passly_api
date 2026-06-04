@@ -1,0 +1,139 @@
+name: Coverage
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+  schedule:
+    - cron: "43 4 * * 1"
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: coverage-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  COMPOSER_ALLOW_SUPERUSER: "1"
+
+jobs:
+  phpunit-mysql:
+    name: PHP ${{ matrix.php-version }} / MySQL ${{ matrix.mysql-version }} / suite ${{ matrix.suite }}
+    if: ${{ vars.TEST_DISABLED != 'true' && vars.TEST_DISABLED != '1' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - "8.2"
+        mysql-version:
+          - "8.0"
+        suite:
+          - "1"
+          - "2"
+    services:
+      mysql:
+        image: mysql:${{ matrix.mysql-version }}
+        env:
+          MYSQL_USER: user
+          MYSQL_PASSWORD: testing-password
+          MYSQL_ROOT_PASSWORD: testing-password2
+          MYSQL_DATABASE: test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1 -u root -ptesting-password2"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      APP_FULL_BASE_URL: http://127.0.0.1
+      DEBUG: "true"
+      PASSBOLT_GPG_SERVER_KEY_PUBLIC: config/gpg/unsecure.key
+      PASSBOLT_GPG_SERVER_KEY_PRIVATE: config/gpg/unsecure_private.key
+      PASSBOLT_GPG_SERVER_KEY_FINGERPRINT: 2FC8945833C51946E937F9FED47B0811573EE67E
+      PASSBOLT_REGISTRATION_PUBLIC: "1"
+      PASSBOLT_SELENIUM_ACTIVE: "1"
+      DATASOURCES_DEFAULT_DATABASE: non_existing_database
+      DATASOURCES_DEFAULT_USERNAME: user
+      DATASOURCES_DEFAULT_PASSWORD: testing-password
+      DATASOURCES_DEFAULT_HOST: 127.0.0.1
+      DATASOURCES_TEST_DATABASE: test
+      DATASOURCES_TEST_USERNAME: user
+      DATASOURCES_TEST_PASSWORD: testing-password
+      DATASOURCES_TEST_HOST: 127.0.0.1
+    steps:
+      - name: Check out sources
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: curl, gd, gnupg, iconv, intl, ldap, mbstring, openssl, pdo, pdo_mysql, posix
+          tools: composer:v2
+          coverage: pcov
+
+      - name: Install MySQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y default-mysql-client
+
+      - name: Prepare database
+        env:
+          MYSQL_ROOT_PASSWORD: testing-password2
+        run: |
+          until mysqladmin -h "$DATASOURCES_TEST_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" ping --silent; do
+            sleep 1
+          done
+          mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" -e "ALTER USER '$DATASOURCES_TEST_USERNAME'@'%' IDENTIFIED BY '$DATASOURCES_TEST_PASSWORD';"
+          mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" -e "GRANT ALL ON *.* TO '$DATASOURCES_TEST_USERNAME'@'%';"
+          mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" -e "SET GLOBAL log_bin_trust_function_creators = 1;"
+
+      - name: Install dependencies
+        run: |
+          cp config/app.default.php config/app.php
+          composer config --global process-timeout 2000
+          composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare application keys
+        run: |
+          gpg --import config/gpg/unsecure_private.key
+          gpg --import config/gpg/unsecure.key
+          ./bin/cake passbolt create_jwt_keys
+          composer create-split-testsuite -- 2
+
+      - name: Run PHPUnit with coverage
+        run: |
+          mkdir -p coverage
+          vendor/bin/phpunit \
+            --testsuite "${{ matrix.suite }}" \
+            -c tmp/tests/testsuitesplit.xml \
+            --coverage-clover "coverage/phpunit-suite-${{ matrix.suite }}.xml" \
+            --log-junit "coverage/junit-suite-${{ matrix.suite }}.xml"
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v6
+        with:
+          use_oidc: true
+          files: coverage/phpunit-suite-${{ matrix.suite }}.xml
+          disable_search: true
+          flags: phpunit-mysql-suite-${{ matrix.suite }}
+          name: passly-api-phpunit-mysql-suite-${{ matrix.suite }}
+          fail_ci_if_error: true
+          verbose: true
+
+      - name: Upload coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-api-mysql-suite-${{ matrix.suite }}
+          path: coverage/
+          if-no-files-found: ignore
