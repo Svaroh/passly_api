@@ -11,8 +11,6 @@
  * @link          https://www.passbolt.com Passbolt(tm)
  * @since         2.0.0
  */
-var path = require('path');
-
 /**
  * This Gruntfile provides tasks and commands to build and distribute the project
  *

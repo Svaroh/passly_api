@@ -181,7 +181,7 @@ ready(function () {
       };
       worker.postMessage({ name, email }, [channel.port2]);
     });
-  }
+  };
 
   init();
 });
