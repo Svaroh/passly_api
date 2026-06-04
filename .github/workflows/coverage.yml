@@ -119,7 +119,51 @@ jobs:
             --coverage-clover "coverage/phpunit-suite-${{ matrix.suite }}.xml" \
             --log-junit "coverage/junit-suite-${{ matrix.suite }}.xml"
 
+      - name: Publish coverage summary
+        if: always()
+        env:
+          COVERAGE_FILE: coverage/phpunit-suite-${{ matrix.suite }}.xml
+          SUITE_NAME: ${{ matrix.suite }}
+        run: |
+          python3 <<'PY'
+          import os
+          import xml.etree.ElementTree as ET
+
+          coverage_file = os.environ["COVERAGE_FILE"]
+          summary_file = os.environ["GITHUB_STEP_SUMMARY"]
+          suite_name = os.environ["SUITE_NAME"]
+
+          if not os.path.exists(coverage_file):
+              with open(summary_file, "a", encoding="utf-8") as summary:
+                  summary.write(f"### PHP unit coverage suite {suite_name}\n\nCoverage report was not generated.\n")
+              raise SystemExit(0)
+
+          metrics = ET.parse(coverage_file).getroot().find(".//metrics")
+          rows = [
+              ("Statements", "coveredstatements", "statements"),
+              ("Conditionals", "coveredconditionals", "conditionals"),
+              ("Methods", "coveredmethods", "methods"),
+              ("Elements", "coveredelements", "elements"),
+          ]
+
+          def percent(covered, total):
+              if total == 0:
+                  return "n/a"
+              return f"{covered / total * 100:.2f}%"
+
+          with open(summary_file, "a", encoding="utf-8") as summary:
+              summary.write(f"### PHP unit coverage suite {suite_name}\n\n")
+              summary.write("| Metric | Covered | Total | Coverage |\n")
+              summary.write("| --- | ---: | ---: | ---: |\n")
+              for label, covered_attr, total_attr in rows:
+                  covered = int(metrics.attrib.get(covered_attr, "0"))
+                  total = int(metrics.attrib.get(total_attr, "0"))
+                  summary.write(f"| {label} | {covered} | {total} | {percent(covered, total)} |\n")
+              summary.write("\n")
+          PY
+
       - name: Upload coverage to Codecov
+        continue-on-error: true
         uses: codecov/codecov-action@v6
         with:
           use_oidc: true
@@ -127,7 +171,7 @@ jobs:
           disable_search: true
           flags: phpunit-mysql-suite-${{ matrix.suite }}
           name: passly-api-phpunit-mysql-suite-${{ matrix.suite }}
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           verbose: true
 
       - name: Upload coverage artifacts
