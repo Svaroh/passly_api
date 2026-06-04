@@ -23,7 +23,7 @@ use Passbolt\Sso\Service\Cache\SsoProviderErrorCacheService;
 use Passbolt\Sso\Test\Lib\SsoTestCase;
 
 /**
- * @covers SsoProviderErrorCacheService
+ * @covers \Passbolt\Sso\Service\Cache\SsoProviderErrorCacheService
  */
 class SsoProviderErrorCacheServiceTest extends SsoTestCase
 {

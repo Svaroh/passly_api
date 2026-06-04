@@ -27,7 +27,7 @@ use Passbolt\PasswordPoliciesUpdate\PasswordPoliciesUpdatePlugin;
 use Passbolt\PasswordPoliciesUpdate\Test\Factory\PasswordPoliciesSettingFactory;
 
 /**
- * @covers \Passbolt\PasswordPolicies\Controller\PasswordPoliciesSettingsSetController
+ * @covers \Passbolt\PasswordPoliciesUpdate\Controller\PasswordPoliciesUpdateSetSettingsController
  */
 class PasswordPoliciesSettingsSetControllerTest extends AppIntegrationTestCase
 {

@@ -24,7 +24,7 @@ use Passbolt\SelfRegistration\Service\Healthcheck\SelfRegistrationHealthcheckSer
 use Passbolt\SelfRegistration\Test\Lib\SelfRegistrationTestTrait;
 
 /**
- * @covers \Passbolt\SelfRegistration\Service\Healthcheck\SelfRegistrationHealthcheckServiceTest
+ * @covers \Passbolt\SelfRegistration\Service\Healthcheck\SelfRegistrationHealthcheckService
  */
 class SelfRegistrationHealthcheckServiceTest extends TestCase
 {

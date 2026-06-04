@@ -23,7 +23,7 @@ use Passbolt\Subscription\Service\Subscriptions\SubscriptionKeyGetService;
 use Passbolt\Subscription\Test\DummySubscriptionTrait;
 
 /**
- * @uses \Passbolt\Subscription\Command\SubscriptionCheckCommand
+ * @uses \App\Command\SubscriptionCheckCommand
  */
 class SubscriptionCheckCommandTest extends AppTestCase
 {

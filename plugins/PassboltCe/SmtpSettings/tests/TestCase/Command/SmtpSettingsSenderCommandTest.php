@@ -30,7 +30,7 @@ use Passbolt\EmailDigest\Test\Factory\EmailQueueFactory;
 use Passbolt\SmtpSettings\Test\Lib\SmtpSettingsTestTrait;
 
 /**
- * @uses \EmailQueue\Shell\SenderShell
+ * @uses \EmailQueue\Command\SenderCommand
  */
 class SmtpSettingsSenderCommandTest extends TestCase
 {

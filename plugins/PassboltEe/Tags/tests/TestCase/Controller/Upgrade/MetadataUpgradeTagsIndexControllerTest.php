@@ -24,7 +24,7 @@ use Passbolt\Tags\Test\Factory\ResourcesTagFactory;
 use Passbolt\Tags\Test\Factory\TagFactory;
 
 /**
- * @uses \Passbolt\Metadata\Controller\Upgrade\MetadataUpgradeTagsIndexController
+ * @uses \Passbolt\Tags\Controller\Upgrade\MetadataUpgradeTagsIndexController
  */
 class MetadataUpgradeTagsIndexControllerTest extends AppIntegrationTestCaseV5
 {

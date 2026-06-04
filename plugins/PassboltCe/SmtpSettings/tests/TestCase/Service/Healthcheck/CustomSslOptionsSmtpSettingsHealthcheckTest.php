@@ -25,7 +25,7 @@ use Passbolt\SmtpSettings\Service\Healthcheck\CustomSslOptionsSmtpSettingsHealth
 use Passbolt\SmtpSettings\Test\Lib\SmtpSettingsTestTrait;
 
 /**
- * @covers \Passbolt\SmtpSettings\Service\CustomSslOptionsSmtpSettingsHealthcheck
+ * @covers \Passbolt\SmtpSettings\Service\Healthcheck\CustomSslOptionsSmtpSettingsHealthcheck
  */
 class CustomSslOptionsSmtpSettingsHealthcheckTest extends TestCase
 {
