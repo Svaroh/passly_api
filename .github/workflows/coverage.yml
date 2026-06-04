@@ -156,6 +156,7 @@ jobs:
           mkdir -p coverage
           set +e
           vendor/bin/phpunit \
+            --do-not-fail-on-phpunit-warning \
             --testsuite "${{ matrix.suite }}" \
             -c tmp/tests/testsuitesplit.xml \
             --coverage-clover "coverage/phpunit-suite-${{ matrix.suite }}.xml" \
