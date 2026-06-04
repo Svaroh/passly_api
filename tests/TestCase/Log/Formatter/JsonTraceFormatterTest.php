@@ -22,7 +22,7 @@ use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
 
 /**
- * @covers JsonTraceFormatter
+ * @covers \App\Log\Formatter\JsonTraceFormatter
  */
 class JsonTraceFormatterTest extends TestCase
 {

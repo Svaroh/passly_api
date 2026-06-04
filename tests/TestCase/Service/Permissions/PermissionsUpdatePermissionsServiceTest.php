@@ -33,7 +33,7 @@ use Cake\Utility\Hash;
 /**
  * \App\Test\TestCase\Service\Permissions\PermissionsUpdatePermissionsService Test Case
  *
- * @covers \App\Test\TestCase\Service\Permissions\PermissionsUpdatePermissionsService
+ * @covers \App\Service\Permissions\PermissionsUpdatePermissionsService
  */
 class PermissionsUpdatePermissionsServiceTest extends AppTestCase
 {

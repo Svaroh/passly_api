@@ -30,7 +30,7 @@ use Passbolt\Metadata\Test\Factory\MetadataPrivateKeyFactory;
 use Passbolt\Metadata\Test\Utility\GpgMetadataKeysTestTrait;
 
 /**
- * @covers \Passbolt\Metadata\Service\MetadataKeyShareDefaultServiceTest
+ * @covers \Passbolt\Metadata\Service\MetadataKeyShareDefaultService
  */
 class MetadataKeyShareDefaultServiceTest extends AppTestCaseV5
 {

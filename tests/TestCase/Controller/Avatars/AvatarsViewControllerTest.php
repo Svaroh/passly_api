@@ -27,7 +27,7 @@ use App\View\Helper\AvatarHelper;
 /**
  * App\Controller\AvatarsController Test Case
  *
- * @uses \App\Controller\AvatarsController
+ * @uses \App\Controller\Avatars\AvatarsViewController
  */
 class AvatarsViewControllerTest extends AppIntegrationTestCase
 {

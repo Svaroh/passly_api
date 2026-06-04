@@ -27,7 +27,7 @@ use App\Test\Lib\AppTestCase;
 /**
  * \App\Test\TestCase\Service\Permissions\PermissionsGetUsersIdsHavingAccessToService Test Case
  *
- * @covers \App\Test\TestCase\Service\Permissions\PermissionsGetUsersIdsHavingAccessToService
+ * @covers \App\Service\Permissions\PermissionsGetUsersIdsHavingAccessToService
  */
 class PermissionsGetUsersIdsHavingAccessToServiceTest extends AppTestCase
 {
