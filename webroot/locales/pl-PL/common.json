@@ -453,7 +453,6 @@
   "Edit App.fullBaseUrl in {configurationFilePath}": "Edytuj App.fullBaseUrl w {configurationFilePath}",
   "Edit Avatar": "Edytuj awatar",
   "Edit group": "Edytuj grupę",
-  "Edit in passbolt": "Edytuj w passbolt",
   "Edit or generate another key with a valid email id.": "Edytuj lub wygeneruj inny klucz z prawidłowym adresem e-mail.",
   "Edit password": "Edytuj hasło",
   "Edit profile": "Edytuj profil",
@@ -1742,7 +1741,6 @@
   "Very weak": "Bardzo słabe",
   "View": "Zobacz",
   "View detail": "Sprawdź szczegóły",
-  "View it in passbolt": "Sprawdź w passbolt",
   "Wait for a password to expire.": "Poczekaj, aż hasło wygaśnie.",
   "Wait for a team member to share a password with you.": "Poczekaj, aż członek zespołu udostępni Ci hasło.",
   "Want to contribute?": "Chcesz nam pomóc?",
@@ -2033,5 +2031,7 @@
   "Unable to mark the resource as expired._one": "Nie można oznaczyć zasobu jako wygasłego.",
   "Unable to mark the resource as expired._few": "Nie można oznaczyć zasobów jako wygasłych.",
   "Unable to mark the resource as expired._many": "Nie można oznaczyć zasobów jako wygasłych.",
-  "Unable to mark the resource as expired._other": "Nie można oznaczyć zasobów jako wygasłych."
+  "Unable to mark the resource as expired._other": "Nie można oznaczyć zasobów jako wygasłych.",
+  "Edit in the vault": "Edytuj w skarbcu",
+  "View in the vault": "Zobacz w skarbcu"
 }

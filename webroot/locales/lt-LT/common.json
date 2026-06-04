@@ -453,7 +453,6 @@
   "Edit App.fullBaseUrl in {configurationFilePath}": "Redaguokite App.fullBaseUrl faile {configurationFilePath}",
   "Edit Avatar": "Redaguoti avatarą",
   "Edit group": "Redaguoti grupę",
-  "Edit in passbolt": "Redaguoti „passbolt'e“",
   "Edit or generate another key with a valid email id.": "Redaguokite arba sukurkite kitą raktą su galiojančiu el. pašto adresu.",
   "Edit password": "Redaguoti slaptažodį",
   "Edit profile": "Redaguoti profilį",
@@ -1742,7 +1741,6 @@
   "Very weak": "Labai silpnas",
   "View": "Peržiūrėti\n",
   "View detail": "Parodyti detales",
-  "View it in passbolt": "Peržiūrėkite „passbolt'e“",
   "Wait for a password to expire.": "Laukite, kol slaptažodis nustos galioti.",
   "Wait for a team member to share a password with you.": "Palaukite, kol komandos narys pasidalins su jumis slaptažodžiu.",
   "Want to contribute?": "Norite prisidėti?\n",
@@ -2033,5 +2031,7 @@
   "Unable to mark the resource as expired._one": "Nepavyko pažymėti ištekliaus kaip pasibaigusio.",
   "Unable to mark the resource as expired._few": "Nepavyko pažymėti išteklių kaip pasibaigusių.",
   "Unable to mark the resource as expired._many": "Nepavyko pažymėti išteklių kaip pasibaigusių.",
-  "Unable to mark the resource as expired._other": "Nepavyko pažymėti išteklių kaip pasibaigusių."
+  "Unable to mark the resource as expired._other": "Nepavyko pažymėti išteklių kaip pasibaigusių.",
+  "Edit in the vault": "Redaguoti saugykloje",
+  "View in the vault": "Peržiūrėti saugykloje"
 }

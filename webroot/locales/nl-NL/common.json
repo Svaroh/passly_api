@@ -453,7 +453,6 @@
   "Edit App.fullBaseUrl in {configurationFilePath}": "Bewerk App.fullBaseUrl in {configurationFilePath}",
   "Edit Avatar": "Avatar bewerken",
   "Edit group": "Groep bewerken",
-  "Edit in passbolt": "Bewerken in Passbolt",
   "Edit or generate another key with a valid email id.": "Bewerk of genereer een andere sleutel met een geldig e-mailadres.",
   "Edit password": "Wachtwoord bewerken",
   "Edit profile": "Profiel bewerken",
@@ -1742,7 +1741,6 @@
   "Very weak": "Erg zwak",
   "View": "Bekijken",
   "View detail": "Bekijk details",
-  "View it in passbolt": "Bekijk het in Passbolt",
   "Wait for a password to expire.": "Wacht tot een wachtwoord verloopt.",
   "Wait for a team member to share a password with you.": "Wacht tot een teamlid een wachtwoord met je deelt.",
   "Want to contribute?": "Wil je bijdragen?",
@@ -1963,5 +1961,7 @@
   "This resource does not need an expiry date._one": "Dit middel heeft geen vervaldatum nodig.",
   "This resource does not need an expiry date._other": "Deze middelen hebben geen vervaldatum nodig.",
   "Unable to mark the resource as expired._one": "Kan het middel niet markeren als verlopen.",
-  "Unable to mark the resource as expired._other": "Kan de middelen niet markeren als verlopen."
+  "Unable to mark the resource as expired._other": "Kan de middelen niet markeren als verlopen.",
+  "Edit in the vault": "Bewerken in de kluis",
+  "View in the vault": "Bekijken in de kluis"
 }

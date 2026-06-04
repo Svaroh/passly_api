@@ -453,7 +453,6 @@
   "Edit App.fullBaseUrl in {configurationFilePath}": "{configurationFilePath}에서 App.fullBaseUrl을 편집하세요.",
   "Edit Avatar": "아바타 수정",
   "Edit group": "그룹 수정",
-  "Edit in passbolt": "패스볼트에서 수정",
   "Edit or generate another key with a valid email id.": "유효한 이메일 Id로 다른 키를 편집하거나 생성하세요.",
   "Edit password": "비밀번호 수정",
   "Edit profile": "프로필 수정",
@@ -1742,7 +1741,6 @@
   "Very weak": "매우 약함",
   "View": "보기",
   "View detail": "자세히보기",
-  "View it in passbolt": "패스볼트에서 보기",
   "Wait for a password to expire.": "비밀번호가 만료될 때까지 기다립니다.",
   "Wait for a team member to share a password with you.": "팀 구성원이 사용자와 비밀번호를 공유할 때까지 기다립니다.",
   "Want to contribute?": "번역에 기여하시겠습니까?",
@@ -1928,5 +1926,7 @@
   "The resource has been deleted successfully._other": "리소스가 성공적으로 삭제되었습니다.",
   "The resource has been marked as expired._other": "리소스가 만료된 것으로 표시되었습니다.",
   "This resource does not need an expiry date._other": "이 리소스는 만료일이 필요하지 않습니다.",
-  "Unable to mark the resource as expired._other": "리소스를 만료된 것으로 표시할 수 없습니다."
+  "Unable to mark the resource as expired._other": "리소스를 만료된 것으로 표시할 수 없습니다.",
+  "Edit in the vault": "보관소에서 수정",
+  "View in the vault": "보관소에서 보기"
 }

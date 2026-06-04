@@ -453,7 +453,6 @@
   "Edit App.fullBaseUrl in {configurationFilePath}": "Redigera App.fullBaseUrl i {configurationFilePath}",
   "Edit Avatar": "Redigera Avatar",
   "Edit group": "Redigera grupp",
-  "Edit in passbolt": "Redigera i passbolt",
   "Edit or generate another key with a valid email id.": "Redigera eller generera en annan nyckel med en giltig e-postadress.",
   "Edit password": "Redigera lösenord",
   "Edit profile": "Redigera profil",
@@ -1742,7 +1741,6 @@
   "Very weak": "Mycket svagt",
   "View": "Visa",
   "View detail": "Visa detaljer",
-  "View it in passbolt": "Visa i passbolt",
   "Wait for a password to expire.": "Vänta på att ett lösenord ska gå ut.",
   "Wait for a team member to share a password with you.": "Vänta tills en teammedlem delar ett lösenord med dig.",
   "Want to contribute?": "Vill du bidra?",
@@ -1963,5 +1961,7 @@
   "This resource does not need an expiry date._one": "Denna resurs behöver inget utgångsdatum.",
   "This resource does not need an expiry date._other": "Dessa resurser behöver inget utgångsdatum.",
   "Unable to mark the resource as expired._one": "Det gick inte att markera resursen som utgången.",
-  "Unable to mark the resource as expired._other": "Det gick inte att markera resurserna som utgångna."
+  "Unable to mark the resource as expired._other": "Det gick inte att markera resurserna som utgångna.",
+  "Edit in the vault": "Redigera i valvet",
+  "View in the vault": "Visa i valvet"
 }

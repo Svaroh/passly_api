@@ -49,9 +49,45 @@ module.exports = function(grunt) {
    * Register project specific grunt tasks
    */
   grunt.registerTask('default', ['dependencies-update', 'styleguide-update']);
-  grunt.registerTask('styleguide-update', ['copy:styleguide', 'copy:passly_brand', 'passly-inline-brand']);
+  grunt.registerTask('styleguide-update', ['copy:styleguide', 'copy:passly_brand', 'vault-locales', 'passly-inline-brand']);
   grunt.registerTask('styleguide-watch', ['watch:node-modules-styleguide']);
   grunt.registerTask('dependencies-update', 'copy:dependencies');
+
+  grunt.registerTask('vault-locales', function() {
+    var translations = {
+      'cs-CZ': {edit: 'Upravit v trezoru', view: 'Zobrazit v trezoru'},
+      'de-DE': {edit: 'Im Tresor bearbeiten', view: 'Im Tresor anzeigen'},
+      'en-UK': {edit: 'Edit in the vault', view: 'View in the vault'},
+      'es-ES': {edit: 'Editar en la bóveda', view: 'Ver en la bóveda'},
+      'fr-FR': {edit: 'Modifier dans le coffre', view: 'Afficher dans le coffre'},
+      'it-IT': {edit: 'Modifica nella cassaforte', view: 'Visualizza nella cassaforte'},
+      'ja-JP': {edit: '保管庫で編集', view: '保管庫で表示'},
+      'ko-KR': {edit: '보관소에서 수정', view: '보관소에서 보기'},
+      'lt-LT': {edit: 'Redaguoti saugykloje', view: 'Peržiūrėti saugykloje'},
+      'nl-NL': {edit: 'Bewerken in de kluis', view: 'Bekijken in de kluis'},
+      'pl-PL': {edit: 'Edytuj w skarbcu', view: 'Zobacz w skarbcu'},
+      'pt-BR': {edit: 'Editar no cofre', view: 'Ver no cofre'},
+      'ro-RO': {edit: 'Editați în seif', view: 'Vizualizați în seif'},
+      'ru-RU': {edit: 'Редактировать в хранилище', view: 'Посмотреть в хранилище'},
+      'sl-SI': {edit: 'Uredi v sefu', view: 'Prikaži v sefu'},
+      'sv-SE': {edit: 'Redigera i valvet', view: 'Visa i valvet'},
+      'uk-UA': {edit: 'Редагувати в сховищі', view: 'Переглянути в сховищі'}
+    };
+
+    Object.keys(translations).forEach(function(locale) {
+      var file = paths.webroot + 'locales/' + locale + '/common.json';
+      if (!grunt.file.exists(file)) {
+        return;
+      }
+
+      var common = grunt.file.readJSON(file);
+      delete common['Edit in passbolt'];
+      delete common['View it in passbolt'];
+      common['Edit in the vault'] = translations[locale].edit;
+      common['View in the vault'] = translations[locale].view;
+      grunt.file.write(file, JSON.stringify(common, null, 2) + '\n');
+    });
+  });
 
   grunt.registerTask('passly-inline-brand', function() {
     var files = [

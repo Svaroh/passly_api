@@ -453,7 +453,6 @@
   "Edit App.fullBaseUrl in {configurationFilePath}": "Uredite App.fullBaseUrl v {configurationFilePath}",
   "Edit Avatar": "Uredi avatar",
   "Edit group": "Uredi skupino",
-  "Edit in passbolt": "Uredi v passboltu",
   "Edit or generate another key with a valid email id.": "Uredite ali ustvarite drugi ključ z veljavnim e-poštnim naslovom.",
   "Edit password": "Uredi geslo",
   "Edit profile": "Uredi profil",
@@ -1742,7 +1741,6 @@
   "Very weak": "Zelo šibko",
   "View": "Ogled",
   "View detail": "Prikaži podrobnosti",
-  "View it in passbolt": "Oglejte si to v passboltu",
   "Wait for a password to expire.": "Počakajte, da geslo poteče.",
   "Wait for a team member to share a password with you.": "Počakajte, da vam član ekipe deli geslo.",
   "Want to contribute?": "Žižete prispevati?",
@@ -2033,5 +2031,7 @@
   "Unable to mark the resource as expired._one": "Vira ni mogoče označiti kot poteklega.",
   "Unable to mark the resource as expired._two": "Virov ni mogoče označiti kot poteklih.",
   "Unable to mark the resource as expired._few": "Virov ni mogoče označiti kot poteklih.",
-  "Unable to mark the resource as expired._other": "Virov ni mogoče označiti kot poteklih."
+  "Unable to mark the resource as expired._other": "Virov ni mogoče označiti kot poteklih.",
+  "Edit in the vault": "Uredi v sefu",
+  "View in the vault": "Prikaži v sefu"
 }

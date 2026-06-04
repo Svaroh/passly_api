@@ -453,7 +453,6 @@
   "Edit App.fullBaseUrl in {configurationFilePath}": "Upravte App.fullBaseUrl v {configurationFilePath}",
   "Edit Avatar": "Upravit avatar",
   "Edit group": "Upravit skupinu",
-  "Edit in passbolt": "Upravit v passbolt",
   "Edit or generate another key with a valid email id.": "Upravte nebo vygenerujte jiný klíč s platnou e-mailovou adresou.",
   "Edit password": "Upravit heslo",
   "Edit profile": "Upravit profil",
@@ -1742,7 +1741,6 @@
   "Very weak": "Velmi slabé",
   "View": "Zobrazit",
   "View detail": "Zobrazit detail",
-  "View it in passbolt": "Zobrazit v passbolt",
   "Wait for a password to expire.": "Počkejte, až vyprší platnost hesla.",
   "Wait for a team member to share a password with you.": "Počkejte, až vám člen týmu nasdílí heslo.",
   "Want to contribute?": "Chcete přispět?",
@@ -2033,5 +2031,7 @@
   "Unable to mark the resource as expired._one": "Nepodařilo se označit zdroj jako expirovaný.",
   "Unable to mark the resource as expired._few": "Nepodařilo se označit zdroje jako expirované.",
   "Unable to mark the resource as expired._many": "Nepodařilo se označit zdroje jako expirované.",
-  "Unable to mark the resource as expired._other": "Nepodařilo se označit zdroje jako expirované."
+  "Unable to mark the resource as expired._other": "Nepodařilo se označit zdroje jako expirované.",
+  "Edit in the vault": "Upravit v trezoru",
+  "View in the vault": "Zobrazit v trezoru"
 }

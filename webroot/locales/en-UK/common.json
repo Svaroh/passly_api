@@ -505,7 +505,6 @@
   "Edit App.fullBaseUrl in {configurationFilePath}": "Edit App.fullBaseUrl in {configurationFilePath}",
   "Edit Avatar": "Edit Avatar",
   "Edit group": "Edit group",
-  "Edit in passbolt": "Edit in passbolt",
   "Edit or generate another key with a valid email id.": "Edit or generate another key with a valid email id.",
   "Edit password": "Edit password",
   "Edit profile": "Edit profile",
@@ -1812,7 +1811,6 @@
   "Very weak": "Very weak",
   "View": "View",
   "View detail": "View detail",
-  "View it in passbolt": "View it in passbolt",
   "Wait for a password to expire.": "Wait for a password to expire.",
   "Wait for a team member to share a password with you.": "Wait for a team member to share a password with you.",
   "Want to contribute?": "Want to contribute?",
@@ -1963,5 +1961,7 @@
   "your subscription key will expire": "your subscription key will expire",
   "your subscription requires your attention. The stability of the application is at risk.": "your subscription requires your attention. The stability of the application is at risk.",
   "Zero knowledge": "Zero knowledge",
-  "Zero-knowledge mode (More secure)": "Zero-knowledge mode (More secure)"
+  "Zero-knowledge mode (More secure)": "Zero-knowledge mode (More secure)",
+  "Edit in the vault": "Edit in the vault",
+  "View in the vault": "View in the vault"
 }

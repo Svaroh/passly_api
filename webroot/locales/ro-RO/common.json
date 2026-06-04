@@ -453,7 +453,6 @@
   "Edit App.fullBaseUrl in {configurationFilePath}": "Modificați App.fullBaseUrl în {configurationFilePath}",
   "Edit Avatar": "Modificați Avatar-ul",
   "Edit group": "Modificați grupul",
-  "Edit in passbolt": "Modificați în Passbolt",
   "Edit or generate another key with a valid email id.": "Modificați sau generați o altă cheie cu o adresă de email validă.",
   "Edit password": "Modifică parola",
   "Edit profile": "Modificați profilul",
@@ -1742,7 +1741,6 @@
   "Very weak": "Foarte slabă",
   "View": "Vizualizați",
   "View detail": "Vizualizare detalii",
-  "View it in passbolt": "Vizualizați-le în Passbolt",
   "Wait for a password to expire.": "Așteptați ca o parolă să expire.",
   "Wait for a team member to share a password with you.": "Așteptați ca un membru al echipei să partajeze o parolă cu dvs.",
   "Want to contribute?": "Doriți să contribuiți?",
@@ -1998,5 +1996,7 @@
   "This resource does not need an expiry date._other": "Aceste resurse nu au nevoie de o dată de expirare.",
   "Unable to mark the resource as expired._one": "Nu se poate marca resursa ca expirată.",
   "Unable to mark the resource as expired._few": "Nu se pot marca resursele ca expirate.",
-  "Unable to mark the resource as expired._other": "Nu se pot marca resursele ca expirate."
+  "Unable to mark the resource as expired._other": "Nu se pot marca resursele ca expirate.",
+  "Edit in the vault": "Editați în seif",
+  "View in the vault": "Vizualizați în seif"
 }

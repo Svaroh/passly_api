@@ -453,7 +453,6 @@
   "Edit App.fullBaseUrl in {configurationFilePath}": "Modifica App.fullBaseUrl in {configurationFilePath}",
   "Edit Avatar": "Modifica l'Avatar",
   "Edit group": "Modifica il gruppo",
-  "Edit in passbolt": "Modifica in passbolt",
   "Edit or generate another key with a valid email id.": "Modifica o genera un'altra chiave con un indirizzo email valido.",
   "Edit password": "Modifica password",
   "Edit profile": "Modifica il profilo",
@@ -1742,7 +1741,6 @@
   "Very weak": "Molto debole",
   "View": "Visualizza",
   "View detail": "Visualizza dettaglio",
-  "View it in passbolt": "Visualizza in passbolt",
   "Wait for a password to expire.": "Attendere la scadenza di una password.",
   "Wait for a team member to share a password with you.": "Attendi che un membro del team condivida una password con te.",
   "Want to contribute?": "Vuoi contribuire?",
@@ -1963,5 +1961,7 @@
   "This resource does not need an expiry date._one": "Questa risorsa non necessita di una data di scadenza.",
   "This resource does not need an expiry date._other": "Queste risorse non necessitano di una data di scadenza.",
   "Unable to mark the resource as expired._one": "Impossibile contrassegnare la risorsa come scaduta.",
-  "Unable to mark the resource as expired._other": "Impossibile contrassegnare le risorse come scadute."
+  "Unable to mark the resource as expired._other": "Impossibile contrassegnare le risorse come scadute.",
+  "Edit in the vault": "Modifica nella cassaforte",
+  "View in the vault": "Visualizza nella cassaforte"
 }

@@ -453,7 +453,6 @@
   "Edit App.fullBaseUrl in {configurationFilePath}": "{configurationFilePath} で App.fullBaseUrl を編集してください",
   "Edit Avatar": "アバターを編集",
   "Edit group": "グループを編集",
-  "Edit in passbolt": "パスボルトで編集",
   "Edit or generate another key with a valid email id.": "有効なメールIDを使用してキーを編集または再生成してください。",
   "Edit password": "パスワードを編集",
   "Edit profile": "プロフィールを編集",
@@ -1742,7 +1741,6 @@
   "Very weak": "非常に弱い",
   "View": "表示",
   "View detail": "詳細を表示",
-  "View it in passbolt": "パスボルトで表示",
   "Wait for a password to expire.": "パスワードが期限切れになるのを待ちます。",
   "Wait for a team member to share a password with you.": "チームメンバーがパスワードを共有するのを待ちます。",
   "Want to contribute?": "貢献したいですか？",
@@ -1928,5 +1926,7 @@
   "The resource has been deleted successfully._other": "リソースが正常に削除されました。",
   "The resource has been marked as expired._other": "リソースは期限切れとしてマークされました。",
   "This resource does not need an expiry date._other": "これらのリソースには有効期限は必要ありません。",
-  "Unable to mark the resource as expired._other": "リソースを期限切れにマークできませんでした。"
+  "Unable to mark the resource as expired._other": "リソースを期限切れにマークできませんでした。",
+  "Edit in the vault": "保管庫で編集",
+  "View in the vault": "保管庫で表示"
 }

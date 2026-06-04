@@ -453,7 +453,6 @@
   "Edit App.fullBaseUrl in {configurationFilePath}": "Измените App.fullBaseUrl в {configurationFilePath}",
   "Edit Avatar": "Изменить аватар",
   "Edit group": "Изменить группу",
-  "Edit in passbolt": "Изменить в passbolt",
   "Edit or generate another key with a valid email id.": "Измените или сгенерируйте другой ключ с допустимым адресом электронной почты.",
   "Edit password": "Изменить пароль",
   "Edit profile": "Изменить профиль",
@@ -1742,7 +1741,6 @@
   "Very weak": "Очень слабый",
   "View": "Просмотр",
   "View detail": "Детали",
-  "View it in passbolt": "Посмотреть в passbolt",
   "Wait for a password to expire.": "Дождитесь окончания срока действия пароля.",
   "Wait for a team member to share a password with you.": "Дождитесь, пока другой участник команды поделится с вами паролем.",
   "Want to contribute?": "Хотите нам помочь?",
@@ -2033,5 +2031,7 @@
   "Unable to mark the resource as expired._one": "Не удалось пометить ресурс как устаревший.\n\nНе удалось пометить ресурсы как устаревшие.",
   "Unable to mark the resource as expired._few": "Не удалось отметить ресурсы как истекшие.",
   "Unable to mark the resource as expired._many": "Не удалось отметить ресурсы как истекшие.",
-  "Unable to mark the resource as expired._other": "Не удалось отметить ресурсы как истекшие."
+  "Unable to mark the resource as expired._other": "Не удалось отметить ресурсы как истекшие.",
+  "Edit in the vault": "Редактировать в хранилище",
+  "View in the vault": "Посмотреть в хранилище"
 }
