@@ -191,6 +191,17 @@ class SlugDefinition
         'pattern' => '^\d+$',
     ];
 
+    private static array $passkeyBase64UrlSecretPropertySchemaV5 = [
+        'type' => 'string',
+        'maxLength' => 8192,
+        'pattern' => '^[A-Za-z0-9_-]+$',
+    ];
+
+    private static array $passkeyObjectTypeSecretPropertySchemaV5 = [
+        'type' => 'string',
+        'enum' => ['PASSLY_PASSKEY'],
+    ];
+
     /**
      * @return string|false
      */
@@ -661,6 +672,107 @@ class SlugDefinition
                 'properties' => [
                     'object_type' => self::$objectTypeSecretPropertySchemaV5,
                     'pin_code' => self::$pinCodeSecretPropertySchemaV5,
+                    'description' => self::$descriptionSecretPropertySchemaV5,
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * @return string|false
+     */
+    public static function v5Passkey(): string|false
+    {
+        return json_encode([
+            'resource' => [
+                'type' => 'object',
+                'required' => ['name'],
+                'properties' => [
+                    'name' => self::$nameMetadataPropertySchemaV5,
+                    'username' => self::$usernameMetadataPropertySchemaV5,
+                    'uris' => self::$urisMetadataPropertySchemaV5,
+                    'description' => self::$descriptionMetadataPropertySchemaV5,
+                    'icon' => self::$iconMetadataPropertySchemaV5,
+                ],
+            ],
+            'secret' => [
+                'type' => 'object',
+                'required' => [
+                    'object_type',
+                    'schema_version',
+                    'credential_id',
+                    'rp_id',
+                    'user_handle',
+                    'user_name',
+                    'cose_alg',
+                    'public_key_cose',
+                    'private_key_pkcs8',
+                    'aaguid',
+                    'backup_eligible',
+                    'backup_state',
+                    'sign_count',
+                ],
+                'properties' => [
+                    'object_type' => self::$passkeyObjectTypeSecretPropertySchemaV5,
+                    'schema_version' => [
+                        'type' => 'integer',
+                        'enum' => [1],
+                    ],
+                    'credential_id' => self::$passkeyBase64UrlSecretPropertySchemaV5,
+                    'rp_id' => [
+                        'type' => 'string',
+                        'maxLength' => 253,
+                    ],
+                    'origin' => [
+                        'anyOf' => [
+                            ['type' => 'string', 'maxLength' => 1024],
+                            ['type' => 'null'],
+                        ],
+                    ],
+                    'user_handle' => self::$passkeyBase64UrlSecretPropertySchemaV5,
+                    'user_name' => [
+                        'type' => 'string',
+                        'maxLength' => 255,
+                    ],
+                    'user_display_name' => [
+                        'anyOf' => [
+                            ['type' => 'string', 'maxLength' => 255],
+                            ['type' => 'null'],
+                        ],
+                    ],
+                    'cose_alg' => [
+                        'type' => 'integer',
+                        'enum' => [-7],
+                    ],
+                    'public_key_cose' => self::$passkeyBase64UrlSecretPropertySchemaV5,
+                    'private_key_pkcs8' => self::$passkeyBase64UrlSecretPropertySchemaV5,
+                    'aaguid' => [
+                        'type' => 'string',
+                        'format' => 'uuid',
+                    ],
+                    'backup_eligible' => [
+                        'type' => 'boolean',
+                    ],
+                    'backup_state' => [
+                        'type' => 'boolean',
+                    ],
+                    'sign_count' => [
+                        'type' => 'integer',
+                        'minimum' => 0,
+                    ],
+                    'transports' => [
+                        'type' => 'array',
+                        'maxItems' => 8,
+                        'items' => [
+                            'type' => 'string',
+                            'enum' => ['ble', 'hybrid', 'internal', 'nfc', 'usb'],
+                        ],
+                    ],
+                    'extensions' => [
+                        'type' => 'object',
+                        'required' => [],
+                        'properties' => [],
+                    ],
                     'description' => self::$descriptionSecretPropertySchemaV5,
                 ],
             ],

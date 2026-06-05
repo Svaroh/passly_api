@@ -1042,4 +1042,33 @@ class SlugDefinitionTest extends TestCase
         $result = SlugDefinition::v5PinCode();
         $this->assertEquals($expected, $result);
     }
+
+    public function testV5Passkey(): void
+    {
+        $result = json_decode(SlugDefinition::v5Passkey(), true);
+
+        $this->assertSame(['name'], $result['resource']['required']);
+        $this->assertSame([
+            'object_type',
+            'schema_version',
+            'credential_id',
+            'rp_id',
+            'user_handle',
+            'user_name',
+            'cose_alg',
+            'public_key_cose',
+            'private_key_pkcs8',
+            'aaguid',
+            'backup_eligible',
+            'backup_state',
+            'sign_count',
+        ], $result['secret']['required']);
+        $this->assertSame(['PASSLY_PASSKEY'], $result['secret']['properties']['object_type']['enum']);
+        $this->assertSame([1], $result['secret']['properties']['schema_version']['enum']);
+        $this->assertSame([-7], $result['secret']['properties']['cose_alg']['enum']);
+        $this->assertSame('^[A-Za-z0-9_-]+$', $result['secret']['properties']['credential_id']['pattern']);
+        $this->assertSame('^[A-Za-z0-9_-]+$', $result['secret']['properties']['private_key_pkcs8']['pattern']);
+        $this->assertSame(253, $result['secret']['properties']['rp_id']['maxLength']);
+        $this->assertSame(0, $result['secret']['properties']['sign_count']['minimum']);
+    }
 }
