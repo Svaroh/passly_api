@@ -338,6 +338,45 @@ class ResourcesAddControllerTest extends AppIntegrationTestCaseV5
         $this->assertBadRequestError('Resource creation\/modification with encrypted metadata not allowed');
     }
 
+    public function testResourcesAddController_Success_AllowPasskeyCreationWhenV5ResourceCreationDisabled(): void
+    {
+        // Allow only V4 format, while passkeys still require encrypted metadata.
+        MetadataTypesSettingsFactory::make()->v4()->persist();
+        $user = UserFactory::make()->user()->persist();
+        $metadataKey = MetadataKeyFactory::make()->withCreatorAndModifier($user)->withServerPrivateKey()->persist();
+        $v4ResourceTypeId = ResourceTypeFactory::make()->passwordString()->persist()->get('id');
+        $resourceTypeId = ResourceTypeFactory::make()->v5Passkey()->persist()->get('id');
+        $metadataKeyId = $metadataKey->get('id');
+        $dummyResourceData = $this->getDummyResourcesPostData([
+            'resource_type_id' => $v4ResourceTypeId, // v4 here is intentional, needed for mapping
+        ]);
+        $resourceDto = MetadataResourceDto::fromArray($dummyResourceData);
+        $clearTextMetadata = json_encode($resourceDto->getClearTextMetadata());
+        $metadata = $this->encryptForMetadataKey($clearTextMetadata);
+        $metadataKeyType = 'shared_key';
+        // login
+        $this->logInAs($user);
+
+        $data = [
+            'metadata_key_id' => $metadataKeyId,
+            'metadata' => $metadata,
+            'metadata_key_type' => $metadataKeyType,
+            'resource_type_id' => $resourceTypeId,
+            'secrets' => [
+                ['data' => $this->getDummyGpgMessage()],
+            ],
+        ];
+        $this->postJson('/resources.json', $data);
+
+        $this->assertSuccess();
+        $resource = ResourceFactory::firstOrFail();
+        $this->assertSame($metadataKeyId, $resource->metadata_key_id);
+        $this->assertSame($metadata, $resource->metadata);
+        $this->assertSame($metadataKeyType, $resource->metadata_key_type);
+        $this->assertSame($resourceTypeId, $resource->resource_type_id);
+        $this->assertObjectNotHasAttribute('name', $this->_responseJsonBody);
+    }
+
     public function testResourcesAddController_Error_AllowCreationOfV4ResourceDisabled(): void
     {
         // Allow only V4 format

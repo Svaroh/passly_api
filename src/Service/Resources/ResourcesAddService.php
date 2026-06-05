@@ -23,6 +23,7 @@ use App\Model\Entity\Resource;
 use App\Model\Table\ResourcesTable;
 use App\Model\Table\UsersTable;
 use App\Utility\UserAccessControl;
+use App\Utility\UuidFactory;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
@@ -32,6 +33,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Passbolt\Metadata\Model\Dto\MetadataResourceDto;
 use Passbolt\Metadata\Model\Dto\MetadataTypesSettingsDto;
 use Passbolt\Metadata\Utility\MetadataSettingsAwareTrait;
+use Passbolt\ResourceTypes\Model\Entity\ResourceType;
 use Passbolt\ResourceTypes\Model\Table\ResourceTypesTable;
 use PDOException;
 
@@ -88,7 +90,12 @@ class ResourcesAddService
      */
     public function add(UserAccessControl $uac, MetadataResourceDto $resourceDto): Resource
     {
-        $this->assertCreationAllowedByMetadataSettings($resourceDto->isV5(), MetadataTypesSettingsDto::ENTITY_RESOURCE);
+        if (!$this->shouldBypassV5ResourceCreationPolicy($resourceDto)) {
+            $this->assertCreationAllowedByMetadataSettings(
+                $resourceDto->isV5(),
+                MetadataTypesSettingsDto::ENTITY_RESOURCE
+            );
+        }
 
         $this->attachListenerToAfterSaveEvent($uac, $resourceDto);
         $attempts = 1;
@@ -109,6 +116,22 @@ class ResourcesAddService
         $this->handleAttemptsExceededError($attempts);
 
         return $resource;
+    }
+
+    /**
+     * @param \Passbolt\Metadata\Model\Dto\MetadataResourceDto $resourceDto Resource data.
+     * @return bool
+     */
+    private function shouldBypassV5ResourceCreationPolicy(MetadataResourceDto $resourceDto): bool
+    {
+        if (!$resourceDto->isV5() || !Configure::read('passbolt.v5.enabled')) {
+            return false;
+        }
+
+        $resourceData = $resourceDto->toArray();
+        $passkeyResourceTypeId = UuidFactory::uuid('resource-types.id.' . ResourceType::SLUG_V5_PASSKEY);
+
+        return ($resourceData[MetadataResourceDto::RESOURCE_TYPE_ID] ?? null) === $passkeyResourceTypeId;
     }
 
     /**
