@@ -19,6 +19,7 @@ namespace Passbolt\TotpResourceTypes\Test\TestCase\Service;
 
 use App\Test\Lib\AppTestCase;
 use CakephpFixtureFactories\Scenario\ScenarioAwareTrait;
+use Passbolt\ResourceTypes\Model\Entity\ResourceType;
 use Passbolt\ResourceTypes\Test\Scenario\ResourceTypesScenario;
 use Passbolt\TotpResourceTypes\Service\TotpResourceTypesFinderService;
 use Passbolt\TotpResourceTypes\Test\Scenario\TotpResourceTypesScenario;
@@ -51,7 +52,12 @@ class TotpResourceTypesFinderServiceTest extends AppTestCase
         $this->loadFixtureScenario(TotpResourceTypesScenario::class);
 
         $result = $this->service->find();
+        $resourceTypeSlugs = $result
+            ->all()
+            ->extract('slug')
+            ->toList();
 
-        $this->assertCount(6, $result->toArray());
+        $this->assertContains(ResourceType::SLUG_STANDALONE_TOTP, $resourceTypeSlugs);
+        $this->assertContains(ResourceType::SLUG_PASSWORD_DESCRIPTION_TOTP, $resourceTypeSlugs);
     }
 }

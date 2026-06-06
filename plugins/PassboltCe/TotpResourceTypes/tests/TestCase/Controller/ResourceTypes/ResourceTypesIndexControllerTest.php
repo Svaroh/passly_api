@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Passbolt\TotpResourceTypes\Test\TestCase\Controller\ResourceTypes;
 
 use App\Test\Lib\AppIntegrationTestCase;
+use Passbolt\ResourceTypes\Model\Entity\ResourceType;
 use Passbolt\ResourceTypes\ResourceTypesPlugin;
 use Passbolt\ResourceTypes\Test\Lib\Model\ResourceTypesModelTrait;
 use Passbolt\ResourceTypes\Test\Scenario\ResourceTypesScenario;
@@ -48,7 +49,9 @@ class ResourceTypesIndexControllerTest extends AppIntegrationTestCase
 
         $this->assertSuccess();
         $this->assertGreaterThan(1, count($this->_responseJsonBody));
-        $this->assertCount(6, $this->_responseJsonBody);
+        $resourceTypeSlugs = array_map(fn ($resourceType) => $resourceType->slug, $this->_responseJsonBody);
+        $this->assertContains(ResourceType::SLUG_STANDALONE_TOTP, $resourceTypeSlugs);
+        $this->assertContains(ResourceType::SLUG_PASSWORD_DESCRIPTION_TOTP, $resourceTypeSlugs);
     }
 
     public function testResourceTypesIndex_Success_WithoutTotpResourceTypes()
@@ -64,7 +67,9 @@ class ResourceTypesIndexControllerTest extends AppIntegrationTestCase
         $this->assertSuccess();
         $this->assertGreaterThan(1, count($this->_responseJsonBody));
         $this->assertResourceTypeAttributes($this->_responseJsonBody[0]);
-        $this->assertCount(4, $this->_responseJsonBody);
+        $resourceTypeSlugs = array_map(fn ($resourceType) => $resourceType->slug, $this->_responseJsonBody);
+        $this->assertNotContains(ResourceType::SLUG_STANDALONE_TOTP, $resourceTypeSlugs);
+        $this->assertNotContains(ResourceType::SLUG_PASSWORD_DESCRIPTION_TOTP, $resourceTypeSlugs);
     }
 
     public function testResourceTypesIndex_ResourceTypesPlugin_Disabled()
