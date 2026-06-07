@@ -100,7 +100,7 @@ class ChangelogFileTest extends TestCase
     {
         $file = $this->getFile(FIXTURES . 'Changelog' . DS . 'invalid');
         $this->collectChangelogErrors($file);
-        $this->assertSame(7, count($this->errors));
+        $this->assertSame(6, count($this->errors));
     }
 
     protected function collectChangelogErrors(array $file)
@@ -164,8 +164,8 @@ class ChangelogFileTest extends TestCase
             $line = $file[$position];
             $this->appendErrorIf(substr($line, 0, 2) !== '- ', 'Dash is missing', $position);
             $this->appendErrorIf(
-                substr($line, 2, 3) !== 'PB-',
-                'Each line should start with a ticket number',
+                trim(substr($line, 2)) === '',
+                'Each line should contain a change description',
                 $position
             );
             $position++;

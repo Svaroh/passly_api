@@ -15,29 +15,29 @@ Release, packaging, CI, and coverage workflows are now available in GitHub Actio
 
 ## [6.0.0] - 2026-06-07
 ### Added
-- PB-51235 Adds browser first login relay endpoints for secure Android to browser setup
-- PB-51247 Adds encrypted private key relay support for browser first login
-- PB-51294 Adds passkey resource type support
-- PB-60001 Adds password and folder self-notification settings
-- PB-60002 Adds GitHub Actions CI, release, packaging, and coverage workflows
+- Adds browser first login relay endpoints for secure Android to browser setup
+- Adds encrypted private key relay support for browser first login
+- Adds passkey resource type support
+- Adds password and folder self-notification settings
+- Adds GitHub Actions CI, release, packaging, and coverage workflows
 
 ### Changed
-- PB-60003 Rebrands visible product wording and assets to Passly
-- PB-60004 Replaces product logos and inline API logos with the Passly Team Shield
-- PB-60005 Uses vault wording for resource actions
+- Rebrands visible product wording and assets to Passly
+- Replaces product logos and inline API logos with the Passly Team Shield
+- Uses vault wording for resource actions
 
 ### Fixed
-- PB-60006 Fixes browser first login response handling
-- PB-60007 Restores notification self settings in the API bundle
-- PB-60008 Allows passkey creation with v4 metadata settings
-- PB-60009 Fixes TOTP resource type test expectations
-- PB-60010 Fixes PHPUnit coverage metadata and CI stability issues
+- Fixes browser first login response handling
+- Restores notification self settings in the API bundle
+- Allows passkey creation with v4 metadata settings
+- Fixes TOTP resource type test expectations
+- Fixes PHPUnit coverage metadata and CI stability issues
 
 ### Security
-- PB-60011 Resolves remaining npm audit findings
-- PB-60012 Fixes CodeQL code scanning alerts
-- PB-60013 Updates vulnerable npm and Composer dependencies
+- Resolves remaining npm audit findings
+- Fixes CodeQL code scanning alerts
+- Updates vulnerable npm and Composer dependencies
 
 ### Maintenance
-- PB-60014 Adds the Nix development shell for local API tooling
-- PB-60015 Aligns Composer audit strict branch handling for the Passly fork
+- Adds the Nix development shell for local API tooling
+- Aligns Composer audit strict branch handling for the Passly fork
