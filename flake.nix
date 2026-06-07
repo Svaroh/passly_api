@@ -42,12 +42,16 @@
               memory_limit = 1G
             '';
           };
+
+          composer = pkgs.php82Packages.composer.override {
+            inherit php;
+          };
         in
         {
           default = pkgs.mkShell {
             packages = [
               php
-              pkgs.php82Packages.composer
+              composer
               pkgs.nodejs_22
               pkgs.gnupg
               pkgs.mysql84
@@ -58,7 +62,7 @@
             shellHook = ''
               export COMPOSER_MEMORY_LIMIT="''${COMPOSER_MEMORY_LIMIT:--1}"
               export XDEBUG_MODE="''${XDEBUG_MODE:-develop}"
-              export PATH="$PATH:$PWD/vendor/bin:$PWD/node_modules/.bin"
+              export PATH="$PWD/vendor/bin:$PWD/node_modules/.bin:$PATH"
 
               export APP_FULL_BASE_URL="''${APP_FULL_BASE_URL:-http://127.0.0.1}"
               export DEBUG="''${DEBUG:-true}"

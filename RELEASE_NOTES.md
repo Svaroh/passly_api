@@ -1,64 +1,43 @@
-Release song: https://www.youtube.com/watch?v=0udIM6eooUA
+Passly 6.0.0 is the first stable API release from the Svaroh Passly fork.
 
-Passbolt 5.12.0 makes the Safari browser extension generally available, ending the open beta period.
-This release also introduces a new PIN code resource type, along with improvements to TOTP field detection and the usual round of security and dependency updates.
+This release completes the visible Passly rebrand, ships the Team Shield assets across the API bundle, and adds the GitHub automation needed to publish releases and trigger packaging from tags.
 
-## Safari Extension Out of Beta
-The Safari extension is now offered by default to all Safari users, on equal footing with Chrome, Firefox, and Edge.
+It also includes the browser first-login relay used by Android to help set up the browser extension, the new passkey resource type, notification self-settings restored in the API bundle, and dependency/security maintenance carried forward from the fork.
 
-This milestone reflects months of work across both our internal testing and the open beta period, during which organisations
-enabled the extension on their own instances and gave feedback. Many thanks to everyone who joined the TestFlight program
-for the open beta. Your feedback shaped this release.
+## Highlights
+The API now exposes browser first-login relay endpoints for the mobile to browser setup flow, including encrypted private key handoff support.
 
-## PIN code resource type
-Passbolt 5.12 introduces a dedicated *Pin Code* resource type for securely storing standalone PINs such as door access codes,
-safes, alarm systems, SIM codes, or device unlock codes.
+Passkey support is available as a v5 resource type, with follow-up handling for v4 metadata settings.
 
-Unlike workarounds based on passwords or custom fields, Pin Codes now have their own dedicated form, icon, validation, and generation flow.
-PINs are strictly numeric and support 4 to 12 digits in accordance with the ISO 9564-1 standard.
+The product-facing API assets and wording now use Passly branding, including the Passly Team Shield logo in static and inline bundles.
 
-Users can create, view, copy, and generate PIN codes directly from the browser extension, optionally alongside a secure note.
-A dedicated PIN code column can also be displayed in the resource grid, while administrators can enable or disable the resource type from the administration settings.
+Release, packaging, CI, and coverage workflows are now available in GitHub Actions for the fork.
 
-Import and export are supported for both CSV and KDBX formats, with automatic detection of compatible PIN code entries during import.
-This release also lays the groundwork for additional resource types in future releases.
-
-## Maintenance and security
-As usual, this release ships some third-party dependency upgrades and security advisory fixes, with no user-visible impact.
-
-The release also refines the browser extension's detection of TOTP fields to reduce false positives in autofill. Many thanks to
-the community members who reported cases where the extension picked up unintended fields. Clearly integrating with the wide variety
-of forms across the web is a community effort, and your feedback is what makes it possible.
-
-For administrators, the action logs purge command now covers additional entries, improving the audit logs performance.
-
-## Conclusion
-Many thanks to everyone who tried the Safari open beta, reported autofill issues, and contributed to making Passbolt better.
-
-## What’s next
-Passbolt is also preparing for offline mode support, allowing users to securely access encrypted resources even when temporarily disconnected from the server. More details will be shared in upcoming releases!
-
-## [5.12.0] - 2026-05-12
+## [6.0.0] - 2026-06-07
 ### Added
-- PB-51081 Adds pin code resource type
-- PB-51516 Enables Safari by default
+- PB-51235 Adds browser first login relay endpoints for secure Android to browser setup
+- PB-51247 Adds encrypted private key relay support for browser first login
+- PB-51294 Adds passkey resource type support
+- PB-60001 Adds password and folder self-notification settings
+- PB-60002 Adds GitHub Actions CI, release, packaging, and coverage workflows
+
+### Changed
+- PB-60003 Rebrands visible product wording and assets to Passly
+- PB-60004 Replaces product logos and inline API logos with the Passly Team Shield
+- PB-60005 Uses vault wording for resource actions
+
+### Fixed
+- PB-60006 Fixes browser first login response handling
+- PB-60007 Restores notification self settings in the API bundle
+- PB-60008 Allows passkey creation with v4 metadata settings
+- PB-60009 Fixes TOTP resource type test expectations
+- PB-60010 Fixes PHPUnit coverage metadata and CI stability issues
 
 ### Security
-- PB-50625 Fixes GHSA-F886-M6HF-6M8V security vulnerability advisory (Medium)
-- PB-50340 Upgrades picomatch package (Medium)
-- PB-50538 Upgrades lodash package (Critical)
-- PB-50895 Fixes bn.js security vulnerability advisory GHSA-378v-28hj-76wf (Medium)
-- PB-50969 Fixes composer security vulnerability advisory affecting phpseclib/phpseclib package (CVE-2026-40194)
-- PB-51135 Fixes security vulnerability advisory affecting composer/composer package (CVE-2026-40261, CVE-2026-40176)
-- PB-51151 Fixes i18next-http-backend security vulnerability advisory GHSA-r5fr-rjxr-66jc (Medium)
-- PB-51152 Fixes uuid security vulnerability advisory GHSA-w5hq-g745-h8pq (Medium)
-- PB-51448 Fixes security vulnerability advisory affecting phpseclib/phpseclib package (CVE-2026-44167)
-- PB-51208 Cleans up UserScimResource.php logged errors
-- PB-51028 Sets SESSION_COOKIE_SAMESITE on Lax by default for all session engines
+- PB-60011 Resolves remaining npm audit findings
+- PB-60012 Fixes CodeQL code scanning alerts
+- PB-60013 Updates vulnerable npm and Composer dependencies
 
 ### Maintenance
-- PB-50893 As an administrator I can purge action additional logs by action via the logs purge command
-- PB-50914 Homogenizes CE and Pro codebase
-- PB-51243 Fixes activity logging breaking after instance reset while executing Selenium tests
-- PB-51428 Fixes dev test data inserting empty definitions for v5 resource types
-- PB-51541 Fixes SCIM endpoints returning 500 errors on cloud when resourceType is not supported
+- PB-60014 Adds the Nix development shell for local API tooling
+- PB-60015 Aligns Composer audit strict branch handling for the Passly fork
