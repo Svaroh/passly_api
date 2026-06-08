@@ -73,6 +73,21 @@ class FindIndexTest extends AppTestCase
         $this->assertSame($notDeletedResource->id, $resources->firstOrFail()->id);
     }
 
+    public function testFilterIsDeleted()
+    {
+        $user = UserFactory::make()->persist();
+        $factory = ResourceFactory::make()->withCreatorAndPermission($user);
+
+        $factory->persist();
+        $deletedResource = $factory->setDeleted()->persist();
+
+        $options['filter']['is-deleted'] = true;
+        $resources = $this->Resources->findIndex($user->id, $options);
+
+        $this->assertSame(1, $resources->all()->count());
+        $this->assertSame($deletedResource->id, $resources->firstOrFail()->id);
+    }
+
     public function testContainSecrets()
     {
         $user = UserFactory::make()->persist();

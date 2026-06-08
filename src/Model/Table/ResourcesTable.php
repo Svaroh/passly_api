@@ -528,16 +528,21 @@ class ResourcesTable extends Table implements TableCleanupProviderInterface
      * @param string $userId The user who perform the delete.
      * @param \App\Model\Entity\Resource $resource The resource to delete.
      * @param bool $checkPermission Whether to check for permission or not.
+     * @param bool $recoverable Whether to keep associated data so the resource can be restored.
      * @throws \InvalidArgumentException if the user id is not a uuid
      * @return bool true if success
      */
-    public function softDelete(string $userId, Resource $resource, bool $checkPermission = true): bool
-    {
+    public function softDelete(
+        string $userId,
+        Resource $resource,
+        bool $checkPermission = true,
+        bool $recoverable = false
+    ): bool {
         // The softDelete will perform an update to the entity to soft delete it.
         if (!Validation::uuid($userId)) {
             throw new InvalidArgumentException('The user identifier should be a valid UUID.');
         }
-        if ($resource->deleted) {
+        if ($resource->deleted && $recoverable) {
             $resource->setError('deleted', [
                 'is_not_soft_deleted' => __('The resource should not be already soft deleted.'),
             ]);
@@ -569,21 +574,25 @@ class ResourcesTable extends Table implements TableCleanupProviderInterface
         $data = [
             'deleted' => true,
             'modified_by' => $userId,
-            // cleanup sensitive data
-            'username' => null,
-            'uri' => null,
-            'description' => null,
         ];
+        if (!$recoverable) {
+            // cleanup sensitive data
+            $data['username'] = null;
+            $data['uri'] = null;
+            $data['description'] = null;
+        }
         $patchOptions = [
             'accessibleFields' => [
-                'username' => true,
-                'uri' => true,
-                'description' => true,
                 'deleted' => true,
                 'modified' => true,
                 'modified_by' => true,
             ],
         ];
+        if (!$recoverable) {
+            $patchOptions['accessibleFields']['username'] = true;
+            $patchOptions['accessibleFields']['uri'] = true;
+            $patchOptions['accessibleFields']['description'] = true;
+        }
         $this->patchEntity($resource, $data, $patchOptions);
         if ($resource->getErrors()) {
             return false;
@@ -593,6 +602,13 @@ class ResourcesTable extends Table implements TableCleanupProviderInterface
         $this->save($resource, ['checkRules' => false]);
         if ($resource->getErrors()) {
             return false;
+        }
+
+        if ($recoverable) {
+            $deleted = DateTime::now();
+            $this->SecretRevisions->softDelete($resource->id, $deleted);
+
+            return true;
         }
 
         // Remove all the associated secrets.
@@ -625,6 +641,195 @@ class ResourcesTable extends Table implements TableCleanupProviderInterface
         $this->getEventManager()->dispatch($event);
 
         return true;
+    }
+
+    /**
+     * Restore a recoverably deleted resource.
+     *
+     * @param string $userId The user who performs the restore.
+     * @param \App\Model\Entity\Resource $resource The resource to restore.
+     * @param bool $checkPermission Whether to check for permission or not.
+     * @throws \InvalidArgumentException if the user id is not a uuid
+     * @return bool true if success
+     */
+    public function restore(string $userId, Resource $resource, bool $checkPermission = true): bool
+    {
+        if (!Validation::uuid($userId)) {
+            throw new InvalidArgumentException('The user identifier should be a valid UUID.');
+        }
+        if (!$resource->deleted) {
+            $resource->setError('deleted', [
+                'is_soft_deleted' => __('The resource should be soft deleted.'),
+            ]);
+
+            return false;
+        }
+
+        $acoType = PermissionsTable::RESOURCE_ACO;
+        if (
+            $checkPermission
+            && !$this->Permissions->hasAccess($acoType, $resource->id, $userId, Permission::UPDATE)
+        ) {
+            $resource->setError('id', [
+                'has_access' => __('The user cannot restore this resource.'),
+            ]);
+
+            return false;
+        }
+
+        if (empty($resource->resource_type) || !is_null($resource->resource_type->deleted)) {
+            $resource->setError('resource_type_id', [
+                'resource_type_not_exists' => __('The resource type for this resource does not exist.'),
+            ]);
+
+            return false;
+        }
+
+        if (!$this->hasRecoverableAssociations($resource->id)) {
+            $resource->setError('id', [
+                'recoverable_data_exists' => __(
+                    'The resource cannot be restored because its recoverable data is missing.'
+                ),
+            ]);
+
+            return false;
+        }
+
+        try {
+            $this->getConnection()->transactional(function () use ($resource, $userId): void {
+                $this->updateAll([
+                    'deleted' => false,
+                    'modified' => DateTime::now(),
+                    'modified_by' => $userId,
+                ], ['id' => $resource->id]);
+
+                $secretRevisionIds = $this->restoreLatestDeletedSecretRevisions($resource->id);
+                $restoredSecrets = $this->restoreLatestDeletedSecrets($resource->id, $secretRevisionIds);
+                if ($restoredSecrets === 0) {
+                    throw new InvalidArgumentException('No recoverable secrets were found for the resource.');
+                }
+            });
+        } catch (Throwable $e) {
+            $resource->setError('id', [
+                'recoverable_data_exists' => __(
+                    'The resource cannot be restored because its recoverable data is missing.'
+                ),
+            ]);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check whether the resource still has enough associated data to be restored.
+     *
+     * @param string $resourceId Resource identifier.
+     * @return bool
+     */
+    private function hasRecoverableAssociations(string $resourceId): bool
+    {
+        $hasPermissions = $this->getAssociation('Permissions')
+            ->find()
+            ->where([
+                'Permissions.aco' => PermissionsTable::RESOURCE_ACO,
+                'Permissions.aco_foreign_key' => $resourceId,
+            ])
+            ->all()
+            ->count() > 0;
+        if (!$hasPermissions) {
+            return false;
+        }
+
+        return $this->Secrets
+            ->find()
+            ->where([
+                'Secrets.resource_id' => $resourceId,
+                'Secrets.deleted IS NOT' => null,
+            ])
+            ->all()
+            ->count() > 0;
+    }
+
+    /**
+     * Restore the latest soft-deleted secret revisions for a resource.
+     *
+     * @param string $resourceId Resource identifier.
+     * @return array<string>
+     */
+    private function restoreLatestDeletedSecretRevisions(string $resourceId): array
+    {
+        $latestDeletedRevision = $this->SecretRevisions
+            ->find()
+            ->select(['deleted'])
+            ->where([
+                'resource_id' => $resourceId,
+                'deleted IS NOT' => null,
+            ])
+            ->orderByDesc('deleted')
+            ->disableHydration()
+            ->first();
+
+        if (empty($latestDeletedRevision)) {
+            return [];
+        }
+
+        $secretRevisionIds = $this->SecretRevisions
+            ->find()
+            ->select(['id'])
+            ->where([
+                'resource_id' => $resourceId,
+                'deleted' => $latestDeletedRevision['deleted'],
+            ])
+            ->disableHydration()
+            ->all()
+            ->extract('id')
+            ->toList();
+        $this->SecretRevisions->updateAll(['deleted' => null], [
+            'id IN' => $secretRevisionIds,
+        ]);
+
+        return $secretRevisionIds;
+    }
+
+    /**
+     * Restore the latest soft-deleted secrets for a resource.
+     *
+     * @param string $resourceId Resource identifier.
+     * @param array<string> $secretRevisionIds Secret revision identifiers restored with the resource.
+     * @return int Number of restored secrets.
+     */
+    private function restoreLatestDeletedSecrets(string $resourceId, array $secretRevisionIds = []): int
+    {
+        if (!empty($secretRevisionIds)) {
+            $restored = $this->Secrets->updateAll(['deleted' => null], [
+                'resource_id' => $resourceId,
+                'secret_revision_id IN' => $secretRevisionIds,
+            ]);
+            if ($restored > 0) {
+                return $restored;
+            }
+        }
+
+        $latestDeletedSecret = $this->Secrets
+            ->find()
+            ->select(['deleted'])
+            ->where([
+                'resource_id' => $resourceId,
+                'deleted IS NOT' => null,
+            ])
+            ->orderByDesc('deleted')
+            ->disableHydration()
+            ->first();
+        if (empty($latestDeletedSecret)) {
+            return 0;
+        }
+
+        return $this->Secrets->updateAll(['deleted' => null], [
+            'resource_id' => $resourceId,
+            'deleted' => $latestDeletedSecret['deleted'],
+        ]);
     }
 
     /**

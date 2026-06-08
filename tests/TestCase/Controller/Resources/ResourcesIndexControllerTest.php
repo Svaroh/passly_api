@@ -208,6 +208,19 @@ class ResourcesIndexControllerTest extends AppIntegrationTestCase
         $this->assertContains($resourceBId, $resourcesIds);
     }
 
+    public function testResourcesIndexController_Success_FilterIsDeleted_WithFactories(): void
+    {
+        $user = $this->logInAsUser();
+        ResourceFactory::make()->withPermissionsFor([$user])->persist();
+        $deletedResource = ResourceFactory::make()->setDeleted()->withPermissionsFor([$user])->persist();
+
+        $this->getJson('/resources.json?filter[is-deleted]=1&api-version=2');
+
+        $this->assertSuccess();
+        $this->assertCount(1, $this->_responseJsonBody);
+        $this->assertSame($deletedResource->id, $this->_responseJsonBody[0]->id);
+    }
+
     public function testResourcesIndexController_Success_ResourcesWithResourceTypesDeletedAreNotReturned(): void
     {
         $user = $this->logInAsUser();
