@@ -96,6 +96,46 @@ class SoftDeleteTest extends AppTestCase
         $this->assertSame(2, SecretRevisionFactory::count());
     }
 
+    public function testSoftDeleteRecoverableSuccess()
+    {
+        /** @var \App\Model\Entity\User $user */
+        $user = UserFactory::make()->persist();
+        /** @var \App\Model\Entity\Resource $resource */
+        $resource = ResourceFactory::make()
+            ->withPermissionsFor([$user])
+            ->withSecretsFor([$user])
+            ->withSecretRevisions()
+            ->persist();
+        FavoriteFactory::make()->setResource($resource)->persist();
+
+        $this->Resources->softDelete($user->id, $resource, recoverable: true);
+        $this->assertEmpty($resource->getErrors());
+
+        $resource = $this->Resources->get($resource->id);
+        $this->assertTrue($resource->deleted);
+        $this->assertNotEmpty($resource->username);
+        $this->assertNotEmpty($resource->uri);
+        $this->assertNotEmpty($resource->description);
+
+        $permissions = $this->Resources->getAssociation('Permissions')
+            ->find()->where(['Permissions.aco_foreign_key' => $resource->id])->toArray();
+        $this->assertNotEmpty($permissions);
+
+        $secrets = $this->Resources->getAssociation('Secrets')
+            ->find()->where(['Secrets.resource_id' => $resource->id])->toArray();
+        $this->assertNotEmpty($secrets);
+        foreach ($secrets as $secret) {
+            $this->assertNotNull($secret->deleted);
+        }
+
+        $secretRevisions = $this->Resources->SecretRevisions
+            ->find()->where(['resource_id' => $resource->id])->toArray();
+        $this->assertNotEmpty($secretRevisions);
+        foreach ($secretRevisions as $secretRevision) {
+            $this->assertNotNull($secretRevision->deleted);
+        }
+    }
+
     public function testSoftDeleteErrorNotValidUserIdParameter()
     {
         $userId = 'not-valid-uuid';

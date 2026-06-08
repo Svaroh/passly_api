@@ -263,11 +263,12 @@ class SecretsTable extends Table implements TableCleanupProviderInterface
 
     /**
      * @param string $resourceId resource ID of the secrets to soft-delete
+     * @param \Cake\I18n\DateTime|null $deleted Deleted timestamp to apply.
      * @return int
      */
-    public function softDeleteMany(string $resourceId): int
+    public function softDeleteMany(string $resourceId, ?DateTime $deleted = null): int
     {
-        return $this->updateAll(['deleted' => DateTime::now()], [
+        return $this->updateAll(['deleted' => $deleted ?? DateTime::now()], [
             'resource_id' => $resourceId,
             'deleted IS NULL',
         ]);

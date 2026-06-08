@@ -18,12 +18,15 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller\Resources;
 
 use App\Model\Entity\Permission;
+use App\Test\Factory\PermissionFactory;
 use App\Test\Factory\ResourceFactory;
 use App\Test\Factory\RoleFactory;
+use App\Test\Factory\SecretFactory;
 use App\Test\Lib\AppIntegrationTestCase;
 use App\Utility\UuidFactory;
 use Passbolt\Folders\FoldersPlugin;
 use Passbolt\ResourceTypes\Test\Factory\ResourceTypeFactory;
+use Passbolt\SecretRevisions\Test\Factory\SecretRevisionFactory;
 
 /**
  * @covers \App\Controller\Resources\ResourcesDeleteController
@@ -54,11 +57,34 @@ class ResourcesDeleteControllerTest extends AppIntegrationTestCase
         $this->assertResponseCode(403);
     }
 
-    public function testResourcesDeleteController_Error_ResourceIsSoftDeleted(): void
+    public function testResourcesDeleteController_Success_PermanentDeleteSoftDeletedResource(): void
     {
-        $this->logInAsUser();
-        $resourceId = ResourceFactory::make()->deleted()->persist()->id;
+        $user = $this->logInAsUser();
+        $resourceId = ResourceFactory::make()
+            ->withPermissionsFor([$user])
+            ->withSecretsFor([$user])
+            ->withSecretRevisions()
+            ->persist()
+            ->id;
+
+        $this->deleteJson("/resources/$resourceId.json?recoverable=1");
+        $this->assertSuccess();
+
         $this->deleteJson("/resources/$resourceId.json");
+        $this->assertSuccess();
+
+        $resource = ResourceFactory::get($resourceId);
+        $this->assertTrue($resource->deleted);
+        $this->assertSame(0, PermissionFactory::find()->where(['aco_foreign_key' => $resourceId])->count());
+        $this->assertSame(0, SecretFactory::find()->where(['resource_id' => $resourceId])->count());
+        $this->assertSame(0, SecretRevisionFactory::find()->where(['resource_id' => $resourceId])->count());
+    }
+
+    public function testResourcesDeleteController_Error_RecoverableDeleteSoftDeletedResource(): void
+    {
+        $user = $this->logInAsUser();
+        $resourceId = ResourceFactory::make()->deleted()->withPermissionsFor([$user])->persist()->id;
+        $this->deleteJson("/resources/$resourceId.json?recoverable=1");
         $this->assertError(404, 'The resource does not exist.');
     }
 

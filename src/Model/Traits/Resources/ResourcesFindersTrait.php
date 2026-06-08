@@ -64,9 +64,11 @@ trait ResourcesFindersTrait
 
         $this->getEventManager()->dispatch($event);
 
+        $isDeletedFilter = (bool)($options['filter']['is-deleted'] ?? false);
+
         $query
-            // Filter out deleted resources
-            ->where(['Resources.deleted' => false])
+            // Filter out deleted resources by default, or return only deleted resources when requested.
+            ->where(['Resources.deleted' => $isDeletedFilter])
             // Filter out resources with deleted resource types
             ->innerJoinWith('ResourceTypes', function ($q) {
                 return $q->where([$q->expr()->isNull('ResourceTypes.deleted')]);
