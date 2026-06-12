@@ -203,6 +203,13 @@ $routes->scope('/resources', function ($routes) {
         ->setPass(['id'])
         ->setMethods(['PUT']);
 
+    $routes->connect(
+        '/{id}/restore',
+        ['prefix' => 'Resources', 'controller' => 'ResourcesRestore', 'action' => 'restore']
+    )
+        ->setPass(['id'])
+        ->setMethods(['POST']);
+
     $routes->connect('/{id}', ['prefix' => 'Resources', 'controller' => 'ResourcesDelete', 'action' => 'delete'])
         ->setPass(['id'])
         ->setMethods(['DELETE']);

@@ -79,7 +79,7 @@ class ResourcesIndexController extends AppController
             ],
             'filter' => [
                 'is-favorite', 'is-shared-with-group', 'is-owned-by-me',
-                'is-shared-with-me', 'has-id', 'metadata_key_type',
+                'is-shared-with-me', 'has-id', 'is-deleted', 'metadata_key_type',
             ],
         ];
 

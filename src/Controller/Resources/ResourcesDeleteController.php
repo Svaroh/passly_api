@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace App\Controller\Resources;
 
 use App\Controller\AppController;
+use App\Controller\Component\QueryStringComponent;
 use App\Error\Exception\ValidationException;
 use App\Model\Entity\Resource;
 use App\Model\Entity\Role;
@@ -65,7 +66,7 @@ class ResourcesDeleteController extends AppController
      *
      * @param string $id The identifier of the resource to delete.
      * @throws \Cake\Http\Exception\NotFoundException If the resource does not exist.
-     * @throws \Cake\Http\Exception\NotFoundException If the resource is soft deleted.
+     * @throws \Cake\Http\Exception\NotFoundException If a recoverable delete is requested for a soft deleted resource.
      * @throws \Cake\Http\Exception\NotFoundException If the user does not have access to the resource.
      * @throws \Cake\Http\Exception\ForbiddenException If the user does not have the permission to delete the resource.
      * @throws \Cake\Http\Exception\BadRequestException If the resource id is not a valid uuid.
@@ -101,8 +102,10 @@ class ResourcesDeleteController extends AppController
             ->find('locale')
             ->all();
 
-        // Update the entity to delete=1, clear uri/desc/username and drop associated permissions
-        if (!$this->Resources->softDelete($this->User->id(), $resource)) {
+        $recoverable = QueryStringComponent::normalizeBoolean($this->getRequest()->getQuery('recoverable', false));
+
+        // Update the entity to delete=1. In recoverable mode, keep enough associated data for restore.
+        if (!$this->Resources->softDelete($this->User->id(), $resource, recoverable: $recoverable)) {
             $this->_handleDeleteError($resource);
             throw new InternalErrorException('Could not delete the resource. Please try again later.');
         }
