@@ -20,7 +20,6 @@ use App\Model\Entity\AuthenticationToken;
 use App\Test\Factory\AuthenticationTokenFactory;
 use App\Test\Factory\UserFactory;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Passbolt\JwtAuthentication\Service\Middleware\JwtAuthenticationService;
 use Passbolt\JwtAuthentication\Service\RefreshToken\RefreshTokenAbstractService;
 use Passbolt\JwtAuthentication\Service\RefreshToken\RefreshTokenRenewalService;
 use Passbolt\JwtAuthentication\Test\Utility\JwtAuthenticationIntegrationTestCase;
@@ -135,19 +134,17 @@ class JwtLogoutControllerTest extends JwtAuthenticationIntegrationTestCase
     public function testAuthJwtLogoutController_Logout_From_Session_Endpoint()
     {
         $userId = UserFactory::make()->user()->persist()->id;
-        $this->createJwtTokenAndSetInHeader($userId);
+        $accessToken = $this->createJwtTokenAndSetInHeader($userId);
         AuthenticationTokenFactory::make()
             ->active()
             ->type(AuthenticationToken::TYPE_REFRESH_TOKEN)
             ->userId($userId)
             ->persist();
 
-        $bearerToken = $this->_request['headers'][JwtAuthenticationService::JWT_HEADER];
-
         $this->post('/auth/logout');
         $this->assertResponseError('The route /auth/logout is not permitted with JWT authentication.');
 
-        $this->setJwtTokenInHeader($bearerToken);
+        $this->setJwtTokenInHeader($accessToken);
         $this->getJson('/auth/is-authenticated.json');
         $this->assertResponseSuccess();
 

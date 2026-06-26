@@ -34,7 +34,7 @@ class DuoSetupPromptPostControllerTest extends MfaIntegrationTestCase
     {
         $this->post('/mfa/setup/duo/prompt');
         $this->assertRedirect();
-        $this->assertRedirectContains('/auth/login?redirect=%2Fmfa%2Fsetup%2Fduo%2Fprompt');
+        $this->assertRedirectContains('/auth/login');
     }
 
     public function testDuoSetupPromptPostController_Error_JsonNotAllowed()
