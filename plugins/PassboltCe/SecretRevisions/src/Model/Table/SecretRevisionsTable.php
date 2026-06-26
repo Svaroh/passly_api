@@ -225,13 +225,15 @@ class SecretRevisionsTable extends Table
 
     /**
      * @param string $resourceId resource ID of the secret revision to soft-delete
+     * @param \Cake\I18n\DateTime|null $deleted Deleted timestamp to apply.
      * @return int
      */
-    public function softDelete(string $resourceId): int
+    public function softDelete(string $resourceId, ?DateTime $deleted = null): int
     {
-        $this->Secrets->softDeleteMany($resourceId);
+        $deleted = $deleted ?? DateTime::now();
+        $this->Secrets->softDeleteMany($resourceId, $deleted);
 
-        return $this->updateAll(['deleted' => DateTime::now()], [
+        return $this->updateAll(['deleted' => $deleted], [
             'resource_id' => $resourceId,
             'deleted IS NULL',
         ]);

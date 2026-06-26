@@ -460,8 +460,13 @@ class FoldersRelationsMoveItemInUserTreeServiceTest extends FoldersTestCase
         /** @var \Passbolt\Folders\Model\Entity\Folder $folderD */
         $folderD = FolderFactory::make()
             ->withPermissionsFor([$userC, $userD, $userE])
-            ->withFoldersRelationsFor([$userC], $folderB)
             ->withFoldersRelationsFor([$userD, $userE])
+            ->persist();
+        FoldersRelationFactory::make()
+            ->user($userC)
+            ->foreignModelFolder($folderD)
+            ->folderParent($folderB)
+            ->patchData(['created' => '2024-01-01 00:00:00'])
             ->persist();
         /** @var \Passbolt\Folders\Model\Entity\Folder $folderC */
         $folderC = FolderFactory::make()
@@ -471,20 +476,26 @@ class FoldersRelationsMoveItemInUserTreeServiceTest extends FoldersTestCase
         $folderA = FolderFactory::make()
             ->withPermissionsFor([$userA, $userB])
             ->withFoldersRelationsFor([$userA])
-            ->withFoldersRelationsFor([$userB], $folderC)
             ->persist();
-        // in order to make the test predictable, we need to make the relation C->A older than the relation D->C, so
+        // In order to make the test predictable, we need to make the relation C->A older than the relation D->C, so
         // the algorithm will always choose the relation to break.
-        sleep(1);
+        FoldersRelationFactory::make()
+            ->user($userB)
+            ->foreignModelFolder($folderA)
+            ->folderParent($folderC)
+            ->patchData(['created' => '2022-01-01 00:00:00'])
+            ->persist();
         FoldersRelationFactory::make()
             ->user($userC)
             ->foreignModelFolder($folderC)
             ->folderParent($folderD)
+            ->patchData(['created' => '2024-01-01 00:00:00'])
             ->persist();
         FoldersRelationFactory::make()
             ->user($userE)
             ->foreignModelFolder($folderC)
             ->folderParent($folderD)
+            ->patchData(['created' => '2024-01-01 00:00:00'])
             ->persist();
         $uac = new UserAccessControl(Role::USER, $userA->id);
 
