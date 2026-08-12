@@ -54,7 +54,10 @@
               composer
               pkgs.nodejs_22
               pkgs.gnupg
-              pkgs.mysql84
+              # MariaDB rather than MySQL: nixpkgs dropped mysql80 as end of life, and the test suite's table
+              # sniffer (cakephp-test-suite-light) creates its TruncateDirtyTables procedure with a two statement
+              # execute() that MySQL 8.4 silently ignores, which breaks every integration test in setUp.
+              pkgs.mariadb
               pkgs.git
               pkgs.jq
             ];
