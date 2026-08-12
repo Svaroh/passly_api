@@ -94,7 +94,6 @@ class BaseSolutionBootstrapper
         $this->addFeaturePluginIfEnabled($app, 'UserKeyPolicies');
         $this->addFeaturePluginIfEnabled($app, 'ExportPolicies');
         $this->addFeaturePluginIfEnabled($app, 'SecretRevisions');
-        $this->addFeaturePluginIfEnabled($app, 'Sync', ['bootstrap' => true, 'routes' => true]);
     }
 
     /**
