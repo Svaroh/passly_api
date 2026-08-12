@@ -22,7 +22,7 @@ use App\Database\Type\ISOFormatDateTimeType;
 use App\Model\Table\ResourcesTable;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
-use Cake\Http\Exception\InternalErrorException;
+use Cake\Log\Log;
 use Cake\Utility\Hash;
 use Exception;
 use Passbolt\Folders\Model\Behavior\FolderizableBehavior;
@@ -122,6 +122,13 @@ class ResourcesIndexController extends AppController
             return;
         }
 
+        // Failing to write an audit row must not deny the index itself. This endpoint serves whole pages of
+        // resources, so a single failing insert would otherwise take down listing and synchronisation for every
+        // client, repeatedly, until the cause is fixed by hand.
+        // The deliberate single secret reads keep throwing - see SecretsViewController.
+        $failureCount = 0;
+        $firstError = null;
+
         foreach ($resources as $resource) {
             $secrets = Hash::get($resource, 'secrets');
             if (!isset($secrets)) {
@@ -136,9 +143,21 @@ class ResourcesIndexController extends AppController
                         Hash::get($secret, 'id'),
                     );
                 } catch (Exception $e) {
-                    throw new InternalErrorException('Could not log secret access entry.', 500, $e);
+                    $failureCount++;
+                    $firstError = $firstError ?? $e->getMessage();
                 }
             }
+        }
+
+        // Summarised once per request on purpose: a broken audit table on a page of a few thousand resources
+        // would otherwise write one line per secret, on every synchronisation, and drown the error log.
+        if ($failureCount > 0) {
+            Log::error(sprintf(
+                'Could not log %d secret access entries for user %s. First error: %s',
+                $failureCount,
+                $this->User->id(),
+                $firstError
+            ));
         }
     }
 }
