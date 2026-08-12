@@ -81,6 +81,7 @@ class EeSolutionBootstrapperTest extends SolutionBootstrapperTestCase
         'Passbolt/ExportPolicies',
         'Passbolt/Scim',
         'Passbolt/SecretRevisions',
+        'Passbolt/Sync',
     ];
 
     public function setUp(): void
