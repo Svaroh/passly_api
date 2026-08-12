@@ -64,6 +64,7 @@ class BaseSolutionBootstrapperTest extends SolutionBootstrapperTestCase
         'Passbolt/UserKeyPolicies',
         'Passbolt/ExportPolicies',
         'Passbolt/SecretRevisions',
+        'Passbolt/Sync',
     ];
 
     private ?BaseSolutionBootstrapper $sut = null;
