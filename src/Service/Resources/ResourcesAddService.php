@@ -93,7 +93,7 @@ class ResourcesAddService
         if (!$this->shouldBypassV5ResourceCreationPolicy($resourceDto)) {
             $this->assertCreationAllowedByMetadataSettings(
                 $resourceDto->isV5(),
-                MetadataTypesSettingsDto::ENTITY_RESOURCE
+                MetadataTypesSettingsDto::ENTITY_RESOURCE,
             );
         }
 

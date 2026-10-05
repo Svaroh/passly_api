@@ -146,7 +146,7 @@ class EmailNotificationSettingsFormTest extends AppTestCase
             EmailNotificationSettingsForm::class,
             'send_password_updateSelf',
             self::getDummyData(),
-            $testCases
+            $testCases,
         );
     }
 
@@ -160,7 +160,7 @@ class EmailNotificationSettingsFormTest extends AppTestCase
             EmailNotificationSettingsForm::class,
             'send_password_deleteSelf',
             self::getDummyData(),
-            $testCases
+            $testCases,
         );
     }
 

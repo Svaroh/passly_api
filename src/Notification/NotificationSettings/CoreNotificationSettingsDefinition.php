@@ -104,11 +104,11 @@ class CoreNotificationSettingsDefinition implements EmailNotificationSettingsDef
             ->boolean('send_password_update', __('The send on password updated setting should be a boolean.'))
             ->boolean(
                 'send_password_updateSelf',
-                __('The send on password update creator setting should be a boolean.')
+                __('The send on password update creator setting should be a boolean.'),
             )
             ->boolean(
                 'send_password_deleteSelf',
-                __('The send on password self deleted setting should be a boolean.')
+                __('The send on password self deleted setting should be a boolean.'),
             )
             ->boolean('send_password_delete', __('The send on password deleted setting should be a boolean.'))
             ->boolean('send_user_create', __('The send on user created setting should be a boolean.'))

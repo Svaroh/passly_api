@@ -546,7 +546,7 @@ class ResourcesTable extends Table implements TableCleanupProviderInterface
         string $userId,
         Resource $resource,
         bool $checkPermission = true,
-        bool $recoverable = false
+        bool $recoverable = false,
     ): bool {
         // The softDelete will perform an update to the entity to soft delete it.
         if (!Validation::uuid($userId)) {
@@ -698,7 +698,7 @@ class ResourcesTable extends Table implements TableCleanupProviderInterface
         if (!$this->hasRecoverableAssociations($resource->id)) {
             $resource->setError('id', [
                 'recoverable_data_exists' => __(
-                    'The resource cannot be restored because its recoverable data is missing.'
+                    'The resource cannot be restored because its recoverable data is missing.',
                 ),
             ]);
 
@@ -722,7 +722,7 @@ class ResourcesTable extends Table implements TableCleanupProviderInterface
         } catch (Throwable $e) {
             $resource->setError('id', [
                 'recoverable_data_exists' => __(
-                    'The resource cannot be restored because its recoverable data is missing.'
+                    'The resource cannot be restored because its recoverable data is missing.',
                 ),
             ]);
 

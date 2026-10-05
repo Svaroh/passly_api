@@ -135,7 +135,7 @@ class FoldersUpdateServiceTest extends FoldersTestCase
             ->persist();
 
         $name = 'new name';
-        $dto = MetadataFolderDto::fromArray(['name' => $name]);
+        $dto = MetadataFolderDto::createFromArray(['name' => $name]);
         $this->service->update($this->makeUac($userA), $folderA->get('id'), $dto);
 
         $this->assertEmailQueueCount(1);

@@ -350,7 +350,7 @@ class ResourcesAddControllerTest extends AppIntegrationTestCaseV5
         $dummyResourceData = $this->getDummyResourcesPostData([
             'resource_type_id' => $v4ResourceTypeId, // v4 here is intentional, needed for mapping
         ]);
-        $resourceDto = MetadataResourceDto::fromArray($dummyResourceData);
+        $resourceDto = MetadataResourceDto::createFromArray($dummyResourceData);
         $clearTextMetadata = json_encode($resourceDto->getClearTextMetadata());
         $metadata = $this->encryptForMetadataKey($clearTextMetadata);
         $metadataKeyType = 'shared_key';

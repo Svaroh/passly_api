@@ -49,7 +49,7 @@ class ResourceTypesIndexControllerTest extends AppIntegrationTestCase
 
         $this->assertSuccess();
         $this->assertGreaterThan(1, count($this->_responseJsonBody));
-        $resourceTypeSlugs = array_map(fn ($resourceType) => $resourceType->slug, $this->_responseJsonBody);
+        $resourceTypeSlugs = array_map(fn($resourceType) => $resourceType->slug, $this->_responseJsonBody);
         $this->assertContains(ResourceType::SLUG_STANDALONE_TOTP, $resourceTypeSlugs);
         $this->assertContains(ResourceType::SLUG_PASSWORD_DESCRIPTION_TOTP, $resourceTypeSlugs);
     }
@@ -67,7 +67,7 @@ class ResourceTypesIndexControllerTest extends AppIntegrationTestCase
         $this->assertSuccess();
         $this->assertGreaterThan(1, count($this->_responseJsonBody));
         $this->assertResourceTypeAttributes($this->_responseJsonBody[0]);
-        $resourceTypeSlugs = array_map(fn ($resourceType) => $resourceType->slug, $this->_responseJsonBody);
+        $resourceTypeSlugs = array_map(fn($resourceType) => $resourceType->slug, $this->_responseJsonBody);
         $this->assertNotContains(ResourceType::SLUG_STANDALONE_TOTP, $resourceTypeSlugs);
         $this->assertNotContains(ResourceType::SLUG_PASSWORD_DESCRIPTION_TOTP, $resourceTypeSlugs);
     }

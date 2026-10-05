@@ -34,7 +34,7 @@ class SyncChangesController extends AppController
         $changes = (new SyncChangesService())->get(
             $this->User->id(),
             $this->assertSince(),
-            $this->assertLimit()
+            $this->assertLimit(),
         );
 
         $this->success(__('The operation was successful.'), $changes->toArray());
@@ -65,7 +65,7 @@ class SyncChangesController extends AppController
 
         if (!is_numeric($limit) || (int)$limit < 1 || (int)$limit > SyncMetaService::MAX_PAGE_SIZE) {
             throw new BadRequestException(
-                __('The limit should be an integer between 1 and {0}.', SyncMetaService::MAX_PAGE_SIZE)
+                __('The limit should be an integer between 1 and {0}.', SyncMetaService::MAX_PAGE_SIZE),
             );
         }
 
