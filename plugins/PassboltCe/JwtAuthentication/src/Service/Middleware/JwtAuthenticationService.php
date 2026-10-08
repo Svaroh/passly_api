@@ -38,6 +38,12 @@ class JwtAuthenticationService extends AuthenticationService
         } elseif ($this->isRefreshEndpointPost($request)) {
             $this->loadAuthenticator('Passbolt/JwtAuthentication.JwtRefreshToken');
         } else {
+            $this->loadIdentifier('Authentication.JwtSubject', [
+                'resolver' => [
+                    'className' => 'Authentication.Orm',
+                    'finder' => 'activeNotDeletedNotDisabledContainRole',
+                ],
+            ]);
             $this->loadAuthenticator('Authentication.Jwt', [
                 'header' => self::JWT_HEADER,
                 'algorithm' => JwtTokenCreateService::JWT_ALG,
