@@ -23,24 +23,24 @@ use Passbolt\OfflineMode\Model\Entity\OfflineModeSetting;
 class OfflineSettingsDto
 {
     /**
-     * Settings - session_duration. In seconds.
+     * Settings - session_duration. In seconds. 0 = unlimited / perpetual.
      */
-    public const DEFAULT_MAX_SESSION_DURATION = 300;
-    public const MIN_MAX_SESSION_DURATION = 300;
+    public const DEFAULT_MAX_SESSION_DURATION = 0;
+    public const MIN_MAX_SESSION_DURATION = 0;
     public const MAX_MAX_SESSION_DURATION = 86400;
 
     /**
-     * Settings - data_retention_period. In days.
+     * Settings - data_retention_period. In days. 0 = unlimited / perpetual.
      */
-    public const DEFAULT_DATA_RETENTION_PERIOD = 7;
-    public const MIN_DATA_RETENTION_PERIOD = 1;
+    public const DEFAULT_DATA_RETENTION_PERIOD = 0;
+    public const MIN_DATA_RETENTION_PERIOD = 0;
     public const MAX_DATA_RETENTION_PERIOD = 30;
 
     /**
-     * Settings - max_items.
+     * Settings - max_items. 0 = unlimited.
      */
-    public const DEFAULT_MAX_ITEMS = 1000;
-    public const MIN_MAX_ITEMS = 1;
+    public const DEFAULT_MAX_ITEMS = 0;
+    public const MIN_MAX_ITEMS = 0;
     public const MAX_MAX_ITEMS = 5000;
 
     public int $max_session_duration;

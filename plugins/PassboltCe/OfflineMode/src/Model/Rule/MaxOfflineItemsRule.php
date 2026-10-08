@@ -53,6 +53,10 @@ class MaxOfflineItemsRule
 
         $maxItems = $offlineSettingsDto->max_items;
 
+        if ($maxItems <= 0) {
+            return true;
+        }
+
         $count = $this->fetchTable('Passbolt/OfflineMode.OfflineItems')
             ->find()
             ->where(['user_id' => $userId])

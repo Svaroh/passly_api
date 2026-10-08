@@ -51,17 +51,11 @@ class OfflineSettingsDefaultsForm extends Form implements OfflineSettingsFormInt
      */
     public function validationDefault(Validator $validator): Validator
     {
-        foreach (self::DEFAULTS as $field => $default) {
+        foreach (array_keys(self::DEFAULTS) as $field) {
             $validator
                 ->requirePresence($field, true, __('The setting is required.'))
                 ->integer($field, __('The setting should be a valid integer.'))
-                ->add($field, 'default_only', [
-                    'rule' => fn(mixed $value): bool => $value === $default,
-                    'message' => __(
-                        'This setting is not customizable on this edition, it should be {0}.',
-                        $default,
-                    ),
-                ]);
+                ->greaterThanOrEqual($field, 0, __('The setting must be greater than or equal to 0.'));
         }
 
         return $validator;

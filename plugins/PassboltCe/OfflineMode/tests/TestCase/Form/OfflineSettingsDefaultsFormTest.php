@@ -69,9 +69,20 @@ class OfflineSettingsDefaultsFormTest extends TestCase
         return [
             'string' => ['string'],
             'array' => [[]],
-            'zero' => [0],
             'negative' => [-1],
         ];
+    }
+
+    public function testOfflineSettingsDefaultsForm_Success_CustomNonZeroValues(): void
+    {
+        $data = [
+            'max_session_duration' => 600,
+            'data_retention_period' => 14,
+            'max_items' => 2000,
+        ];
+        $this->assertTrue($this->form->execute($data));
+        $this->assertSame([], $this->form->getErrors());
+        $this->assertSame($data, $this->form->getSettings());
     }
 
     /**
