@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 use App\Model\Entity\OrganizationSetting;
 use App\Utility\UuidFactory;
-use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Migrations\AbstractMigration;
 use Passbolt\OfflineMode\Model\Dto\OfflineSettingsDto;
@@ -29,48 +28,46 @@ class V602SetPerpetualOfflineModeSettings extends AbstractMigration
     public function change(): void
     {
         try {
-            ConnectionManager::get('default')->transactional(function (): void {
-                $propertyId = UuidFactory::uuid(
-                    OrganizationSetting::UUID_NAMESPACE . OfflineModeSetting::PROPERTY_NAME,
+            $propertyId = UuidFactory::uuid(
+                OrganizationSetting::UUID_NAMESPACE . OfflineModeSetting::PROPERTY_NAME,
+            );
+
+            $existing = $this->fetchRow(
+                sprintf("SELECT id FROM organization_settings WHERE property_id = '%s' LIMIT 1", $propertyId),
+            );
+
+            $value = json_encode([
+                'max_session_duration' => OfflineSettingsDto::DEFAULT_MAX_SESSION_DURATION,
+                'data_retention_period' => OfflineSettingsDto::DEFAULT_DATA_RETENTION_PERIOD,
+                'max_items' => OfflineSettingsDto::DEFAULT_MAX_ITEMS,
+            ]);
+            $now = date('Y-m-d H:i:s');
+
+            if (!empty($existing)) {
+                $this->execute(
+                    sprintf(
+                        "UPDATE organization_settings SET value = '%s', modified = '%s' WHERE id = '%s'",
+                        addslashes($value),
+                        $now,
+                        $existing['id'],
+                    ),
                 );
+            } else {
+                $admin = $this->fetchRow('SELECT id FROM users ORDER BY created ASC LIMIT 1');
+                $adminId = $admin['id'] ?? null;
 
-                $existing = $this->fetchRow(
-                    sprintf("SELECT id FROM organization_settings WHERE property_id = '%s' LIMIT 1", $propertyId),
-                );
-
-                $value = json_encode([
-                    'max_session_duration' => OfflineSettingsDto::DEFAULT_MAX_SESSION_DURATION,
-                    'data_retention_period' => OfflineSettingsDto::DEFAULT_DATA_RETENTION_PERIOD,
-                    'max_items' => OfflineSettingsDto::DEFAULT_MAX_ITEMS,
-                ]);
-                $now = date('Y-m-d H:i:s');
-
-                if (!empty($existing)) {
-                    $this->execute(
-                        sprintf(
-                            "UPDATE organization_settings SET value = '%s', modified = '%s' WHERE id = '%s'",
-                            addslashes($value),
-                            $now,
-                            $existing['id'],
-                        ),
-                    );
-                } else {
-                    $admin = $this->fetchRow('SELECT id FROM users ORDER BY created ASC LIMIT 1');
-                    $adminId = $admin['id'] ?? null;
-
-                    $table = $this->table('organization_settings');
-                    $table->insert([
-                        'id' => UuidFactory::uuid(),
-                        'property' => OfflineModeSetting::PROPERTY_NAME,
-                        'property_id' => $propertyId,
-                        'value' => $value,
-                        'created' => $now,
-                        'created_by' => $adminId,
-                        'modified' => $now,
-                        'modified_by' => $adminId,
-                    ])->saveData();
-                }
-            });
+                $table = $this->table('organization_settings');
+                $table->insert([
+                    'id' => UuidFactory::uuid(),
+                    'property' => OfflineModeSetting::PROPERTY_NAME,
+                    'property_id' => $propertyId,
+                    'value' => $value,
+                    'created' => $now,
+                    'created_by' => $adminId,
+                    'modified' => $now,
+                    'modified_by' => $adminId,
+                ])->saveData();
+            }
         } catch (Throwable $e) {
             $msg = 'There was an error in V602SetPerpetualOfflineModeSettings.';
             $msg .= ' ' . $e->getMessage();
