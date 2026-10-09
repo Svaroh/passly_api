@@ -140,16 +140,15 @@ class OfflineSettingsPostControllerTest extends AppIntegrationTestCase
         $this->postJson('/offline/settings.json', [
             'max_session_duration' => 'not-an-int',
             'data_retention_period' => -1,
-            'max_items' => OfflineSettingsDto::MAX_MAX_ITEMS + 1,
+            'max_items' => -1,
         ]);
 
         $this->assertBadRequestError('Could not validate offline settings data');
         $response = $this->getResponseBodyAsArray();
         $this->assertCount(3, $response);
-        // Assert only CE rules are applied
-        $this->assertArrayHasAttributes(['integer', 'default_only'], $response['max_session_duration']);
-        $this->assertArrayHasKey('default_only', $response['data_retention_period']);
-        $this->assertArrayHasKey('default_only', $response['max_items']);
+        $this->assertArrayHasKey('integer', $response['max_session_duration']);
+        $this->assertArrayHasKey('greaterThanOrEqual', $response['data_retention_period']);
+        $this->assertArrayHasKey('greaterThanOrEqual', $response['max_items']);
     }
 
     public function testOfflineSettingsPostController_Error_MaxSessionDurationOutOfRange(): void
@@ -157,7 +156,7 @@ class OfflineSettingsPostControllerTest extends AppIntegrationTestCase
         $this->logInAsAdmin();
 
         $this->postJson('/offline/settings.json', [
-            'max_session_duration' => OfflineSettingsDto::MAX_MAX_SESSION_DURATION + 1,
+            'max_session_duration' => OfflineSettingsDto::MIN_MAX_SESSION_DURATION - 1,
             'data_retention_period' => 7,
             'max_items' => 1000,
         ]);

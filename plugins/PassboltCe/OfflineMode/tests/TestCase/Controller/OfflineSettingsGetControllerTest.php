@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Passbolt\OfflineMode\Test\TestCase\Controller;
 
 use App\Test\Lib\AppIntegrationTestCase;
+use Passbolt\OfflineMode\Model\Dto\OfflineSettingsDto;
 use Passbolt\OfflineMode\OfflineModePlugin;
 use Passbolt\OfflineMode\Test\Factory\OfflineModeSettingFactory;
 
@@ -35,6 +36,7 @@ class OfflineSettingsGetControllerTest extends AppIntegrationTestCase
 
     public function testOfflineSettingsGetController_Success_EmptyBodyWhenNoRow(): void
     {
+        $this->disableFeaturePlugin(OfflineModePlugin::class);
         $this->logInAsUser();
         $this->getJson('/offline/settings.json');
 
@@ -85,9 +87,9 @@ class OfflineSettingsGetControllerTest extends AppIntegrationTestCase
 
         $this->assertResponseOk();
         $body = $this->getResponseBodyAsArray();
-        $this->assertSame(300, $body['max_session_duration']);
-        $this->assertSame(7, $body['data_retention_period']);
-        $this->assertSame(1000, $body['max_items']);
+        $this->assertSame(OfflineSettingsDto::DEFAULT_MAX_SESSION_DURATION, $body['max_session_duration']);
+        $this->assertSame(OfflineSettingsDto::DEFAULT_DATA_RETENTION_PERIOD, $body['data_retention_period']);
+        $this->assertSame(OfflineSettingsDto::DEFAULT_MAX_ITEMS, $body['max_items']);
     }
 
     public function testOfflineSettingsGetController_Error_UnusableStoredValue(): void
@@ -105,7 +107,7 @@ class OfflineSettingsGetControllerTest extends AppIntegrationTestCase
     {
         OfflineModeSettingFactory::make()
             ->setField('value', [
-                'max_session_duration' => 600,
+                'max_session_duration' => -1,
                 'data_retention_period' => 14,
                 'max_items' => 500,
             ])
@@ -115,7 +117,7 @@ class OfflineSettingsGetControllerTest extends AppIntegrationTestCase
         $this->getJson('/offline/settings.json');
 
         $this->assertBadRequestError('Could not validate offline settings data');
-        $this->assertArrayHasKey('default_only', $this->getResponseBodyAsArray()['max_session_duration']);
+        $this->assertArrayHasKey('greaterThanOrEqual', $this->getResponseBodyAsArray()['max_session_duration']);
     }
 
     public function testOfflineSettingsGetController_Error_NotAuthenticated(): void

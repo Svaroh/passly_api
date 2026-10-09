@@ -277,6 +277,7 @@ class OfflineItemsAddControllerTest extends AppIntegrationTestCase
 
     private function disableOfflineMode(): void
     {
+        $this->disableFeaturePlugin(OfflineModePlugin::class);
         $table = OfflineModeSettingFactory::make()->getTable();
         $table->deleteAll([]);
     }

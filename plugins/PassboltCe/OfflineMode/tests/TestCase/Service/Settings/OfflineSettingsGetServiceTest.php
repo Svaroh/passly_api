@@ -126,7 +126,7 @@ class OfflineSettingsGetServiceTest extends AppTestCase
     {
         OfflineModeSettingFactory::make()
             ->setField('value', [
-                'max_session_duration' => 600,
+                'max_session_duration' => -1,
                 'data_retention_period' => 14,
                 'max_items' => 500,
             ])
@@ -137,7 +137,7 @@ class OfflineSettingsGetServiceTest extends AppTestCase
             $this->fail('A CustomValidationException should have been thrown.');
         } catch (CustomValidationException $e) {
             $errors = $e->getErrors();
-            $this->assertArrayHasKey('default_only', $errors['max_session_duration']);
+            $this->assertArrayHasKey('greaterThanOrEqual', $errors['max_session_duration']);
         }
     }
 

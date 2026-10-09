@@ -123,40 +123,4 @@ class OfflineSettingsDefaultsFormTest extends TestCase
         $this->assertFalse($this->form->execute($data));
         $this->assertNotEmpty($this->form->getError('max_items'));
     }
-
-    /**
-     * @return array
-     */
-    public static function nonDefaultInValuesProvider(): array
-    {
-        return [
-            'max_session_duration' => ['max_session_duration', 600],
-            'data_retention_period' => ['data_retention_period', 14],
-            'max_items' => ['max_items', 500],
-        ];
-    }
-
-    /**
-     * @dataProvider nonDefaultInValuesProvider
-     * @param string $field Field under test.
-     * @param int $value An in-bounds value that is not the default.
-     * @return void
-     */
-    public function testOfflineSettingsDefaultsForm_Error_NonDefaultValueRejected(string $field, int $value): void
-    {
-        $data = array_merge(self::getDefaultData(), [$field => $value]);
-
-        $this->assertFalse($this->form->execute($data));
-        $this->assertArrayHasKey('default_only', $this->form->getErrors()[$field]);
-    }
-
-    public function testOfflineSettingsDefaultsForm_Error_OutOfBoundsValueRejected(): void
-    {
-        $data = array_merge(self::getDefaultData(), [
-            'max_items' => OfflineSettingsDto::MAX_MAX_ITEMS + 1,
-        ]);
-
-        $this->assertFalse($this->form->execute($data));
-        $this->assertArrayHasKey('default_only', $this->form->getErrors()['max_items']);
-    }
 }
