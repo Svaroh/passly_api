@@ -21,6 +21,7 @@ use App\Utility\UserAccessControl;
 use Cake\Http\ServerRequest;
 use Passbolt\JwtAuthentication\Authenticator\JwtArmoredChallengeService;
 use Passbolt\MultiFactorAuthentication\Service\IsMfaAuthenticationRequiredService;
+use Passbolt\MultiFactorAuthentication\Service\MfaPolicies\RememberAMonthSettingInterface;
 use Passbolt\MultiFactorAuthentication\Utility\MfaSettings;
 
 /**
@@ -30,6 +31,16 @@ use Passbolt\MultiFactorAuthentication\Utility\MfaSettings;
  */
 class MfaJwtArmoredChallengeService extends JwtArmoredChallengeService
 {
+    /**
+     * Constructor.
+     *
+     * @param \Passbolt\MultiFactorAuthentication\Service\MfaPolicies\RememberAMonthSettingInterface $rememberMeForAMonthSetting
+     */
+    public function __construct(
+        private readonly RememberAMonthSettingInterface $rememberMeForAMonthSetting,
+    ) {
+    }
+
     /**
      * @inheritDoc
      */
@@ -41,7 +52,7 @@ class MfaJwtArmoredChallengeService extends JwtArmoredChallengeService
         $mfaSettings = MfaSettings::get($uac);
 
         $isMfaAuthenticationRequired = (new IsMfaAuthenticationRequiredService())
-            ->isMfaCheckRequired($request, $mfaSettings, $uac);
+            ->isMfaCheckRequired($request, $mfaSettings, $uac, null, $this->rememberMeForAMonthSetting);
 
         if ($isMfaAuthenticationRequired) {
             $challenge['providers'] = $mfaSettings->getEnabledProvidersWithLastUsedFirst();

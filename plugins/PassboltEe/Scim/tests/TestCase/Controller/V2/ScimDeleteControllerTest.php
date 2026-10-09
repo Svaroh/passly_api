@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Passbolt\Scim\Test\TestCase\Controller\V2;
 
+use Cake\Core\Configure;
 use Passbolt\Scim\Test\Utility\ScimApiIntegrationTestCase;
 
 /**
@@ -40,6 +41,49 @@ class ScimDeleteControllerTest extends ScimApiIntegrationTestCase
         $this->assertResponseCode(204);
 
         $scimEntry = $this->getScimEntryByName(self::USER_1_SCIM_NAME, addUser: true, isDeleted: true);
+        $this->assertTrue($scimEntry->user->deleted);
+    }
+
+    public function testScimControllerUsersDelete_Error_CannotDeleteAdmin()
+    {
+        $this->setTestNow();
+        $scimEntry = $this->createScimAdminUser();
+
+        $this->configScimAuth();
+        $this->delete($this->getScimEndpoint('Users' . DS . $scimEntry->foreign_key));
+
+        $this->assertResponseCode(403);
+        $this->assertResponseContains('An administrator user cannot be deleted via SCIM.');
+        $scimEntry = $this->getScimEntryByName('admin-scim@username.com', addUser: true);
+        $this->assertFalse($scimEntry->user->deleted);
+    }
+
+    public function testScimControllerUsersDelete_Success_CanDeleteAdminWhenConfigAllows()
+    {
+        $this->setTestNow();
+        Configure::write('passbolt.plugins.scim.security.allowDeleteAdministrators', true);
+        $scimEntry = $this->createScimAdminUser();
+
+        $this->configScimAuth();
+        $this->delete($this->getScimEndpoint('Users' . DS . $scimEntry->foreign_key));
+
+        $this->assertResponseCode(204);
+        $scimEntry = $this->getScimEntryByName('admin-scim@username.com', addUser: true, isDeleted: true);
+        $this->assertTrue($scimEntry->user->deleted);
+    }
+
+    public function testScimControllerUsersDelete_Success_CanDeleteAdminWhenSuspendConfigAllows()
+    {
+        $this->setTestNow();
+        Configure::write('passbolt.plugins.scim.security.allowDeleteAdministrators', null);
+        Configure::write('passbolt.plugins.scim.security.allowSuspendAdministrators', true);
+        $scimEntry = $this->createScimAdminUser();
+
+        $this->configScimAuth();
+        $this->delete($this->getScimEndpoint('Users' . DS . $scimEntry->foreign_key));
+
+        $this->assertResponseCode(204);
+        $scimEntry = $this->getScimEntryByName('admin-scim@username.com', addUser: true, isDeleted: true);
         $this->assertTrue($scimEntry->user->deleted);
     }
 

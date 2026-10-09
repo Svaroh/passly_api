@@ -27,6 +27,7 @@ use Cake\I18n\Date;
 use Cake\I18n\DateTime;
 use Cake\ORM\TableRegistry;
 use Cake\Validation\Validation;
+use Passbolt\MultiFactorAuthentication\Service\MfaPolicies\RememberAMonthSettingInterface;
 use Passbolt\MultiFactorAuthentication\Test\Factory\MfaAuthenticationTokenFactory;
 use Passbolt\MultiFactorAuthentication\Test\Lib\MfaIntegrationTestCase;
 use Passbolt\MultiFactorAuthentication\Utility\MfaSettings;
@@ -242,7 +243,7 @@ class MfaVerifiedTokenTest extends MfaIntegrationTestCase
             ->withAuthenticationTokens(
                 MfaAuthenticationTokenFactory::make()
                     ->active()
-                    ->setField('data', '{This is no valid JSON!{')
+                    ->setField('data', '{This is no valid JSON!{'),
             )
             ->persist();
         $token = $user->authentication_tokens[0];
@@ -262,7 +263,7 @@ class MfaVerifiedTokenTest extends MfaIntegrationTestCase
             ->withAuthenticationTokens(
                 MfaAuthenticationTokenFactory::make()
                     ->active()
-                    ->created((new DateTime())->addDays(-MfaVerifiedCookie::MAX_DURATION_IN_DAYS))
+                    ->created((new DateTime())->addDays(-MfaVerifiedCookie::MAX_DURATION_IN_DAYS)),
             )
             ->persist();
         $token = $user->authentication_tokens[0];
@@ -329,6 +330,78 @@ class MfaVerifiedTokenTest extends MfaIntegrationTestCase
         $this->assertTrue($success);
     }
 
+    public function testMfaVerifiedTokenCheck_RememberTrueRow_PolicyDisabled_InvalidatesToken(): void
+    {
+        $uac = UserFactory::make()->user()->persistedUAC();
+        $token = $this->persistRememberMeMfaToken($uac->getId());
+
+        $policy = $this->createMock(RememberAMonthSettingInterface::class);
+        $policy->method('isEnabled')->willReturn(false);
+
+        $valid = MfaVerifiedToken::check($uac, $token->token, null, null, $policy);
+
+        $this->assertFalse($valid);
+        $refreshed = $this->AuthenticationTokens->find()->where(['token' => $token->token])->firstOrFail();
+        $this->assertFalse($refreshed->get('active'));
+    }
+
+    public function testMfaVerifyTokenCheck_RememberTrueRow_PolicyDisabled_SessionMatches_StillRejects(): void
+    {
+        $uac = UserFactory::make()->user()->persistedUAC();
+        $token = $this->persistRememberMeMfaToken($uac->getId());
+
+        $policy = $this->createMock(RememberAMonthSettingInterface::class);
+        $policy->method('isEnabled')->willReturn(false);
+        $sessionIdSvc = $this->createStub(AbstractSessionIdentificationService::class);
+        $sessionIdSvc->method('checkAuthenticationToken')->willReturn(true);
+
+        $valid = MfaVerifiedToken::check($uac, $token->token, $sessionIdSvc, new ServerRequest(), $policy);
+
+        $this->assertFalse($valid);
+        $refreshed = $this->AuthenticationTokens->find()->where(['token' => $token->token])->firstOrFail();
+        $this->assertFalse($refreshed->get('active'));
+    }
+
+    public function testMfaVerifyTokenCheck_RememberTrueRow_PolicyEnabled_HonoursTheRow(): void
+    {
+        $uac = UserFactory::make()->user()->persistedUAC();
+        $token = $this->persistRememberMeMfaToken($uac->getId());
+
+        $policy = $this->createMock(RememberAMonthSettingInterface::class);
+        $policy->method('isEnabled')->willReturn(true);
+
+        $valid = MfaVerifiedToken::check($uac, $token->token, null, null, $policy);
+
+        $this->assertTrue($valid);
+        $refreshed = $this->AuthenticationTokens->find()->where(['token' => $token->token])->firstOrFail();
+        $this->assertTrue($refreshed->get('active'));
+    }
+
+    public function testMfaVerifyTokenCheck_RememberFalseRow_PolicyDisabled_NoEarlyInvalidate(): void
+    {
+        $uac = UserFactory::make()->user()->persistedUAC();
+        $sessionId = uniqid();
+        $sessionIdSvc = $this->createStub(AbstractSessionIdentificationService::class);
+        $sessionIdSvc->method('checkAuthenticationToken')->willReturn(true);
+        $tokenString = MfaVerifiedToken::get($uac, MfaSettings::PROVIDER_TOTP, $sessionId, false);
+        $policy = $this->createMock(RememberAMonthSettingInterface::class);
+        $policy->method('isEnabled')->willReturn(false);
+
+        $valid = MfaVerifiedToken::check($uac, $tokenString, $sessionIdSvc, new ServerRequest(), $policy);
+
+        $this->assertTrue($valid);
+    }
+
+    public function testMfaVerifyTokenCheck_NoPolicySupplied_FallsBackToLegacyBehaviour(): void
+    {
+        $uac = UserFactory::make()->user()->persistedUAC();
+        $token = $this->persistRememberMeMfaToken($uac->getId());
+
+        $valid = MfaVerifiedToken::check($uac, $token->token);
+
+        $this->assertTrue($valid);
+    }
+
     /**
      * @group mfa
      * @group mfaVerifiedToken
@@ -352,5 +425,27 @@ class MfaVerifiedTokenTest extends MfaIntegrationTestCase
             ->all()
             ->count();
         $this->assertEquals($tokensCount, 0);
+    }
+
+    private function persistRememberMeMfaToken(string $userId): AuthenticationToken
+    {
+        $entityData = [
+            'user_id' => $userId,
+            'token' => UuidFactory::uuid(),
+            'active' => true,
+            'type' => AuthenticationToken::TYPE_MFA,
+            'data' => json_encode([
+                'provider' => MfaSettings::PROVIDER_TOTP,
+                'user_agent' => null,
+                'remember' => true,
+            ]),
+        ];
+        $accessibleFields = ['user_id' => true, 'token' => true, 'active' => true, 'type' => true, 'data' => true];
+        $token = $this->AuthenticationTokens->newEntity($entityData, ['accessibleFields' => $accessibleFields]);
+        $this->assertEmpty($token->getErrors());
+        $this->AuthenticationTokens->save($token);
+        $this->assertEmpty($token->getErrors());
+
+        return $token;
     }
 }

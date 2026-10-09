@@ -118,13 +118,12 @@ class PermissionsHistoryTable extends Table
     {
         $validator
             ->uuid('id', __('The identifier should be a valid UUID.'))
-            ->requirePresence('id', 'create', __('An identifier is required.'))
-            ->notEmptyString('id', __('The identifier should not be empty.'));
+            ->allowEmptyString('id', __('The identifier should not be empty.'), 'create');
 
         $validator
             ->inList('aco', PermissionsTable::ALLOWED_ACOS, __(
                 'The type of the access control object should be one of the following: {0}.',
-                implode(', ', PermissionsTable::ALLOWED_ACOS)
+                implode(', ', PermissionsTable::ALLOWED_ACOS),
             ))
             ->requirePresence('aco', 'create', __('The type of the access control object is required.'))
             ->notEmptyString('aco', __('The type of the access control object should not be empty.'));
@@ -134,14 +133,14 @@ class PermissionsHistoryTable extends Table
             ->requirePresence(
                 'aco_foreign_key',
                 'create',
-                __('The identifier of the access control object is required.')
+                __('The identifier of the access control object is required.'),
             )
             ->notEmptyString('aco_foreign_key', __('The identifier of the access control object should not be empty.'));
 
         $validator
             ->inList('aro', PermissionsTable::ALLOWED_AROS, __(
                 'The access request object type should be one of the following: {0}.',
-                implode(', ', PermissionsTable::ALLOWED_AROS)
+                implode(', ', PermissionsTable::ALLOWED_AROS),
             ))
             ->requirePresence('aro', 'create', __('The type of the access request object is required.'))
             ->notEmptyString('aro', __('The access request object type should not be empty.'));
@@ -151,14 +150,14 @@ class PermissionsHistoryTable extends Table
             ->requirePresence(
                 'aro_foreign_key',
                 'create',
-                __('The identifier of the access request object is required.')
+                __('The identifier of the access request object is required.'),
             )
             ->notEmptyString('aro_foreign_key', __('The identifier of the access request object should not be empty.'));
 
         $validator
             ->inList('type', PermissionsTable::ALLOWED_TYPES, __(
                 'The type must be one of the following: {0}.',
-                implode(', ', PermissionsTable::ALLOWED_TYPES)
+                implode(', ', PermissionsTable::ALLOWED_TYPES),
             ))
             ->requirePresence('type', 'create', __('The type is required.'))
             ->notEmptyString('type', __('The type should not be empty.'));
@@ -176,7 +175,6 @@ class PermissionsHistoryTable extends Table
     {
         return $this->newEntity($data, [
             'accessibleFields' => [
-                'id' => true,
                 'aco' => true,
                 'aco_foreign_key' => true,
                 'aro' => true,

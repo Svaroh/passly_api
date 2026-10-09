@@ -29,6 +29,7 @@ use App\Test\Lib\Utility\ArrayTrait;
 use App\Test\Lib\Utility\EntityTrait;
 use App\Test\Lib\Utility\ErrorTestTrait;
 use App\Test\Lib\Utility\ObjectTrait;
+use App\Test\Lib\Utility\StubAppTrait;
 use App\Test\Lib\Utility\UserAccessControlTrait;
 use App\Utility\Application\FeaturePluginAwareTrait;
 use App\Utility\UserAction;
@@ -57,6 +58,7 @@ abstract class AppTestCase extends TestCase
     use ProfilesModelTrait;
     use ResourcesModelTrait;
     use SecretsModelTrait;
+    use StubAppTrait;
     use TruncateDirtyTables;
     use UserAccessControlTrait;
     use UsersModelTrait;

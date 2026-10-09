@@ -23,8 +23,10 @@ use App\Service\Setup\RecoverCompleteService;
 use App\Test\Factory\AuthenticationTokenFactory;
 use App\Test\Factory\UserFactory;
 use App\Test\Lib\AppTestCase;
+use Cake\Event\EventInterface;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Http\ServerRequest;
+use RuntimeException;
 
 class RecoverCompleteServiceTest extends AppTestCase
 {
@@ -80,6 +82,43 @@ class RecoverCompleteServiceTest extends AppTestCase
         $this->expectExceptionMessage('The authentication token is not valid.');
 
         (new RecoverCompleteService($request))->complete($user->id);
+    }
+
+    public function testRecoverCompleteService_TokenRemainsActiveWhenDownstreamStepThrows(): void
+    {
+        $authToken = AuthenticationTokenFactory::make()->active()
+            ->with('Users', UserFactory::make()->user()->active()->withValidGpgKey())
+            ->type(AuthenticationToken::TYPE_RECOVER)
+            ->persist();
+        $user = $authToken->user;
+
+        $request = new ServerRequest([
+            'post' => [
+                'authentication_token' => $authToken->toArray(),
+                'gpgkey' => ['armored_key' => $user->gpgkey->armored_key],
+            ],
+            'environment' => ['REQUEST_METHOD' => 'POST'],
+        ]);
+
+        $service = new class ($request) extends RecoverCompleteService {
+            public function dispatchEvent(string $name, array $data = [], ?object $subject = null): EventInterface
+            {
+                throw new RuntimeException('simulated post-consume failure');
+            }
+        };
+
+        try {
+            $service->complete($user->id);
+            $this->fail('Expected RuntimeException was not thrown.');
+        } catch (RuntimeException) {
+        }
+
+        $tokenAfterFailure = AuthenticationTokenFactory::get($authToken->id);
+        $this->assertTrue($tokenAfterFailure->active);
+
+        (new RecoverCompleteService($request))->complete($user->id);
+        $tokenAfterRetry = AuthenticationTokenFactory::get($authToken->id);
+        $this->assertFalse($tokenAfterRetry->active);
     }
 
     public function testRecoverCompleteService_FailOnNotMatchingKey(): void

@@ -30,21 +30,6 @@ class JwtAuthenticationService extends AuthenticationService
     /**
      * @inheritDoc
      */
-    public function __construct(array $config = [])
-    {
-        parent::__construct($config);
-
-        $this->loadIdentifier('Authentication.JwtSubject', [
-            'resolver' => [
-                'className' => 'Authentication.Orm',
-                'finder' => 'activeNotDeletedContainRole',
-            ],
-        ]);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function authenticate(ServerRequestInterface $request): ResultInterface
     {
         /** @var \Cake\Http\ServerRequest $request */
@@ -58,6 +43,14 @@ class JwtAuthenticationService extends AuthenticationService
                 'algorithm' => JwtTokenCreateService::JWT_ALG,
                 'secretKey' => file_get_contents(JwksGetService::PUBLIC_KEY_PATH),
                 'returnPayload' => false,
+                'identifier' => [
+                    'Authentication.JwtSubject' => [
+                        'resolver' => [
+                            'className' => 'Authentication.Orm',
+                            'finder' => 'activeNotDeletedNotDisabledContainRole',
+                        ],
+                    ],
+                ],
             ]);
         }
 

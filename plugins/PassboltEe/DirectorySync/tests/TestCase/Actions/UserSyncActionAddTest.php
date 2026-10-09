@@ -24,6 +24,7 @@ use Passbolt\DirectorySync\Actions\UserSyncAction;
 use Passbolt\DirectorySync\Test\Utility\DirectorySyncDeprecatedIntegrationTestCase;
 use Passbolt\DirectorySync\Test\Utility\Traits\AssertUsersTrait;
 use Passbolt\DirectorySync\Utility\Alias;
+use Passbolt\DirectorySync\Utility\DirectoryInterface;
 
 class UserSyncActionAddTest extends DirectorySyncDeprecatedIntegrationTestCase
 {
@@ -33,7 +34,7 @@ class UserSyncActionAddTest extends DirectorySyncDeprecatedIntegrationTestCase
     {
         parent::setUp();
         $this->action = new UserSyncAction(
-            new ResourcesExpireResourcesFallbackServiceService()
+            new ResourcesExpireResourcesFallbackServiceService(),
         );
         $this->action->getDirectory()->setUsers([]);
     }
@@ -1277,5 +1278,58 @@ class UserSyncActionAddTest extends DirectorySyncDeprecatedIntegrationTestCase
         $this->assertUserNotExist(['username' => 'neil@passbolt.com', 'active' => false, 'deleted' => false]);
         $this->assertDirectoryEntryEmpty();
         $this->assertDirectoryIgnoreEmpty();
+    }
+
+    /**
+     * @group DirectorySync
+     * @group DirectorySyncUser
+     * @group DirectorySyncUserAdd
+     */
+    public function testDirectorySyncUserAdd_ActiveDirectory_DeletedModifiedAfterReAdded()
+    {
+        $Users = TableRegistry::getTableLocator()->get('Users');
+        $sofia = $Users->find()->where(['username' => 'sofia@passbolt.com'])->first();
+        $deletionDate = $sofia->get('modified');
+        $dateBeforeDeletion = $deletionDate->subDays(1);
+        $dateAfterDeletion = $deletionDate->addDays(1);
+
+        // mockDirectoryUserData maps its 4th argument to directory_modified and its 5th to directory_created.
+        $this->mockDirectoryUserData('sofia', 'kovalevskaya', 'sofia@passbolt.com', $dateAfterDeletion, $dateBeforeDeletion);
+        /** @var \Passbolt\DirectorySync\Test\Utility\TestDirectory $directory */
+        $directory = $this->action->getDirectory();
+        $directory->setDirectoryType(DirectoryInterface::TYPE_AD);
+        $reports = $this->action->execute();
+
+        $data = $reports[0]->getData();
+        $this->assertUserExist($data->id, ['username' => 'sofia@passbolt.com', 'deleted' => false]);
+        $expectedReport = ['action' => Alias::ACTION_CREATE, 'model' => Alias::MODEL_USERS, 'status' => Alias::STATUS_SUCCESS, 'type' => Alias::MODEL_USERS];
+        $this->assertReport($reports[0], $expectedReport);
+        $this->assertDirectoryEntryExistsForUser(['username' => 'sofia@passbolt.com', 'deleted' => false]);
+        $this->assertDirectoryIgnoreEmpty();
+    }
+
+    /**
+     * @group DirectorySync
+     * @group DirectorySyncUser
+     * @group DirectorySyncUserAdd
+     */
+    public function testDirectorySyncUserAdd_OpenLdap_DeletedModifiedAfterNotReAdded()
+    {
+        $Users = TableRegistry::getTableLocator()->get('Users');
+        $sofia = $Users->find()->where(['username' => 'sofia@passbolt.com'])->first();
+        $deletionDate = $sofia->get('modified');
+        $dateBeforeDeletion = $deletionDate->subDays(1);
+        $dateAfterDeletion = $deletionDate->addDays(1);
+
+        $this->mockDirectoryUserData('sofia', 'kovalevskaya', 'sofia@passbolt.com', $dateAfterDeletion, $dateBeforeDeletion);
+        /** @var \Passbolt\DirectorySync\Test\Utility\TestDirectory $directory */
+        $directory = $this->action->getDirectory();
+        $directory->setDirectoryType(DirectoryInterface::TYPE_OPENLDAP);
+        $reports = $this->action->execute();
+
+        $expectedReport = ['action' => Alias::ACTION_CREATE, 'model' => Alias::MODEL_USERS, 'status' => Alias::STATUS_ERROR, 'type' => 'SyncError'];
+        $this->assertReport($reports[0], $expectedReport);
+        $this->assertUserExist(UuidFactory::uuid('user.id.sofia'), ['active' => true, 'deleted' => true]);
+        $this->assertOrphanDirectoryEntryExists(UuidFactory::uuid('ldap.user.id.sofia'));
     }
 }

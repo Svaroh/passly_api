@@ -19,7 +19,7 @@ namespace App\Model\Traits\Cleanup;
 use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\UnaryExpression;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
 use Exception;
 
@@ -30,10 +30,10 @@ trait TableCleanupTrait
      *
      * @param string $association association
      * @param bool|null $dryRun false
-     * @param \Cake\ORM\Query|null $query custom query to replace the default find if any
+     * @param \Cake\ORM\Query\SelectQuery|null $query custom query to replace the default find if any
      * @return int Number of affected records
      */
-    public function cleanupSoftDeleted(string $association, ?bool $dryRun = false, ?Query $query = null): int
+    public function cleanupSoftDeleted(string $association, ?bool $dryRun = false, ?SelectQuery $query = null): int
     {
         if (!isset($query)) {
             $query = $this->selectQuery()
@@ -57,10 +57,10 @@ trait TableCleanupTrait
      *
      * @param string $association association
      * @param bool|null $dryRun false
-     * @param \Cake\ORM\Query|null $query custom query to replace the default find if any
+     * @param \Cake\ORM\Query\SelectQuery|null $query custom query to replace the default find if any
      * @return int Number of affected records
      */
-    public function cleanupHardDeleted(string $association, ?bool $dryRun = false, ?Query $query = null): int
+    public function cleanupHardDeleted(string $association, ?bool $dryRun = false, ?SelectQuery $query = null): int
     {
         if (!isset($query)) {
             $query = $this->selectQuery()
@@ -150,7 +150,7 @@ trait TableCleanupTrait
             $innerJoinConditions[]['OR'] = [
                 new ComparisonExpression(
                     new IdentifierExpression($key),
-                    new IdentifierExpression("$duplicateTableName.{$targetTableName}__$key")
+                    new IdentifierExpression("$duplicateTableName.{$targetTableName}__$key"),
                 ),
                 [
                     /**
@@ -159,7 +159,7 @@ trait TableCleanupTrait
                     new UnaryExpression(
                         'IS NULL',
                         new IdentifierExpression("$duplicateTableName.{$targetTableName}__$key"),
-                        UnaryExpression::POSTFIX
+                        UnaryExpression::POSTFIX,
                     ),
                     new UnaryExpression('IS NULL', new IdentifierExpression($key), UnaryExpression::POSTFIX),
                 ],
@@ -167,7 +167,7 @@ trait TableCleanupTrait
         }
 
         // Find all the rows corresponding to the identified duplicated tuples.
-        $duplicatedRowsQuery = $this->selectQuery()
+        $duplicatedRowsQuery = $this->unhydratedSelectQuery()
             ->select(array_merge(['id'], $combinedKey))
             ->join([
                 'table' => $duplicatedTuplesQuery,
@@ -187,7 +187,7 @@ trait TableCleanupTrait
             $duplicatedRowsQuery->orderBy(['created' => $deleteNewest ? 'ASC' : 'DESC']);
         }
 
-        $duplicatedRows = $duplicatedRowsQuery->disableHydration()->toArray();
+        $duplicatedRows = $duplicatedRowsQuery->toArray();
 
         // Extract the rows id to delete.
         $idsToRemove = [];

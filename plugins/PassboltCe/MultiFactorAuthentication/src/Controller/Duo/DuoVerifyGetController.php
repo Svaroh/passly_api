@@ -20,6 +20,7 @@ use App\Authenticator\SessionIdentificationServiceInterface;
 use Cake\Routing\Router;
 use Passbolt\MultiFactorAuthentication\Controller\MfaVerifyController;
 use Passbolt\MultiFactorAuthentication\Form\MfaFormInterface;
+use Passbolt\MultiFactorAuthentication\Service\MfaPolicies\RememberAMonthSettingInterface;
 use Passbolt\MultiFactorAuthentication\Utility\MfaSettings;
 
 class DuoVerifyGetController extends MfaVerifyController
@@ -29,6 +30,7 @@ class DuoVerifyGetController extends MfaVerifyController
      *
      * @param \App\Authenticator\SessionIdentificationServiceInterface $sessionIdentificationService session ID service
      * @param \Passbolt\MultiFactorAuthentication\Form\MfaFormInterface $verifyForm MFA Form
+     * @param \Passbolt\MultiFactorAuthentication\Service\MfaPolicies\RememberAMonthSettingInterface $rememberMeForAMonthSetting Remember a month setting.
      * @throws \Cake\Http\Exception\InternalErrorException if there is no MFA settings for the user
      * @throws \Cake\Http\Exception\BadRequestException if valid Verification token is already present in cookie
      * @throws \Cake\Http\Exception\BadRequestException if there is no MFA settings for this provider
@@ -36,10 +38,11 @@ class DuoVerifyGetController extends MfaVerifyController
      */
     public function get(
         SessionIdentificationServiceInterface $sessionIdentificationService,
-        MfaFormInterface $verifyForm
+        MfaFormInterface $verifyForm,
+        RememberAMonthSettingInterface $rememberMeForAMonthSetting,
     ) {
         $this->_assertRequestNotJson();
-        $this->_handleVerifiedNotRequired($sessionIdentificationService);
+        $this->_handleVerifiedNotRequired($sessionIdentificationService, $rememberMeForAMonthSetting);
         $redirect = $this->_handleInvalidSettings(MfaSettings::PROVIDER_DUO);
         if ($redirect) {
             return $redirect;

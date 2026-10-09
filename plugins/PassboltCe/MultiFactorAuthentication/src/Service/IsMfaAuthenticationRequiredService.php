@@ -22,6 +22,7 @@ use App\Utility\UserAccessControl;
 use Cake\Event\EventManager;
 use Cake\Http\ServerRequest;
 use Passbolt\MultiFactorAuthentication\Event\ClearMfaCookieInResponse;
+use Passbolt\MultiFactorAuthentication\Service\MfaPolicies\RememberAMonthSettingInterface;
 use Passbolt\MultiFactorAuthentication\Utility\MfaSettings;
 use Passbolt\MultiFactorAuthentication\Utility\MfaVerifiedCookie;
 use Passbolt\MultiFactorAuthentication\Utility\MfaVerifiedToken;
@@ -38,13 +39,15 @@ class IsMfaAuthenticationRequiredService
      * @param \Passbolt\MultiFactorAuthentication\Utility\MfaSettings $mfaSettings MFA settings
      * @param \App\Utility\UserAccessControl $uac User Access Controller
      * @param \App\Authenticator\SessionIdentificationServiceInterface|null $sessionIdentificationService Session ID identifier
+     * @param \Passbolt\MultiFactorAuthentication\Service\MfaPolicies\RememberAMonthSettingInterface|null $rememberMeForAMonthSetting Live remember-me policy setting
      * @return bool
      */
     public function isMfaCheckRequired(
         ServerRequest $request,
         MfaSettings $mfaSettings,
         UserAccessControl $uac,
-        ?SessionIdentificationServiceInterface $sessionIdentificationService = null
+        ?SessionIdentificationServiceInterface $sessionIdentificationService = null,
+        ?RememberAMonthSettingInterface $rememberMeForAMonthSetting = null,
     ): bool {
         // Mfa not enabled for org or user
         if (!$mfaSettings->hasEnabledProviders()) {
@@ -54,7 +57,13 @@ class IsMfaAuthenticationRequiredService
         // Mfa cookie is set and a valid token
         $mfa = $request->getCookie(MfaVerifiedCookie::MFA_COOKIE_ALIAS);
         if (isset($mfa)) {
-            $isMfaCookieInvalid = !MfaVerifiedToken::check($uac, $mfa, $sessionIdentificationService, $request);
+            $isMfaCookieInvalid = !MfaVerifiedToken::check(
+                $uac,
+                $mfa,
+                $sessionIdentificationService,
+                $request,
+                $rememberMeForAMonthSetting,
+            );
 
             // If the MFA Cookie is invalid, clear that cookie in the response
             if ($isMfaCookieInvalid) {

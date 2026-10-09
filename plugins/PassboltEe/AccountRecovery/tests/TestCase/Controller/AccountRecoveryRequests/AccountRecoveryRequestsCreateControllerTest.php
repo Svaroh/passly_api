@@ -29,6 +29,9 @@ use Passbolt\AccountRecovery\Test\Factory\AccountRecoveryOrganizationPolicyFacto
 use Passbolt\AccountRecovery\Test\Factory\AccountRecoveryRequestFactory;
 use Passbolt\AccountRecovery\Test\Factory\AccountRecoveryUserSettingFactory;
 use Passbolt\AccountRecovery\Test\Lib\AccountRecoveryIntegrationTestCase;
+use Passbolt\Log\Test\Factory\ActionFactory;
+use Passbolt\Rbacs\RbacsPlugin;
+use Passbolt\Rbacs\Test\Factory\RbacFactory;
 
 class AccountRecoveryRequestsCreateControllerTest extends AccountRecoveryIntegrationTestCase
 {
@@ -104,5 +107,53 @@ class AccountRecoveryRequestsCreateControllerTest extends AccountRecoveryIntegra
                 Router::url('/app/account-recovery/requests/review/' . $request->get('id'), true),
             ], $admin->username);
         }
+    }
+
+    public function testAccountRecoveryRequestsCreateController_Success_NotifiesRbacViewerAndExcludesRequester()
+    {
+        $this->enableFeaturePlugin(RbacsPlugin::class);
+        AccountRecoveryOrganizationPolicyFactory::make()
+            ->optin()
+            ->withAccountRecoveryOrganizationPublicKey()
+            ->persist();
+
+        /** @var \App\Model\Entity\User $user */
+        $user = UserFactory::make()->admin()->withAvatar()->persist();
+        /** @var \App\Model\Entity\User $rbacViewer */
+        $rbacViewer = UserFactory::make()->persist();
+        $action = ActionFactory::make()->name('AccountRecoveryRequestsView.view')->persist();
+        RbacFactory::make()->setAction($action)->setField('role_id', $rbacViewer->role_id)->persist();
+
+        $data = AccountRecoveryRequestFactory::make()->rsa4096Key()->getEntity();
+        AccountRecoveryUserSettingFactory::make()
+            ->setField('user_id', $user->id)
+            ->approved()
+            ->persist();
+        /** @var \App\Model\Entity\AuthenticationToken $token */
+        $token = AuthenticationTokenFactory::make()
+            ->type(AuthenticationToken::TYPE_RECOVER)
+            ->userId($user->id)
+            ->active()
+            ->persist();
+
+        $payload = [
+            'authentication_token' => ['token' => $token->token],
+            'user_id' => $user->id,
+            'fingerprint' => $data->fingerprint,
+            'armored_key' => $data->armored_key,
+        ];
+
+        $this->postJson('/account-recovery/requests.json', $payload);
+        $this->assertResponseOk();
+
+        $name = $user->profile->first_name . ' ' . $user->profile->last_name;
+        $this->assertEmailInBatchContains(
+            $name . ' has initiated an account recovery request',
+            $rbacViewer->username,
+        );
+        $this->assertEmailInBatchNotContains(
+            $name . ' has initiated an account recovery request',
+            $user->username,
+        );
     }
 }

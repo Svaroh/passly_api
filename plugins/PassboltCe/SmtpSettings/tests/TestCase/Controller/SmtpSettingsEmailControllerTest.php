@@ -91,7 +91,7 @@ class SmtpSettingsEmailControllerTest extends AppIntegrationTestCase
         $this->assertMailCount(0);
         $this->assertSame(
             'A test recipient is required.',
-            $this->_responseJsonBody->email_test_to->_required
+            $this->_responseJsonBody->email_test_to->_required,
         );
     }
 

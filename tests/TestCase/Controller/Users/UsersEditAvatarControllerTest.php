@@ -162,4 +162,37 @@ class UsersEditAvatarControllerTest extends AppIntegrationTestCase
         $this->assertSame(1, AvatarFactory::count());
         $this->assertAvatarCachedFilesExist($ireneAvatar);
     }
+
+    public function testUsersEditAvatarController_Bug_Change_Other_User_Avatar(): void
+    {
+        $userA = UserFactory::make()->user()->withAvatar()->persist();
+        $userB = UserFactory::make()->user()->withAvatar()->persist();
+        $this->logInAs($userA);
+        $data = [
+            'id' => $userA->id,
+            'profile' => [
+                'avatar' => [
+                    'file' => $this->createUploadFile(),
+                    'profile_id' => $userB['profile']->id,
+                ],
+            ],
+        ];
+        $this->postJson('/users/' . $userA->id . '.json', $data);
+        $this->assertSuccess();
+        $this->assertNotEquals($userB['profile']->id, $this->_responseJsonBody->profile->avatar->profile_id);
+
+        /** @var \App\Model\Entity\Avatar $avatarUserA */
+        $avatarUserA = AvatarFactory::find()
+            ->contain('Profiles.Users')
+            ->where(['Users.id' => $userA->id])
+            ->firstOrFail();
+
+        /** @var \App\Model\Entity\Avatar $avatarUserB */
+        $avatarUserB = AvatarFactory::find()
+            ->contain('Profiles.Users')
+            ->where(['Users.id' => $userB->id])
+            ->firstOrFail();
+
+        $this->assertNotEquals($avatarUserA->profile_id, $avatarUserB->profile_id);
+    }
 }

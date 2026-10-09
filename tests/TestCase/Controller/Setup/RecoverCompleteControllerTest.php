@@ -110,7 +110,7 @@ class RecoverCompleteControllerTest extends AppIntegrationTestCase
             "User Agent: <i>$userAgent</i><br/>User IP: <i>$clientIP</i>",
             $user->username,
             '',
-            false
+            false,
         );
         $this->assertEmailIsNotInQueue([
             'email' => $user->username,
@@ -127,7 +127,7 @@ class RecoverCompleteControllerTest extends AppIntegrationTestCase
                 "User Agent: <i>$userAgent</i><br/>User IP: <i>$clientIP</i>",
                 $admin->username,
                 '',
-                false
+                false,
             );
         }
         Configure::write('passbolt.plugins.log.enabled', $logEnabled);

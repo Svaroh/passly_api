@@ -63,7 +63,7 @@ class ResourceTypesIsTheLastOneCheckService
         /** @var \Passbolt\ResourceTypes\Model\Table\ResourceTypesTable $resourcesTypesTable */
         $resourcesTypesTable = $this->fetchTable('Passbolt/ResourceTypes.ResourceTypes');
         /** @var \Passbolt\ResourceTypes\Model\Entity\ResourceType $resourceType */
-        $count = $resourcesTypesTable->find()->where($condition)->all()->count();
+        $count = $resourcesTypesTable->find('notDeleted')->where($condition)->all()->count();
 
         return $count < 2;
     }
@@ -76,7 +76,7 @@ class ResourceTypesIsTheLastOneCheckService
     {
         /** @var \Passbolt\ResourceTypes\Model\Table\ResourceTypesTable $resourcesTypesTable */
         $resourcesTypesTable = $this->fetchTable('Passbolt/ResourceTypes.ResourceTypes');
-        $count = $resourcesTypesTable->find()->all()->count();
+        $count = $resourcesTypesTable->find('notDeleted')->all()->count();
 
         return $count < 2;
     }

@@ -16,27 +16,26 @@ declare(strict_types=1);
  */
 namespace Passbolt\MultiFactorAuthentication;
 
-use App\Middleware\SetUserIdentityInRequestMiddleware;
 use App\Service\Command\ProcessUserService;
 use App\Utility\Application\FeaturePluginAwareTrait;
 use Cake\Core\BasePlugin;
 use Cake\Core\ContainerInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\MiddlewareQueue;
-use Cake\ORM\TableRegistry;
 use Duo\DuoUniversal\Client;
+use Passbolt\Edition\Middleware\LogoutUsersOnEditionChangeMiddleware;
 use Passbolt\JwtAuthentication\Authenticator\JwtArmoredChallengeInterface;
 use Passbolt\MultiFactorAuthentication\Authenticator\MfaJwtArmoredChallengeService;
 use Passbolt\MultiFactorAuthentication\Command\MfaUserSettingsDisableCommand;
 use Passbolt\MultiFactorAuthentication\Event\AddIsMfaEnabledColumnToUsersGrid;
 use Passbolt\MultiFactorAuthentication\Event\AddMfaCookieOnSuccessfulRefreshTokenCreation;
 use Passbolt\MultiFactorAuthentication\Event\ClearMfaCookieOnSetupAndRecover;
+use Passbolt\MultiFactorAuthentication\Event\UsersModelInitializeEventListener;
 use Passbolt\MultiFactorAuthentication\Middleware\InjectMfaFormMiddleware;
 use Passbolt\MultiFactorAuthentication\Middleware\MfaRequiredCheckMiddleware;
 use Passbolt\MultiFactorAuthentication\Notification\Email\MfaRedactorPool;
 use Passbolt\MultiFactorAuthentication\Service\MfaPolicies\DefaultRememberAMonthSettingService;
 use Passbolt\MultiFactorAuthentication\Service\MfaPolicies\RememberAMonthSettingInterface;
-use Passbolt\MultiFactorAuthentication\Utility\MfaSettings;
 
 class MultiFactorAuthenticationPlugin extends BasePlugin
 {
@@ -49,7 +48,6 @@ class MultiFactorAuthenticationPlugin extends BasePlugin
     {
         parent::bootstrap($app);
 
-        $this->addAccountSettingsAssociation();
         $this->registerListeners($app);
     }
 
@@ -58,22 +56,14 @@ class MultiFactorAuthenticationPlugin extends BasePlugin
      */
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
+        // Anchor after LogoutUsersOnEditionChangeMiddleware (not directly after
+        // SetUserIdentityInRequestMiddleware) so a pre-change session is
+        // terminated before MFA enforcement evaluates it against post-change
+        // policy state. The Edition plugin is loaded unconditionally by
+        // BaseSolutionBootstrapper, so the anchor is always present.
         return $middlewareQueue
-            ->insertAfter(SetUserIdentityInRequestMiddleware::class, MfaRequiredCheckMiddleware::class)
+            ->insertAfter(LogoutUsersOnEditionChangeMiddleware::class, MfaRequiredCheckMiddleware::class)
             ->insertAfter(MfaRequiredCheckMiddleware::class, InjectMfaFormMiddleware::class);
-    }
-
-    /**
-     * @return void
-     */
-    public function addAccountSettingsAssociation(): void
-    {
-        TableRegistry::getTableLocator()->get('Users')
-            ->hasOne('MfaSettings')
-            ->setClassName('Passbolt/AccountSettings.AccountSettings')
-            ->setForeignKey('user_id')
-            ->setProperty(Service\Query\IsMfaEnabledQueryService::MFA_SETTINGS_PROPERTY)
-            ->setConditions(['MfaSettings.property' => MfaSettings::MFA]);
     }
 
     /**
@@ -85,6 +75,7 @@ class MultiFactorAuthenticationPlugin extends BasePlugin
     public function registerListeners(PluginApplicationInterface $app): void
     {
         $app->getEventManager()
+            ->on(new UsersModelInitializeEventListener()) // Decorate the users table class to add the MFA settings association
             // Decorate the users grid and add the column "is_mfa_enabled"
             ->on(new AddIsMfaEnabledColumnToUsersGrid()) // decorate the query to add the new property on the User entity
             ->on(new MfaRedactorPool()) // Register email redactors
@@ -101,15 +92,16 @@ class MultiFactorAuthenticationPlugin extends BasePlugin
      */
     public function services(ContainerInterface $container): void
     {
-        if ($this->isFeaturePluginEnabled('JwtAuthentication')) {
-            $container
-                ->extend(JwtArmoredChallengeInterface::class)
-                ->setConcrete(MfaJwtArmoredChallengeService::class);
-        }
-
         $container
             ->add(RememberAMonthSettingInterface::class)
             ->setConcrete(DefaultRememberAMonthSettingService::class);
+
+        if ($this->isFeaturePluginEnabled('JwtAuthentication')) {
+            $container
+                ->extend(JwtArmoredChallengeInterface::class)
+                ->setConcrete(MfaJwtArmoredChallengeService::class)
+                ->addArgument(RememberAMonthSettingInterface::class);
+        }
 
         $container->add(Client::class)->setConcrete(null);
 

@@ -34,6 +34,8 @@ use Cake\Http\Exception\NotFoundException;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Passbolt\ResourceTypes\Test\Factory\ResourceTypeFactory;
+use Passbolt\Tags\TagsPlugin;
+use Passbolt\Tags\Test\Factory\TagFactory;
 
 /**
  * \App\Test\TestCase\Service\Resources\ResourcesShareServiceTest Test Case
@@ -70,12 +72,13 @@ class ResourcesShareServiceTest extends AppTestCase
     public function setUp(): void
     {
         parent::setUp();
+        $this->enableFeaturePlugin(TagsPlugin::class);
         $this->Favorites = TableRegistry::getTableLocator()->get('Favorites');
         $this->Resources = TableRegistry::getTableLocator()->get('Resources');
         $this->Permissions = TableRegistry::getTableLocator()->get('Permissions');
         $this->Users = TableRegistry::getTableLocator()->get('Users');
         $this->service = new ResourcesShareService(
-            new ResourcesExpireResourcesFallbackServiceService()
+            new ResourcesExpireResourcesFallbackServiceService(),
         );
         RoleFactory::make()->guest()->persist();
     }
@@ -214,6 +217,40 @@ hcciUFw5
     }
 
     /* SHARE */
+
+    public function testResourceShareService_PostUserAccessRevokedNotDeleteAssociatedDataWhenUserStillHaveAccess()
+    {
+        [$userA, $userB] = UserFactory::make(2)->user()->persist();
+        $group = GroupFactory::make()->withGroupsUsersFor([$userA, $userB])->persist();
+        $uac = $this->makeUac($userA);
+
+        $resource = ResourceFactory::make()
+            ->withSecretsFor([$userA, $userB])
+            ->withPermissionsFor([$userA])
+            ->withPermissionsFor([$userB, $group], Permission::READ)
+            ->persist();
+
+        FavoriteFactory::make()->setUser($userB)->setResource($resource)->persist();
+        TagFactory::make(['slug' => 'prod'])->isPersonalFor($resource, $userB)->persist();
+
+        $permissionUserBId = $resource->permissions[1]->id;
+
+        $changes[] = ['id' => $permissionUserBId, 'delete' => true];
+
+        // User A removes only the direct permission. User B still has access through the group.
+        $resource = $this->service->share($uac, $resource->id, $changes);
+        $this->assertFalse($resource->hasErrors());
+
+        // Assert Favorite still exists
+        $resources = $this->Favorites->find()
+            ->where(['user_id' => $userB->id])
+            ->all();
+        $resourcesId = Hash::extract($resources->toArray(), '{n}.foreign_key');
+        $this->assertContains($resource->id, $resourcesId);
+
+        // Assert Tag still exists
+        $this->assertSame(1, TagFactory::count());
+    }
 
     public function testResourceShareService_LostAccessFavoritesDeleted()
     {

@@ -112,8 +112,8 @@ class InsertWithFactoriesCommand extends PassboltCommand
         $connection = ConnectionManager::get('default');
         $tablesList = $connection->getSchemaCollection()->listTables();
         foreach ($tablesList as $table) {
-            //skips roles, resource_types, ui_actions, rbacs, phinxlog tables
-            if ($table === 'roles' || $table === 'resource_types' || $table === 'ui_actions' || $table === 'rbacs' || $table === 'phinxlog') { //phpcs:ignore
+            //skips phinxlog table
+            if ($table === 'phinxlog') { //phpcs:ignore
                 continue;
             }
             $table = $this->fetchTable($table);

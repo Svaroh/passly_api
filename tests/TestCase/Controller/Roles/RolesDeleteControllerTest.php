@@ -107,6 +107,32 @@ class RolesDeleteControllerTest extends RbacsIntegrationTestCase
         $this->assertResponseCode(404);
     }
 
+    public function testRolesDeleteController_CannotDeleteReservedRoleAfterRenameAttempt(): void
+    {
+        $adminRole = RoleFactory::make()->admin()->persist();
+        $this->logInAsAdmin();
+
+        $this->putJson("/roles/$adminRole->id.json", ['name' => 'foobar']);
+
+        $this->assertResponseCode(400);
+        $this->assertResponseContains('A reserved role cannot be renamed.');
+        $reloaded = RoleFactory::get($adminRole->id);
+        $this->assertSame(Role::ADMIN, $reloaded->name);
+    }
+
+    public function testRolesDeleteController_CannotDeleteReservedRole(): void
+    {
+        $adminRole = RoleFactory::make()->admin()->persist();
+        $this->logInAsAdmin();
+
+        $this->deleteJson("/roles/$adminRole->id.json");
+
+        $this->assertResponseCode(400);
+        $this->assertResponseContains('A reserved role cannot be deleted.');
+        $reloaded = RoleFactory::get($adminRole->id);
+        $this->assertNull($reloaded->deleted);
+    }
+
     // ---------------------------
     // Helper methods
     // ---------------------------

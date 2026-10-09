@@ -96,14 +96,20 @@ class AdminUserSetupCompleteEmailRedactor implements SubscribedEmailRedactorInte
             $userWhoCompletedSetup,
             [
                 'Profiles',
-                'EntitiesHistory' => function (Query $q) {
-                    // Filter on the created action (this action can happen only once)
-                    return $q->where(['crud' => EntityHistory::CRUD_CREATE]);
-                },
-                'EntitiesHistory.ActionLogs',
-                'EntitiesHistory.ActionLogs.Users',
-                'EntitiesHistory.ActionLogs.Users.Profiles',
-            ]
+                'EntitiesHistory' => [
+                    // Force strategy to `select`: the 5.4 subquery eager-loading default mis-orders the
+                    // nested join (emits "Unknown column '<Model>.<fk>' in 'ON'").
+                    'strategy' => 'select',
+                    'queryBuilder' => function (Query $q) {
+                        return $q->where(['crud' => EntityHistory::CRUD_CREATE]);
+                    },
+                    'ActionLogs' => [
+                        'Users' => [
+                            'Profiles',
+                        ],
+                    ],
+                ],
+            ],
         );
 
         if (!isset($userWhoCompletedSetup->entities_history) || !isset($userWhoCompletedSetup->entities_history[0])) {
@@ -129,7 +135,7 @@ class AdminUserSetupCompleteEmailRedactor implements SubscribedEmailRedactorInte
         // Create an email for every admin
         foreach ($admins as $admin) {
             $emailCollection->addEmail(
-                $this->createEmail($admin, $userWhoCompletedSetup, $invitedBy, $invitedWhen)
+                $this->createEmail($admin, $userWhoCompletedSetup, $invitedBy, $invitedWhen),
             );
         }
 
@@ -152,13 +158,13 @@ class AdminUserSetupCompleteEmailRedactor implements SubscribedEmailRedactorInte
             $admin->locale,
             function () use ($profile) {
                 return __('{0} just activated their account on passly', $profile->first_name);
-            }
+            },
         );
         $invitedWhen = (new LocaleService())->translateString(
             $admin->locale,
             function () use ($invitedWhen) {
                 return $invitedWhen->timeAgoInWords(['accuracy' => 'day']);
-            }
+            },
         );
 
         $body = [
@@ -178,7 +184,7 @@ class AdminUserSetupCompleteEmailRedactor implements SubscribedEmailRedactorInte
             $admin,
             $subject,
             ['title' => $subject, 'body' => $body],
-            self::TEMPLATE
+            self::TEMPLATE,
         );
     }
 }

@@ -70,7 +70,7 @@ class MetadataResourcesBatchUpgradeValidationService extends MetadataBatchUpgrad
 
         /** @var \App\Model\Table\PermissionsTable $Permissions */
         $Permissions = TableRegistry::getTableLocator()->get('Permissions');
-        $permission = $Permissions->find()
+        $permission = $Permissions->unhydratedFind()
             ->select([
                 'Permissions.aro_foreign_key',
                 'Users.id',
@@ -83,7 +83,6 @@ class MetadataResourcesBatchUpgradeValidationService extends MetadataBatchUpgrad
                 'Permissions.aco' => PermissionsTable::RESOURCE_ACO,
                 'Permissions.aro' => PermissionsTable::USER_ARO,
             ])
-            ->disableHydration()
             ->first();
 
         if (!is_null($permission)) {

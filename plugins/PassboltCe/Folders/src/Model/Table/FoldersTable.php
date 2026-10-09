@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Passbolt\Folders\Model\Table;
 
 use App\Model\Validation\ArmoredMessage\IsParsableMessageValidationRule;
+use App\Model\Validation\HasNoInvisibleCharactersValidationRule;
 use Cake\ORM\Behavior\TimestampBehavior;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
@@ -26,6 +27,7 @@ use Passbolt\Folders\Model\Behavior\FolderizableBehavior;
 use Passbolt\Folders\Model\Entity\Folder;
 use Passbolt\Folders\Model\Traits\Folders\FoldersFindersTrait;
 use Passbolt\Metadata\Model\Dto\MetadataFolderDto;
+use Passbolt\Metadata\Model\Entity\MetadataKey;
 use Passbolt\Metadata\Model\Rule\IsFolderV5ToV4DowngradeAllowedRule;
 use Passbolt\Metadata\Model\Rule\IsMetadataKeyTypeAllowedBySettingsRule;
 use Passbolt\Metadata\Model\Rule\IsMetadataKeyTypeSharedOnSharedItemRule;
@@ -150,22 +152,23 @@ class FoldersTable extends Table
             ->maxLength(
                 'name',
                 Folder::MAX_NAME_LENGTH,
-                __('The name length should be maximum {0} characters.', Folder::MAX_NAME_LENGTH)
+                __('The name length should be maximum {0} characters.', Folder::MAX_NAME_LENGTH),
             )
             ->requirePresence('name', 'create', __('A name is required.'))
-            ->allowEmptyString('name', __('The name should not be empty.'), false);
+            ->allowEmptyString('name', __('The name should not be empty.'), false)
+            ->add('name', 'noInvisibleCharacters', new HasNoInvisibleCharactersValidationRule());
 
         $validator
             ->uuid('created_by', __('The identifier of the user who created the folder should be a valid UUID.'))
             ->requirePresence(
                 'created_by',
                 'create',
-                __('The identifier of the user who created the folder is required.')
+                __('The identifier of the user who created the folder is required.'),
             )
             ->notEmptyString(
                 'created_by',
                 __('The identifier of the user who created the folder should not be empty.'),
-                false
+                false,
             );
 
         $validator
@@ -173,12 +176,12 @@ class FoldersTable extends Table
             ->requirePresence(
                 'modified_by',
                 'create',
-                __('The identifier of the user who modified the folder is required.')
+                __('The identifier of the user who modified the folder is required.'),
             )
             ->notEmptyString(
                 'modified_by',
                 __('The identifier of the user who modified the folder should not be empty.'),
-                false
+                false,
             );
 
         return $validator;
@@ -213,12 +216,14 @@ class FoldersTable extends Table
             ->notEmptyString('metadata', __('The metadata should not be empty.'))
             ->add('metadata', 'isMetadataParsable', new IsParsableMessageValidationRule());
 
+        $allowedMetadataKeyTypes = [MetadataKey::TYPE_USER_KEY, MetadataKey::TYPE_SHARED_KEY];
         $validator
             ->utf8Extended('metadata_key_type', __('The metadata key type should be a valid UTF8 string.'))
-            ->allowEmptyString('metadata_key_type')
-            ->inList('metadata_key_type', ['user_key', 'shared_key'], __(
+            ->requirePresence('metadata_key_type', 'create', __('A metadata key type is required.'))
+            ->notEmptyString('metadata_key_type', __('The metadata key type should not be empty.'))
+            ->inList('metadata_key_type', $allowedMetadataKeyTypes, __(
                 'The metadata key type should be one of the following: {0}.',
-                implode(', ', ['user_key', 'shared_key'])
+                implode(', ', $allowedMetadataKeyTypes),
             ));
 
         return $validator;
@@ -279,7 +284,7 @@ class FoldersTable extends Table
             [
                 'errorField' => 'metadata_key_type',
                 'message' => __('A folder of type personal cannot be shared with other users or a group.'),
-            ]
+            ],
         );
 
         $rules->addUpdate(new IsV4ToV5UpgradeAllowedRule(), 'v4_to_v5_upgrade_allowed', [

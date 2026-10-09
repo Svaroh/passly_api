@@ -33,18 +33,18 @@ class ResourcesIndexControllerTest extends FoldersIntegrationTestCase
     public function testResourcesIndexController_FilterHasParentSuccess()
     {
         $user = UserFactory::make()->user()->persist();
-        [$resourceA, $resourceB, $resourceC] = ResourceFactory::make(3)
+        [$resourceA, $resourceB, $resourceC] = ResourceFactory::make(['created_by' => $user->get('id'), 'modified_by' => $user->get('id')], 3)
             ->withPermissionsFor([$user])
             ->withFoldersRelationsFor([$user])
             ->persist();
         [$folderA, $folderB, $folderC] = FolderFactory::make(3)
             ->withPermissionsFor([$user])
             ->persist();
-        [$resourceD, $resourceE] = ResourceFactory::make(2)
+        [$resourceD, $resourceE] = ResourceFactory::make(['created_by' => $user->get('id'), 'modified_by' => $user->get('id')], 2)
             ->withPermissionsFor([$user])
             ->withFoldersRelationsFor([$user], $folderB)
             ->persist();
-        $resourceF = ResourceFactory::make()
+        $resourceF = ResourceFactory::make(['created_by' => $user->get('id'), 'modified_by' => $user->get('id')])
             ->withPermissionsFor([$user])
             ->withFoldersRelationsFor([$user], $folderC)
             ->persist();
@@ -125,12 +125,22 @@ class ResourcesIndexControllerTest extends FoldersIntegrationTestCase
                 'filter' => [
                     'has-parent' => $case['filter'],
                 ],
+                'contain' => [
+                    'modifier' => 1,
+                    'creator' => 1,
+                ],
             ]);
 
             $this->getJson('/resources.json?' . $queryParameters);
             $this->assertSuccess();
 
             $resultFolderIds = Hash::extract($this->_responseJsonBody, '{n}.id');
+            $resources = $this->_responseJsonBody;
+
+            foreach ($resources as $resource) {
+                $this->assertObjectNotHasAttribute('last_logged_in', $resource->modifier);
+                $this->assertObjectNotHasAttribute('last_logged_in', $resource->creator);
+            }
 
             foreach ($case['expected'] as $expectedFolderChildrenId) {
                 $this->assertContains($expectedFolderChildrenId, $resultFolderIds, 'Expected children is missing for the given parent folder.');

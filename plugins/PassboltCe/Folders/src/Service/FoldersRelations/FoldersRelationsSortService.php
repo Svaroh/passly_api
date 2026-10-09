@@ -44,7 +44,10 @@ class FoldersRelationsSortService
      * 1. The folder relation presence in the operator tree. Priority to the operator view.
      * 2. The folder relation usage. Priority to the more used.
      * 3. (Optional) The folder relation presence in the target user tree. Priority to the target user view.
-     * 4. The folder relation age. Priority to the oldest folder relation.
+     * 4. The folder relation parent personal status. Priority to relations whose parent is shared (i.e. break
+     *    personal-parent edges first; this matches `repairPersonal` and keeps cycle repairs deterministic when
+     *    the creation timestamps tie).
+     * 5. The folder relation age. Priority to the oldest folder relation.
      *
      * **Note** The function doesn't sort folders relations having root as folder parent.
      *
@@ -63,10 +66,10 @@ class FoldersRelationsSortService
 
         usort($foldersRelations, function (
             FoldersRelation $relationA,
-            FoldersRelation $relationB
+            FoldersRelation $relationB,
         ) use (
             $changesDetails,
-            $userId
+            $userId,
         ) {
             $inOperatorTreePriority = $this->hasInOperatorTreePriority($relationA, $relationB, $changesDetails);
             if (!is_null($inOperatorTreePriority)) {
@@ -81,6 +84,10 @@ class FoldersRelationsSortService
                 if (!is_null($inUserTreePriority)) {
                     return $inUserTreePriority ? -1 : 1;
                 }
+            }
+            $sharedParentPriority = $this->hasSharedParentPriority($relationA, $relationB);
+            if (!is_null($sharedParentPriority)) {
+                return $sharedParentPriority ? -1 : 1;
             }
             $grandPaPriority = $this->hasGrandPaPriority($relationA, $relationB, $changesDetails);
             if (!is_null($grandPaPriority)) {
@@ -115,7 +122,7 @@ class FoldersRelationsSortService
     private function getFolderRelationsDetails(
         array $foldersRelations,
         UserAccessControl $uac,
-        ?string $userId = null
+        ?string $userId = null,
     ): array {
         $inOperatorTreeDetails = $this->getFoldersRelationsInOperatorTreeDetails($foldersRelations, $uac);
         $usageDetails = $this->getFoldersRelationsUsageDetails($foldersRelations);
@@ -258,7 +265,7 @@ class FoldersRelationsSortService
      */
     private function buildFoldersRelationsTupleComparisonExpression(
         array $foldersRelations,
-        bool $isInOperator = true
+        bool $isInOperator = true,
     ): TupleComparison {
         $operator = $isInOperator ? 'IN' : 'NOT IN';
         $excludeFoldersRelationsArray = array_map(function (FoldersRelation $excludeFolderRelation) {
@@ -292,7 +299,7 @@ class FoldersRelationsSortService
     private function hasInOperatorTreePriority(
         FoldersRelation $relationA,
         FoldersRelation $relationB,
-        array $changesDetails
+        array $changesDetails,
     ): ?bool {
         $inTreeA = Hash::get($changesDetails, "{$this->getRelationDetailsKey($relationA)}.in_operator_tree", false);
         $inTreeB = Hash::get($changesDetails, "{$this->getRelationDetailsKey($relationB)}.in_operator_tree", false);
@@ -317,7 +324,7 @@ class FoldersRelationsSortService
     private function hasUsagePriority(
         FoldersRelation $relationA,
         FoldersRelation $relationB,
-        array $changesDetails
+        array $changesDetails,
     ): ?bool {
         $usageCountA = Hash::get($changesDetails, "{$this->getRelationDetailsKey($relationA)}.usage_count", 0);
         $usageCountB = Hash::get($changesDetails, "{$this->getRelationDetailsKey($relationB)}.usage_count", 0);
@@ -344,13 +351,39 @@ class FoldersRelationsSortService
     private function hasInUserTreePriority(
         FoldersRelation $relationA,
         FoldersRelation $relationB,
-        array $changesDetails
+        array $changesDetails,
     ): ?bool {
         $inTreeA = Hash::get($changesDetails, "{$this->getRelationDetailsKey($relationA)}.in_user_tree", false);
         $inTreeB = Hash::get($changesDetails, "{$this->getRelationDetailsKey($relationB)}.in_user_tree", false);
         if ($inTreeA && !$inTreeB) {
             return true;
         } elseif (!$inTreeA && $inTreeB) {
+            return false;
+        }
+
+        return null;
+    }
+
+    /**
+     * Check which folder relation has the shared-parent priority. A relation whose parent is a shared folder
+     * has priority (is preserved) over a relation whose parent is a personal folder. This tie-breaker matches the
+     * behavior of `FoldersRelationsRepairStronglyConnectedComponentsService::repairPersonal` so the global repair
+     * picks the same edge to break for cycles that traverse a personal folder.
+     *
+     * @param \Passbolt\Folders\Model\Entity\FoldersRelation $relationA The first folder relation to check the priority for.
+     * @param \Passbolt\Folders\Model\Entity\FoldersRelation $relationB The second folder relation to check the priority for.
+     * @return bool|null return true if the first relation has the priority, return false if the second relation has
+     * the priority or return null if none of them has the priority.
+     */
+    private function hasSharedParentPriority(FoldersRelation $relationA, FoldersRelation $relationB): ?bool
+    {
+        $aParentIsPersonal = $relationA->folder_parent_id !== null
+            && $this->foldersRelationsTable->isItemPersonal($relationA->folder_parent_id);
+        $bParentIsPersonal = $relationB->folder_parent_id !== null
+            && $this->foldersRelationsTable->isItemPersonal($relationB->folder_parent_id);
+        if (!$aParentIsPersonal && $bParentIsPersonal) {
+            return true;
+        } elseif ($aParentIsPersonal && !$bParentIsPersonal) {
             return false;
         }
 

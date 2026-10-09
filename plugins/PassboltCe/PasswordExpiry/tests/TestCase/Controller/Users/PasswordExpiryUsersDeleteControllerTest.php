@@ -51,7 +51,7 @@ class PasswordExpiryUsersDeleteControllerTest extends AppIntegrationTestCase
             ->withResources(ResourceFactory::make($resourceSharedViewed))
             ->persist();
 
-        $this->logInAsAdmin();
+        $admin = $this->logInAsAdmin();
         $this->deleteJson('/users/' . $userToDelete->id . '.json');
         $this->assertSuccess();
 
@@ -61,11 +61,16 @@ class PasswordExpiryUsersDeleteControllerTest extends AppIntegrationTestCase
         $resourceSharedNotViewed = ResourceFactory::get($resourceSharedNotViewed->id);
         $this->assertTrue($resourceSharedViewed->isExpired());
         $this->assertFalse($resourceSharedNotViewed->isExpired());
-        // The owner should be notified about the expired resource
-        $this->assertEmailQueueCount(1);
+        // Two notifications: the owner about the expired resource, and the
+        // acting admin about the user deletion (UserDeleteAdminEmailRedactor).
+        $this->assertEmailQueueCount(2);
         $this->assertEmailInBatchContains(
             'Access for users to your shared passwords have been revoked.',
-            $owner->username
+            $owner->username,
+        );
+        $this->assertEmailInBatchContains(
+            "You deleted user {$userToDelete->profile->full_name}",
+            $admin->username,
         );
     }
 }

@@ -53,10 +53,9 @@ class UserMetadataKeysDeleteService
         $metadataPrivateKeysTable = $this->fetchTable('Passbolt/Metadata.MetadataPrivateKeys');
 
         $metadataPrivateKeys = $metadataPrivateKeysTable
-            ->find()
+            ->unhydratedFind()
             ->select(['id'])
             ->where(['user_id' => $userId])
-            ->disableHydration()
             ->toArray();
         if (empty($metadataPrivateKeys)) {
             // Nothing to delete
@@ -81,10 +80,9 @@ class UserMetadataKeysDeleteService
         $metadataSessionKeysTable = $this->fetchTable('Passbolt/Metadata.MetadataSessionKeys');
 
         $metadataSessionKeys = $metadataSessionKeysTable
-            ->find()
+            ->unhydratedFind()
             ->select(['id'])
             ->where(['user_id' => $userId])
-            ->disableHydration()
             ->toArray();
         if (empty($metadataSessionKeys)) {
             // Nothing to delete

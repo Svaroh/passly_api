@@ -34,6 +34,7 @@ use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Http\Exception\InternalErrorException;
 use Cake\I18n\DateTime;
+use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -77,6 +78,7 @@ class UsersTable extends Table implements TableCleanupProviderInterface
 
     public const AFTER_REGISTER_SUCCESS_EVENT_NAME = 'Model.Users.afterRegister.success';
     public const AFTER_SELF_REGISTER_SUCCESS_EVENT_NAME = 'Model.Users.afterSelfRegister.success';
+    public const EVENT_MODEL_USERS_AFTER_SOFT_DELETE = 'Model.Users.afterSoftDelete';
     public const PASSBOLT_SECURITY_USERNAME_CASE_SENSITIVE = 'passbolt.security.username.caseSensitive';
     public const PASSBOLT_SECURITY_USERNAME_LOWER_CASE = 'passbolt.security.username.lowerCase';
 
@@ -269,6 +271,20 @@ class UsersTable extends Table implements TableCleanupProviderInterface
     }
 
     /**
+     * Exclude the last_logged_in field if the user is not an admin.
+     *
+     * @param \Cake\Event\Event $event Model.beforeFind event.
+     * @param \Cake\ORM\Query $query Query under construction.
+     * @param \ArrayObject $options options to apply in the query
+     * @return void
+     */
+    public function beforeFind(Event $event, Query $query, ArrayObject $options): void
+    {
+        $showLastLoggedIn = $options['showLastLoggedIn'] ?? null;
+        $query->find('unsetLastLoggedInForNonAdmin', showLastLoggedIn: $showLastLoggedIn);
+    }
+
+    /**
      * Lower case the username if the username is not case-sensitive
      *
      * @param \Cake\Event\Event $event Event
@@ -356,7 +372,7 @@ class UsersTable extends Table implements TableCleanupProviderInterface
                         ],
                     ],
                 ],
-            ]
+            ],
         );
     }
 
@@ -508,6 +524,7 @@ class UsersTable extends Table implements TableCleanupProviderInterface
 
         // Delete all secrets
         $Secrets = TableRegistry::getTableLocator()->get('Secrets');
+        /** @var array<\App\Model\Entity\Secret> $secretsToDelete */
         $secretsToDelete = $Secrets->find()
             ->select(['id', 'user_id', 'resource_id'])
             ->where(['user_id' => $user->id])
@@ -545,6 +562,10 @@ class UsersTable extends Table implements TableCleanupProviderInterface
             $msg = __('Could not delete the user {0}, please try again later.', $user->username);
             throw new InternalErrorException($msg);
         }
+
+        // Notify other components about the user soft delete.
+        $event = new Event(self::EVENT_MODEL_USERS_AFTER_SOFT_DELETE, $user);
+        $this->getEventManager()->dispatch($event);
 
         return $entitiesChanges;
     }
@@ -597,8 +618,10 @@ class UsersTable extends Table implements TableCleanupProviderInterface
         $eventData = ['user' => $user, 'token' => $token];
         if ($control && $control->getId()) {
             $eventData['adminId'] = $control->getId();
+            /** @psalm-suppress InvalidArgument */
             $this->dispatchEvent(static::AFTER_REGISTER_SUCCESS_EVENT_NAME, $eventData, $this);
         } else {
+            /** @psalm-suppress InvalidArgument */
             $this->dispatchEvent(self::AFTER_SELF_REGISTER_SUCCESS_EVENT_NAME, $eventData, $this);
         }
 
@@ -613,6 +636,7 @@ class UsersTable extends Table implements TableCleanupProviderInterface
     {
         $entitiesChanges = new EntitiesChangesDto();
         $Secrets = TableRegistry::getTableLocator()->get('Secrets');
+        /** @var array<\App\Model\Entity\Secret> $secretsToConsiderAsDeleted */
         $secretsToConsiderAsDeleted = $Secrets->find()
             ->select(['id', 'user_id', 'resource_id'])
             ->where(['user_id' => $user->id])

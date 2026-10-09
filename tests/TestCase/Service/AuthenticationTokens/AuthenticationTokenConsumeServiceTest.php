@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Service\AuthenticationTokens;
 
+use App\Error\Exception\CustomValidationException;
 use App\Service\AuthenticationTokens\AuthenticationTokenConsumeService;
 use App\Test\Factory\AuthenticationTokenFactory;
 use App\Test\Lib\AppTestCase;
@@ -65,5 +66,20 @@ class AuthenticationTokenConsumeServiceTest extends AppTestCase
         $this->expectException(BadRequestException::class);
         (new AuthenticationTokenConsumeService())
             ->consumeActiveNotExpiredOrFail('nope', $t0->user_id, $t0->type);
+    }
+
+    public function testAuthenticationTokenConsumeService_ConcurrentConsume_OnlyOneSucceeds(): void
+    {
+        $t0 = $this->tokenFactory->active()->persist();
+
+        $winner = (new AuthenticationTokenConsumeService())
+            ->consumeActiveNotExpiredOrFail($t0->token, $t0->user_id, $t0->type);
+        $this->assertNotEmpty($winner);
+        $this->assertFalse($winner->active);
+
+        $this->expectException(CustomValidationException::class);
+        $this->expectExceptionMessage('The authentication token is not valid.');
+        (new AuthenticationTokenConsumeService())
+            ->consumeActiveNotExpiredOrFail($t0->token, $t0->user_id, $t0->type);
     }
 }

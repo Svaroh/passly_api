@@ -110,4 +110,17 @@ class RolesAddControllerTest extends RbacsIntegrationTestCase
         $this->postJson('/roles.json', ['name' => '😄😄😄']);
         $this->assertResponseCode(400);
     }
+
+    public function testRolesAddController_Error_Name_InvisibleCharacters(): void
+    {
+        $this->logInAsAdmin();
+        $this->postJson('/roles.json', ['name' => "sales\u{200B}team"]);
+
+        $this->assertBadRequestError('The role could not be saved.');
+        $response = $this->getResponseBodyAsArray();
+        $this->assertSame(
+            'The string should not contain invisible characters.',
+            $response['name']['noInvisibleCharacters'],
+        );
+    }
 }

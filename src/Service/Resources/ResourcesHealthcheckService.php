@@ -56,6 +56,7 @@ class ResourcesHealthcheckService extends AbstractHealthcheckService
      */
     public function check(): array
     {
+        /** @var array<\App\Model\Entity\Resource> $records */
         $records = $this->table->find()->all();
         $metadataKeys = TableRegistry::getTableLocator()->get('Passbolt/Metadata.MetadataKeys')
             ->find('active')
@@ -79,7 +80,7 @@ class ResourcesHealthcheckService extends AbstractHealthcheckService
      */
     private function canValidate(Resource $resource): void
     {
-        $metadataResourceDto = MetadataResourceDto::fromArray($resource->toArray());
+        $metadataResourceDto = MetadataResourceDto::createFromArray($resource->toArray());
 
         $options = $metadataResourceDto->isV5() ? ['validate' => 'v5'] : [];
         $copy = $this->table->newEntity($resource->toArray(), $options);
@@ -111,7 +112,7 @@ class ResourcesHealthcheckService extends AbstractHealthcheckService
         if ($resource->deleted) {
             return;
         }
-        $metadataResourceDto = MetadataResourceDto::fromArray($resource->toArray());
+        $metadataResourceDto = MetadataResourceDto::createFromArray($resource->toArray());
         if (!$metadataResourceDto->isV5() || $resource->metadata_key_type !== MetadataKey::TYPE_SHARED_KEY) {
             return;
         }

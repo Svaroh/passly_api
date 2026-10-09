@@ -158,7 +158,7 @@ class SecretsDataCommand extends DataCommand
 
         $users = $usersTable->findIndex(Role::USER);
         foreach ($users as $user) {
-            $resources = $resourcesTable->findIndex($user->get('id'));
+            $resources = $resourcesTable->findIndex($user->get('id'))->contain(['SecretRevisions']);
             foreach ($resources as $resource) {
                 $password = $this->_getPassword($resource->get('id'));
                 /** @var \Cake\ORM\Entity $user */
@@ -167,6 +167,7 @@ class SecretsDataCommand extends DataCommand
                     'id' => UuidFactory::uuid("secret.id.{$resource->get('id')}-{$user->get('id')}"),
                     'user_id' => $user->get('id'),
                     'resource_id' => $resource->get('id'),
+                    'secret_revision_id' => $resource->get('secret_revisions')[0]->get('id'),
                     'data' => $armoredPassword,
                     'created_by' => $user->get('id'),
                 ];

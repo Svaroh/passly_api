@@ -131,7 +131,7 @@ class AuthenticationTokensTable extends Table
                 'rule' => [$this, 'isValidAuthenticationTokenType'],
                 'message' => __(
                     'The type should be one of the following: {0}.',
-                    implode(', ', $this->getAllowedTypes())
+                    implode(', ', $this->getAllowedTypes()),
                 ),
             ]])
             ->requirePresence('type', 'create', __('A type is required.'))
@@ -208,7 +208,7 @@ class AuthenticationTokensTable extends Table
         string $userId,
         string $type,
         ?string $token = null,
-        ?array $data = []
+        ?array $data = [],
     ): AuthenticationToken {
         $token = $this->newEntity(
             [
@@ -224,7 +224,7 @@ class AuthenticationTokensTable extends Table
                 'active' => true,
                 'type' => true,
                 'data' => true,
-            ]]
+            ]],
         );
         $errors = $token->getErrors();
         $msg = __('It is not possible to create an authentication token for this user.');
@@ -297,10 +297,13 @@ class AuthenticationTokensTable extends Table
     }
 
     /**
-     * Set a token as inactive
+     * Atomically flip a token from active to inactive via a conditional UPDATE.
+     * The winner sees ≥ 1 affected rows; the loser sees 0 and must treat the
+     * token as already consumed. If side effects depend on the consume, run
+     * them AFTER a successful setInactive — steps in between can race.
      *
      * @param string $tokenValue uuid
-     * @return bool save result
+     * @return bool `true` iff at least one row transitioned from active to inactive
      * @throws \InvalidArgumentException is the token is not a valid uuid
      */
     public function setInactive(string $tokenValue): bool
@@ -308,20 +311,19 @@ class AuthenticationTokensTable extends Table
         if (!Validation::uuid($tokenValue)) {
             throw new InvalidArgumentException('The token should be a valid UUID.');
         }
-        $token = $this->find('all')
-            ->where(['token' => $tokenValue, 'active' => true ])
-            ->first();
 
-        if (empty($token)) {
-            return false;
-        }
-        $token->set('active', false);
+        $affected = $this->updateAll(
+            [
+                'active' => false,
+                'modified' => DateTime::now(),
+            ],
+            [
+                'token' => $tokenValue,
+                'active' => true,
+            ],
+        );
 
-        if (!$this->save($token)) {
-            return false;
-        }
-
-        return true;
+        return $affected >= 1;
     }
 
     /**

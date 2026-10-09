@@ -110,7 +110,7 @@ class JwtLogoutControllerTest extends JwtAuthenticationIntegrationTestCase
 
         $this->cookie(
             RefreshTokenRenewalService::REFRESH_TOKEN_COOKIE,
-            $tokenToDeactivate
+            $tokenToDeactivate,
         );
 
         $this->postJson('/auth/jwt/logout.json');
@@ -134,7 +134,7 @@ class JwtLogoutControllerTest extends JwtAuthenticationIntegrationTestCase
     public function testAuthJwtLogoutController_Logout_From_Session_Endpoint()
     {
         $userId = UserFactory::make()->user()->persist()->id;
-        $accessToken = $this->createJwtTokenAndSetInHeader($userId);
+        $token = $this->createJwtTokenAndSetInHeader($userId);
         AuthenticationTokenFactory::make()
             ->active()
             ->type(AuthenticationToken::TYPE_REFRESH_TOKEN)
@@ -144,7 +144,7 @@ class JwtLogoutControllerTest extends JwtAuthenticationIntegrationTestCase
         $this->post('/auth/logout');
         $this->assertResponseError('The route /auth/logout is not permitted with JWT authentication.');
 
-        $this->setJwtTokenInHeader($accessToken);
+        $this->setJwtTokenInHeader($token);
         $this->getJson('/auth/is-authenticated.json');
         $this->assertResponseSuccess();
 

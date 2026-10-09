@@ -36,16 +36,18 @@ class FoldersUpdateControllerTest extends FoldersIntegrationTestCase
         // ----
         // A (Ada:O)
         $userA = UserFactory::make()->persist();
-        $folderA = FolderFactory::make()->withPermissionsFor([$userA])->persist();
+        $folderA = FolderFactory::make(['created_by' => $userA->get('id')])->withPermissionsFor([$userA])->persist();
 
         $data = ['name' => 'A updated'];
         $this->logInAs($userA);
-        $this->postJson("/folders/{$folderA->get('id')}.json?api-version=2", $data);
+        $this->postJson("/folders/{$folderA->get('id')}.json?contain[creator]=1&contain[modifier]=1&api-version=2", $data);
         $this->assertSuccess();
 
         // Assert controller response
         $folderUpdated = $this->_responseJsonBody;
         $this->assertEquals($data['name'], $folderUpdated->name);
+        $this->assertObjectNotHasAttribute('last_logged_in', $folderUpdated->modifier);
+        $this->assertObjectNotHasAttribute('last_logged_in', $folderUpdated->creator);
     }
 
     public function testFoldersUpdateError_NotValidId()

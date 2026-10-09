@@ -56,7 +56,7 @@ class CommentAddEmailRedactor implements SubscribedEmailRedactorInterface
     public function __construct(
         ?array $config = [],
         ?UsersTable $usersTable = null,
-        ?ResourcesTable $resourcesTable = null
+        ?ResourcesTable $resourcesTable = null,
     ) {
         $this->usersTable = $usersTable ?? TableRegistry::getTableLocator()->get('Users');
         $this->resourcesTable = $resourcesTable ?? TableRegistry::getTableLocator()->get('Resources');
@@ -88,6 +88,7 @@ class CommentAddEmailRedactor implements SubscribedEmailRedactorInterface
 
         // Find the users that have access to the resource (including via their groups)
         $options = ['contain' => ['role'], 'filter' => ['has-access' => [$comment->foreign_key]]];
+        /** @var array<\App\Model\Entity\User> $users */
         $users = $this->usersTable
             ->findIndex(Role::USER, $options)
             ->find('locale')
@@ -122,7 +123,7 @@ class CommentAddEmailRedactor implements SubscribedEmailRedactorInterface
             $recipient->locale,
             function () use ($creator, $resource) {
                 return __('{0} commented on {1}', $creator->profile->first_name, $resource->name);
-            }
+            },
         );
         $body = [
             'creator' => $creator,

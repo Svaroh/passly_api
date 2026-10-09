@@ -34,6 +34,8 @@ class DuoSetupPromptPostControllerTest extends MfaIntegrationTestCase
     {
         $this->post('/mfa/setup/duo/prompt');
         $this->assertRedirect();
+        // cakephp/authentication >= 3.3.3 no longer appends the ?redirect=...
+        // query parameter on non-GET requests (CVE-2026-55590 hardening).
         $this->assertRedirectContains('/auth/login');
     }
 

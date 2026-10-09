@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Passbolt\Tags\Test\TestCase\Controller\Metadata;
 
+use App\Model\Entity\Permission;
 use App\Test\Factory\GpgkeyFactory;
 use App\Test\Factory\ResourceFactory;
 use App\Test\Factory\UserFactory;
@@ -623,5 +624,162 @@ class MetadataResourcesTagsAddControllerTest extends AppIntegrationTestCaseV5
 
         $this->assertError(400);
         $this->assertResponseContains($expectedResponse);
+    }
+
+    public function testMetadataResourcesTagsAdd_NonOwnerCannotUnlinkSharedV5TagViaEmptyPayload(): void
+    {
+        MetadataTypesSettingsFactory::make()->v5()->persist();
+        /** @var \App\Model\Entity\User $owner */
+        $owner = UserFactory::make()
+            ->with('Gpgkeys', GpgkeyFactory::make()->withAdaKey())
+            ->admin()
+            ->active()
+            ->persist();
+        /** @var \App\Model\Entity\User $nonOwner */
+        $nonOwner = UserFactory::make()
+            ->with('Gpgkeys', GpgkeyFactory::make()->withBettyKey())
+            ->user()
+            ->active()
+            ->persist();
+        /** @var \App\Model\Entity\Resource $resource */
+        $resource = ResourceFactory::make()
+            ->withPermissionsFor([$owner])
+            ->withPermissionsFor([$nonOwner], Permission::READ)
+            ->persist();
+        $metadataKey = MetadataKeyFactory::make()->withCreatorAndModifier($owner)->withServerPrivateKey()->persist();
+        $clearTextMetadata = json_encode(['object_type' => 'PASSBOLT_TAG_METADATA', 'slug' => 'my-fav']);
+        $metadata = $this->encryptForMetadataKey($clearTextMetadata);
+        /** @var \Passbolt\Tags\Model\Entity\Tag $sharedTag */
+        $sharedTag = TagFactory::make()
+            ->isSharedFor($resource)
+            ->v5Fields(['metadata' => $metadata, 'metadata_key_id' => $metadataKey->id], true)
+            ->persist();
+
+        $this->logInAs($nonOwner);
+        $this->postJson("/tags/{$resource->id}.json?api-version=2", []);
+
+        $this->assertBadRequestError('You do not have the permission to edit shared tags on this resource.');
+        $this->assertSame(1, ResourcesTagFactory::count());
+        ResourcesTagFactory::firstOrFail([
+            'resource_id' => $resource->id,
+            'tag_id' => $sharedTag->id,
+            'user_id IS' => null,
+        ]);
+    }
+
+    public function testMetadataResourcesTagsAdd_NonOwnerCannotUnlinkSharedV5TagViaOmission(): void
+    {
+        MetadataTypesSettingsFactory::make()->v5()->persist();
+        /** @var \App\Model\Entity\User $owner */
+        $owner = UserFactory::make()
+            ->with('Gpgkeys', GpgkeyFactory::make()->withAdaKey())
+            ->admin()
+            ->active()
+            ->persist();
+        /** @var \App\Model\Entity\User $nonOwner */
+        $nonOwner = UserFactory::make()
+            ->with('Gpgkeys', GpgkeyFactory::make()->withBettyKey())
+            ->user()
+            ->active()
+            ->persist();
+        /** @var \App\Model\Entity\Resource $resource */
+        $resource = ResourceFactory::make()
+            ->withPermissionsFor([$owner])
+            ->withPermissionsFor([$nonOwner], Permission::READ)
+            ->persist();
+        $metadataKey = MetadataKeyFactory::make()->withCreatorAndModifier($owner)->withServerPrivateKey()->persist();
+        $sharedClearText = json_encode(['object_type' => 'PASSBOLT_TAG_METADATA', 'slug' => 'my-fav']);
+        $sharedMetadata = $this->encryptForMetadataKey($sharedClearText);
+        /** @var \Passbolt\Tags\Model\Entity\Tag $sharedTag */
+        $sharedTag = TagFactory::make()
+            ->isSharedFor($resource)
+            ->v5Fields(['metadata' => $sharedMetadata, 'metadata_key_id' => $metadataKey->id], true)
+            ->persist();
+        $unrelatedClearText = json_encode(['object_type' => 'PASSBOLT_TAG_METADATA', 'slug' => 'unrelated']);
+        $unrelatedMetadata = $this->encryptForUser($unrelatedClearText, $owner, $this->getAdaNoPassphraseKeyInfo());
+
+        $this->logInAs($nonOwner);
+        $data = [
+            'tags' => [
+                [
+                    'metadata' => $unrelatedMetadata,
+                    'metadata_key_id' => $nonOwner->gpgkey->id,
+                    'metadata_key_type' => MetadataKey::TYPE_USER_KEY,
+                    'is_shared' => false,
+                ],
+            ],
+        ];
+        $this->postJson("/tags/{$resource->id}.json?api-version=2", $data);
+
+        $this->assertBadRequestError('You do not have the permission to edit shared tags on this resource.');
+        ResourcesTagFactory::firstOrFail([
+            'resource_id' => $resource->id,
+            'tag_id' => $sharedTag->id,
+            'user_id IS' => null,
+        ]);
+    }
+
+    public function testMetadataResourcesTagsAdd_OwnerCanUnlinkSharedV5Tag(): void
+    {
+        MetadataTypesSettingsFactory::make()->v5()->persist();
+        /** @var \App\Model\Entity\User $owner */
+        $owner = UserFactory::make()
+            ->with('Gpgkeys', GpgkeyFactory::make()->withAdaKey())
+            ->admin()
+            ->active()
+            ->persist();
+        /** @var \App\Model\Entity\Resource $resource */
+        $resource = ResourceFactory::make()->withPermissionsFor([$owner])->persist();
+        $metadataKey = MetadataKeyFactory::make()->withCreatorAndModifier($owner)->withServerPrivateKey()->persist();
+        $clearTextMetadata = json_encode(['object_type' => 'PASSBOLT_TAG_METADATA', 'slug' => 'my-fav']);
+        $metadata = $this->encryptForMetadataKey($clearTextMetadata);
+        TagFactory::make()
+            ->isSharedFor($resource)
+            ->v5Fields(['metadata' => $metadata, 'metadata_key_id' => $metadataKey->id], true)
+            ->persist();
+
+        $this->logInAs($owner);
+        $this->postJson("/tags/{$resource->id}.json?api-version=2", []);
+
+        $this->assertSuccess();
+        $this->assertSame(0, ResourcesTagFactory::count());
+    }
+
+    public function testMetadataResourcesTagsAdd_NonOwnerCanStillManageOwnPersonalV5Tags(): void
+    {
+        MetadataTypesSettingsFactory::make()->v5()->persist();
+        /** @var \App\Model\Entity\User $owner */
+        $owner = UserFactory::make()
+            ->with('Gpgkeys', GpgkeyFactory::make()->withAdaKey())
+            ->admin()
+            ->active()
+            ->persist();
+        /** @var \App\Model\Entity\User $nonOwner */
+        $nonOwner = UserFactory::make()
+            ->with('Gpgkeys', GpgkeyFactory::make()->withBettyKey())
+            ->user()
+            ->active()
+            ->persist();
+        /** @var \App\Model\Entity\Resource $resource */
+        $resource = ResourceFactory::make()
+            ->withPermissionsFor([$owner])
+            ->withPermissionsFor([$nonOwner], Permission::READ)
+            ->persist();
+        $clearTextMetadata = json_encode(['object_type' => 'PASSBOLT_TAG_METADATA', 'slug' => 'my-personal']);
+        $metadata = $this->encryptForUser($clearTextMetadata, $owner, $this->getAdaNoPassphraseKeyInfo());
+        /** @var \Passbolt\Tags\Model\Entity\Tag $personalTag */
+        $personalTag = TagFactory::make()
+            ->isPersonalFor($resource, $nonOwner)
+            ->v5Fields(['metadata' => $metadata, 'metadata_key_id' => $nonOwner->gpgkey->id])
+            ->persist();
+
+        $this->logInAs($nonOwner);
+        $this->postJson("/tags/{$resource->id}.json?api-version=2", []);
+
+        $this->assertSuccess();
+        $this->assertSame(
+            0,
+            ResourcesTagFactory::find()->where(['tag_id' => $personalTag->id])->count(),
+        );
     }
 }

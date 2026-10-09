@@ -3,7 +3,7 @@
 ## Description: Init passbolt env: install composer deps, create databases and run db migrations
 ## Usage: init_passbolt
 ## Example: "ddev init_pasbolt"
-## DBTypes: mysql,mariadb
+## DBTypes: mysql,mariadb,postgres
 ## ExecRaw: true
 
 set -eo pipefail

@@ -227,7 +227,7 @@ class SecretRevisionsResourceGetControllerTest extends AppIntegrationTestCase
             ->with('SecretRevisions', $secretRevision)
             ->persist();
 
-        $this->getJson("/secret-revisions/resource/{$resource->id}.json?contain[creator]=1");
+        $this->getJson("/secret-revisions/resource/{$resource->id}.json?contain[creator]=1&contain[modifier]=1");
 
         $response = $this->getResponseBodyAsArray();
         $this->assertCount(1, $response);
@@ -238,6 +238,10 @@ class SecretRevisionsResourceGetControllerTest extends AppIntegrationTestCase
 
         // Assert on creator
         $this->assertSame($creator->id, $response[0]['creator']['id']);
+        $this->assertArrayNotHasKey('last_logged_in', $response[0]['creator']);
+
+        // Assert on modifier
+        $this->assertArrayNotHasKey('modifier', $response[0]);
     }
 
     public function testSecretRevisionsResourceGetController_Success_Contain_Creator_Profile(): void

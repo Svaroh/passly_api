@@ -165,7 +165,7 @@ class SmtpSettingsTestEmailServiceTest extends TestCase
         // Mock trace
         $cmd = sprintf(
             'AUTH PLAIN %s',
-            base64_encode(chr(0) . $smtpUsername . chr(0) . $smtpPassword)
+            base64_encode(chr(0) . $smtpUsername . chr(0) . $smtpPassword),
         );
         $trace = [
             ['cmd' => $cmd],

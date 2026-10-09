@@ -18,6 +18,7 @@ namespace Passbolt\MultiFactorAuthentication\Test\TestCase\Controllers\Yubikey;
 
 use App\Test\Factory\AuthenticationTokenFactory;
 use Passbolt\MultiFactorAuthentication\Form\Yubikey\YubikeyVerifyForm;
+use Passbolt\MultiFactorAuthentication\Test\Factory\MfaAccountSettingFactory;
 use Passbolt\MultiFactorAuthentication\Test\Lib\MfaIntegrationTestCase;
 use Passbolt\MultiFactorAuthentication\Test\Scenario\Yubikey\MfaYubikeyScenario;
 use Passbolt\MultiFactorAuthentication\Utility\MfaVerifiedCookie;
@@ -57,5 +58,25 @@ class YubikeyVerifyPostControllerTest extends MfaIntegrationTestCase
         ]);
         $this->assertResponseError('This OTP is not valid.');
         $this->assertResponseCode(400);
+    }
+
+    /**
+     * @group mfa
+     * @group mfaVerify
+     * @group mfaVerifyPost
+     */
+    public function testYubikeyVerifyPostController_Error_DisabledYubikeyProviderDoesNotMintCookie(): void
+    {
+        $user = $this->logInAsUser();
+        // User's MFA account settings for TOTP is present
+        MfaAccountSettingFactory::make()
+            ->setField('user_id', $user->id)
+            ->yubikey()
+            ->persist();
+
+        $this->post('/mfa/verify/yubikey', ['hotp' => 'ccccccbtbhhhrhbrjjttghudibegdvtnrjbvurrdlbdb']);
+
+        $this->assertRedirect('/');
+        $this->assertCookieNotSet(MfaVerifiedCookie::MFA_COOKIE_ALIAS);
     }
 }

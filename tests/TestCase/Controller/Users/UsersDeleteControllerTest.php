@@ -22,6 +22,7 @@ use App\Test\Factory\ResourceFactory;
 use App\Test\Factory\RoleFactory;
 use App\Test\Factory\UserFactory;
 use App\Test\Lib\AppIntegrationTestCase;
+use App\Test\Lib\Model\EmailQueueTrait;
 use App\Test\Lib\Model\GroupsModelTrait;
 use App\Test\Lib\Model\GroupsUsersModelTrait;
 use App\Utility\UuidFactory;
@@ -29,9 +30,11 @@ use Cake\ORM\TableRegistry;
 
 /**
  * @covers \App\Controller\Users\UsersDeleteController
+ * @covers \App\Notification\Email\Redactor\User\UserDeleteAdminEmailRedactor
  */
 class UsersDeleteControllerTest extends AppIntegrationTestCase
 {
+    use EmailQueueTrait;
     use GroupsModelTrait;
     use GroupsUsersModelTrait;
 
@@ -90,7 +93,7 @@ class UsersDeleteControllerTest extends AppIntegrationTestCase
         $this->assertError(400);
         $this->assertStringContainsString(
             'sole group manager',
-            $this->_responseJsonHeader->message
+            $this->_responseJsonHeader->message,
         );
     }
 
@@ -833,5 +836,75 @@ class UsersDeleteControllerTest extends AppIntegrationTestCase
         $this->assertUserIsSoftDeleted($userA->id);
         $this->assertUserIsAdmin($group->id, $userB->id);
         $this->assertPermission($resource->id, $group->id, Permission::OWNER);
+    }
+
+    public function testUsersDeleteController_Notification_AdminDeleted_SendsToAllAdmins(): void
+    {
+        [$adminDeleted, $operator, $otherAdmin] = UserFactory::make(3)->admin()->persist();
+
+        $this->logInAs($operator);
+        $this->deleteJson("/users/{$adminDeleted->id}.json");
+
+        $this->assertSuccess();
+        $this->assertEmailQueueCount(2);
+        $adminFullName = $adminDeleted->profile->full_name;
+        $operatorFullName = $operator->profile->full_name;
+        $this->assertEmailInBatchContains(
+            "You deleted administrator {$adminFullName}",
+            $operator->username,
+        );
+        $this->assertEmailInBatchContains(
+            "The administrator {$adminFullName} ({$adminDeleted->username}) is now deleted from the passbolt organisation.",
+            $operator->username,
+        );
+        $this->assertEmailInBatchContains(
+            "{$operatorFullName} deleted administrator {$adminFullName}",
+            $otherAdmin->username,
+        );
+    }
+
+    public function testUsersDeleteController_Notification_UserDeleted_SendsToAllAdmins(): void
+    {
+        /** @var \App\Model\Entity\User $userDeleted */
+        $userDeleted = UserFactory::make()->user()->persist();
+        /** @var \App\Model\Entity\User $operator */
+        $operator = UserFactory::make()->admin()->active()->persist();
+        /** @var \App\Model\Entity\User $otherAdmin */
+        $otherAdmin = UserFactory::make()->admin()->active()->persist();
+        // Disabled admin, must not receive a notification.
+        UserFactory::make()->admin()->disabled()->persist();
+
+        $this->logInAs($operator);
+        $this->deleteJson("/users/{$userDeleted->id}.json");
+
+        $this->assertSuccess();
+        $this->assertEmailQueueCount(2);
+        $userFullName = $userDeleted->profile->full_name;
+        $operatorFullName = $operator->profile->full_name;
+        $this->assertEmailInBatchContains(
+            "You deleted user {$userFullName}",
+            $operator->username,
+        );
+        $this->assertEmailInBatchContains(
+            "The user {$userFullName} ({$userDeleted->username}) is now deleted from the passbolt organisation.",
+            $operator->username,
+        );
+        $this->assertEmailInBatchContains(
+            "{$operatorFullName} deleted user {$userFullName}",
+            $otherAdmin->username,
+        );
+        $this->assertEmailInBatchContains(
+            "The user {$userFullName} ({$userDeleted->username}) is now deleted from the passbolt organisation.",
+            $otherAdmin->username,
+        );
+        // Operator (the one who did the delete) does not see the "get in touch" suspicion prompt.
+        $this->assertEmailInBatchNotContains(
+            'Feel free to get in touch with the administrator at the origin of the operation',
+            $operator->username,
+        );
+        $this->assertEmailInBatchContains(
+            'Feel free to get in touch with the administrator at the origin of the operation',
+            $otherAdmin->username,
+        );
     }
 }

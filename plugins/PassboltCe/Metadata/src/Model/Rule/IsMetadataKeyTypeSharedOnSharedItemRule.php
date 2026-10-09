@@ -22,6 +22,7 @@ use Cake\Core\Configure;
 use Cake\Log\Log;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
+use Passbolt\Metadata\Model\Entity\MetadataKey;
 
 class IsMetadataKeyTypeSharedOnSharedItemRule
 {
@@ -37,9 +38,9 @@ class IsMetadataKeyTypeSharedOnSharedItemRule
      */
     public function __invoke(Entity $entity, array $options): bool
     {
-        // If the resource's metadata key type is not personal, the present rule does not apply
-        $isPersonal = $entity->get('metadata_key_type') === 'user_key';
-        if (!$isPersonal) {
+        // Only shared_key items are allowed to bypass the permission-count check.
+        // Any other value (user_key, blank, unknown) is treated as personal.
+        if ($entity->get('metadata_key_type') === MetadataKey::TYPE_SHARED_KEY) {
             return true;
         }
 
@@ -51,7 +52,7 @@ class IsMetadataKeyTypeSharedOnSharedItemRule
             ->limit(2)
             ->all();
 
-        // If the resource has more than one permission, the metadata key type should not be "user_key"
+        // If the resource has more than one permission, the metadata key type must be shared_key
         if ($permissions->count() > 1) {
             return false;
         }

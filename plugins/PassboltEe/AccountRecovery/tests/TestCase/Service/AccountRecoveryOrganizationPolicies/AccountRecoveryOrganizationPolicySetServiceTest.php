@@ -74,6 +74,18 @@ class AccountRecoveryOrganizationPolicySetServiceTest extends AccountRecoveryTes
         return new UserAccessControl(Role::ADMIN, UuidFactory::uuid('user.id.admin'));
     }
 
+    /**
+     * @param string $expectedSentence Expected sentence, including the raw markup.
+     * @param string $recipient Username of the user receiving the notification.
+     * @return void
+     */
+    private function assertActorNameMarkupIsEscaped(string $expectedSentence, string $recipient): void
+    {
+        $this->assertEmailInBatchContains($expectedSentence, $recipient);
+        $this->assertEmailInBatchNotContains('<a href="https://evil.example.com">' . 'Click here</a>', $recipient, '', false);
+        $this->assertEmailInBatchNotContains('<a href="https://evil.example.com">', $recipient, '', false);
+    }
+
     // Invalid policy error scenarios
 
     /**
@@ -682,6 +694,33 @@ NZMBGPJsxOKQExEOZncOVsY7ZqLrecuR8UJBQnhPd1aoz3HCJppaPxL4Q==
         }
     }
 
+    public function testAccountRecoveryOrganizationPolicySetService_Success_Enable_EscapesProfileNameHTML(): void
+    {
+        /** @var \App\Model\Entity\User $actor */
+        $actor = UserFactory::make()
+            ->active()
+            ->admin()
+            ->withProfileName('<a href="https://evil.example.com">' . 'Click here</a>', 'Doe')
+            ->persist();
+        /** @var \App\Model\Entity\User $recipient */
+        $recipient = UserFactory::make()->active()->admin()->persist();
+        $keyData = AccountRecoveryOrganizationPublicKeyFactory::make()->rsa4096Key()->getEntity();
+        $policyValue = AccountRecoveryOrganizationPolicy::ACCOUNT_RECOVERY_ORGANIZATION_POLICY_OPT_IN;
+
+        $this->service->set($this->makeUac($actor), [
+            'policy' => $policyValue,
+            'account_recovery_organization_public_key' => [
+                'fingerprint' => $keyData->fingerprint,
+                'armored_key' => $keyData->armored_key,
+            ],
+        ]);
+
+        $this->assertActorNameMarkupIsEscaped(
+            '<a href="https://evil.example.com">' . 'Click here</a>' . " has set the account recovery organization policy to $policyValue.",
+            $recipient->username,
+        );
+    }
+
     // ENABLED => DISABLED
     // SUCCESS SCENARIOS
 
@@ -746,6 +785,34 @@ NZMBGPJsxOKQExEOZncOVsY7ZqLrecuR8UJBQnhPd1aoz3HCJppaPxL4Q==
         }
     }
 
+    public function testAccountRecoveryOrganizationPolicySetService_Success_Disable_EscapesProfileNameHTML(): void
+    {
+        $this->startScenarioOptinWithBackupAndRequest();
+
+        /** @var \App\Model\Entity\User $actor */
+        $actor = UserFactory::make()
+            ->active()
+            ->admin()
+            ->withProfileName('<a href="https://evil.example.com">' . 'Click here</a>', 'Doe')
+            ->persist();
+        /** @var \App\Model\Entity\User $recipient */
+        $recipient = UserFactory::make()->active()->admin()->persist();
+        $keyData = AccountRecoveryOrganizationPublicKeyFactory::make()->revokedKey()->getEntity();
+
+        $this->service->set($this->makeUac($actor), [
+            'policy' => AccountRecoveryOrganizationPolicy::ACCOUNT_RECOVERY_ORGANIZATION_POLICY_DISABLED,
+            'account_recovery_organization_revoked_key' => [
+                'fingerprint' => $keyData->fingerprint,
+                'armored_key' => $keyData->armored_key,
+            ],
+        ]);
+
+        $this->assertActorNameMarkupIsEscaped(
+            '<a href="https://evil.example.com">' . 'Click here</a>' . ' has disabled the account recovery.',
+            $recipient->username,
+        );
+    }
+
     // ENABLED => ENABLED
     // SIMPLE SCENARIOS
 
@@ -798,6 +865,31 @@ NZMBGPJsxOKQExEOZncOVsY7ZqLrecuR8UJBQnhPd1aoz3HCJppaPxL4Q==
             }
             $this->assertEmailInBatchContains('Account Recovery Updated', $admin->username);
         }
+    }
+
+    public function testAccountRecoveryOrganizationPolicySetService_Success_Update_EscapesProfileNameHTML(): void
+    {
+        $this->startScenarioOptinNoBackups();
+
+        /** @var \App\Model\Entity\User $actor */
+        $actor = UserFactory::make()
+            ->active()
+            ->admin()
+            ->withProfileName('<a href="https://evil.example.com">' . 'Click here</a>', 'Doe')
+            ->persist();
+        /** @var \App\Model\Entity\User $recipient */
+        $recipient = UserFactory::make()->active()->admin()->persist();
+        $policyValue = AccountRecoveryOrganizationPolicy::ACCOUNT_RECOVERY_ORGANIZATION_POLICY_OPT_OUT;
+
+        $this->service->set($this->makeUac($actor), [
+            'policy' => $policyValue,
+            'public_key_id' => UuidFactory::uuid('acr.org_public_key.id'),
+        ]);
+
+        $this->assertActorNameMarkupIsEscaped(
+            '<a href="https://evil.example.com">' . 'Click here</a>' . " has updated the account recovery organization policy to $policyValue.",
+            $recipient->username,
+        );
     }
 
     public function testAccountRecoveryOrganizationPolicySetService_Error_UpdateSimple_InvalidPolicy()

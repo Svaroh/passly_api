@@ -38,9 +38,9 @@ class TotpVerifyGetController extends MfaVerifyController
     public function get(
         SessionIdentificationServiceInterface $sessionIdentificationService,
         MfaFormInterface $verifyForm,
-        RememberAMonthSettingInterface $rememberMeForAMonthSetting
+        RememberAMonthSettingInterface $rememberMeForAMonthSetting,
     ) {
-        $this->_handleVerifiedNotRequired($sessionIdentificationService);
+        $this->_handleVerifiedNotRequired($sessionIdentificationService, $rememberMeForAMonthSetting);
         $this->_handleInvalidSettings(MfaSettings::PROVIDER_TOTP);
 
         // Build and return some URI and QR code to work from

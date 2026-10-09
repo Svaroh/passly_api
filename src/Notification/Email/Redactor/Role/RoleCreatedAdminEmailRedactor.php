@@ -98,7 +98,7 @@ class RoleCreatedAdminEmailRedactor implements SubscribedEmailRedactorInterface
 
         foreach ($recipients as $recipient) {
             $emailCollection->addEmail(
-                $this->createEmail($recipient, $role, $operator)
+                $this->createEmail($recipient, $role, $operator),
             );
         }
 
@@ -117,7 +117,7 @@ class RoleCreatedAdminEmailRedactor implements SubscribedEmailRedactorInterface
             $recipient->locale,
             function () use ($role, $operator) {
                 return __('{0} created a new role {1}', $operator->profile->full_name, $role->name);
-            }
+            },
         );
 
         $operator->profile->setVirtual(['full_name']);
@@ -133,7 +133,7 @@ class RoleCreatedAdminEmailRedactor implements SubscribedEmailRedactorInterface
                 ],
                 'title' => $subject,
             ],
-            self::TEMPLATE
+            self::TEMPLATE,
         );
     }
 
@@ -143,12 +143,15 @@ class RoleCreatedAdminEmailRedactor implements SubscribedEmailRedactorInterface
      */
     private function getAdministrators(string $operatorId): array
     {
-        return $this->Users
+        /** @var array<\App\Model\Entity\User> $admins */
+        $admins = $this->Users
             ->findAdmins()
             ->find('notDisabled')
             ->find('locale')
             ->contain(['Profiles' => AvatarsTable::addContainAvatar()])
             ->where(['Users.id !=' => $operatorId])
             ->toArray();
+
+        return $admins;
     }
 }

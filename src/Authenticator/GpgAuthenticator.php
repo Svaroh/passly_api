@@ -197,7 +197,7 @@ class GpgAuthenticator extends SessionAuthenticator
         $this->assertGpgMessageIsValid(
             $this->_gpg,
             $serverVerifyToken,
-            __('The server verify token is missing or invalid.')
+            __('The server verify token is missing or invalid.'),
         );
 
         // Decrypt and verify nonce
@@ -234,7 +234,7 @@ class GpgAuthenticator extends SessionAuthenticator
 
         $this->_gpg->setSignKeyFromFingerprint(
             Configure::read('passbolt.gpg.serverKey.fingerprint'),
-            Configure::read('passbolt.gpg.serverKey.passphrase')
+            Configure::read('passbolt.gpg.serverKey.passphrase'),
         );
 
         // generate the authentication token
@@ -279,8 +279,10 @@ class GpgAuthenticator extends SessionAuthenticator
                 't=' . $uuid . ' u=' . $this->_user->id);
         }
 
-        // All good!
-        $AuthenticationToken->setInactive($uuid);
+        // Atomic consume — losing a concurrent race means another stage-2 call already used this token.
+        if (!$AuthenticationToken->setInactive($uuid)) {
+            return $this->_error(__('The user token result has already been used.'));
+        }
         $this
             ->addHeader('X-GPGAuth-Progress', 'complete')
             ->addHeader('X-GPGAuth-Authenticated', 'true')

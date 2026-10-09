@@ -50,6 +50,7 @@ class UsersHealthcheckService extends AbstractHealthcheckService
      */
     public function check(): array
     {
+        /** @var array<\App\Model\Entity\User> $records */
         $records = $this->Users->find()->all();
         $this->usernameDuplicates = $this->Users->listDuplicateUsernames()->toArray();
 
@@ -74,7 +75,7 @@ class UsersHealthcheckService extends AbstractHealthcheckService
             $msg = __('The username {0} is a duplicate.', $this->usernameDuplicates[$user->id]);
             $copy->setError(
                 'username',
-                ['uniqueUsername' => $msg]
+                ['uniqueUsername' => $msg],
             );
         }
 
