@@ -15,7 +15,6 @@ declare(strict_types=1);
  */
 use App\Model\Entity\OrganizationSetting;
 use App\Utility\UuidFactory;
-use Cake\Log\Log;
 use Migrations\AbstractMigration;
 use Passbolt\OfflineMode\Model\Dto\OfflineSettingsDto;
 use Passbolt\OfflineMode\Model\Entity\OfflineModeSetting;
@@ -27,42 +26,36 @@ class V601InsertDefaultOfflineModeSettings extends AbstractMigration
      */
     public function change(): void
     {
-        try {
-            $propertyId = UuidFactory::uuid(
-                OrganizationSetting::UUID_NAMESPACE . OfflineModeSetting::PROPERTY_NAME,
-            );
+        $propertyId = UuidFactory::uuid(
+            OrganizationSetting::UUID_NAMESPACE . OfflineModeSetting::PROPERTY_NAME,
+        );
 
-            $existing = $this->fetchRow(
-                sprintf("SELECT id FROM organization_settings WHERE property_id = '%s' LIMIT 1", $propertyId),
-            );
+        $existing = $this->fetchRow(
+            sprintf("SELECT id FROM organization_settings WHERE property_id = '%s' LIMIT 1", $propertyId),
+        );
 
-            if (empty($existing)) {
-                $admin = $this->fetchRow('SELECT id FROM users ORDER BY created ASC LIMIT 1');
-                $adminId = $admin['id'] ?? null;
-                $now = date('Y-m-d H:i:s');
+        if (empty($existing)) {
+            $admin = $this->fetchRow('SELECT id FROM users ORDER BY created ASC LIMIT 1');
+            $adminId = $admin['id'] ?? UuidFactory::uuid('users.system');
+            $now = date('Y-m-d H:i:s');
 
-                $value = json_encode([
-                    'max_session_duration' => OfflineSettingsDto::DEFAULT_MAX_SESSION_DURATION,
-                    'data_retention_period' => OfflineSettingsDto::DEFAULT_DATA_RETENTION_PERIOD,
-                    'max_items' => OfflineSettingsDto::DEFAULT_MAX_ITEMS,
-                ]);
+            $value = json_encode([
+                'max_session_duration' => OfflineSettingsDto::DEFAULT_MAX_SESSION_DURATION,
+                'data_retention_period' => OfflineSettingsDto::DEFAULT_DATA_RETENTION_PERIOD,
+                'max_items' => OfflineSettingsDto::DEFAULT_MAX_ITEMS,
+            ]);
 
-                $table = $this->table('organization_settings');
-                $table->insert([
-                    'id' => UuidFactory::uuid(),
-                    'property' => OfflineModeSetting::PROPERTY_NAME,
-                    'property_id' => $propertyId,
-                    'value' => $value,
-                    'created' => $now,
-                    'created_by' => $adminId,
-                    'modified' => $now,
-                    'modified_by' => $adminId,
-                ])->saveData();
-            }
-        } catch (Throwable $e) {
-            $msg = 'There was an error in V601InsertDefaultOfflineModeSettings.';
-            $msg .= ' ' . $e->getMessage();
-            Log::error($msg);
+            $table = $this->table('organization_settings');
+            $table->insert([
+                'id' => UuidFactory::uuid(),
+                'property' => OfflineModeSetting::PROPERTY_NAME,
+                'property_id' => $propertyId,
+                'value' => $value,
+                'created' => $now,
+                'created_by' => $adminId,
+                'modified' => $now,
+                'modified_by' => $adminId,
+            ])->saveData();
         }
     }
 }
