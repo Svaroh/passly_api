@@ -53,14 +53,6 @@ class OfflineSettingsGetService
         /** @var \Passbolt\OfflineMode\Model\Entity\OfflineModeSetting|null $entity */
         $entity = $table->find()->first();
         if ($entity === null) {
-            if (Configure::read('passbolt.plugins.offlineMode.enabled', false)) {
-                return new OfflineSettingsDto(
-                    OfflineSettingsDto::DEFAULT_MAX_SESSION_DURATION,
-                    OfflineSettingsDto::DEFAULT_DATA_RETENTION_PERIOD,
-                    OfflineSettingsDto::DEFAULT_MAX_ITEMS,
-                );
-            }
-
             return null;
         }
 

@@ -42,8 +42,6 @@ Release, packaging, CI, and coverage workflows are now available in GitHub Actio
 - Adds the Nix development shell for local API tooling
 - Aligns Composer audit strict branch handling for the Passly fork
 
-Release song: https://www.youtube.com/watch?v=gI6fQ2IXMjE
-
 ## [5.16.0] - 2026-09-16
 ### Added
 - PB-52633 Add support for Offline Mode

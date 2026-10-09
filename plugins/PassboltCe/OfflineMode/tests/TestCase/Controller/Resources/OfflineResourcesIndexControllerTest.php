@@ -137,8 +137,7 @@ class OfflineResourcesIndexControllerTest extends AppIntegrationTestCase
 
     public function testOfflineResourcesIndexController_FeatureDisabled_ContainRequested_NullOfflineKey(): void
     {
-        // Disable feature plugin and remove settings row — feature is now disabled.
-        $this->disableFeaturePlugin(OfflineModePlugin::class);
+        // Remove the settings row seeded by setUp — feature is now disabled.
         /** @var \Passbolt\OfflineMode\Model\Table\OfflineModeSettingsTable $offlineModeSettingsTable */
         $offlineModeSettingsTable = OfflineModeSettingFactory::make()->getTable();
         $offlineModeSettingsTable->deleteAll(['property' => $offlineModeSettingsTable->getProperty()]);

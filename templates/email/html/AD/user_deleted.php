@@ -58,17 +58,17 @@ echo $this->element('Email/module/avatar', [
 if ($recipient['id'] !== $user['id']) {
     $text = $isAdmin
         ? __(
-            'The administrator {0} ({1}) is now deleted from the passbolt organisation.',
+            'The administrator {0} ({1}) is now deleted from the passly organisation.',
             $userFullName,
             Purifier::clean($user['username'])
         )
         : __(
-            'The user {0} ({1}) is now deleted from the passbolt organisation.',
+            'The user {0} ({1}) is now deleted from the passly organisation.',
             $userFullName,
             Purifier::clean($user['username'])
         );
 } else {
-    $text = __('{0} deleted you from the passbolt organisation.', $operatorFullName);
+    $text = __('{0} deleted you from the passly organisation.', $operatorFullName);
 }
 
 if ($recipient['id'] !== $operator['id']) {

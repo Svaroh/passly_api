@@ -20,7 +20,6 @@ use App\Model\Entity\OrganizationSetting;
 use App\Model\Table\OrganizationSettingsTable;
 use App\Utility\UuidFactory;
 use ArrayObject;
-use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\ORM\Query;
 use Cake\Validation\Validator;
@@ -148,7 +147,7 @@ class OfflineModeSettingsTable extends OrganizationSettingsTable
         /** @var \Passbolt\OfflineMode\Model\Entity\OfflineModeSetting|null $entity */
         $entity = $this->find()->first();
         if ($entity === null) {
-            return (bool)Configure::read('passbolt.plugins.offlineMode.enabled', false);
+            return false;
         }
 
         return is_array($entity->get('value'));

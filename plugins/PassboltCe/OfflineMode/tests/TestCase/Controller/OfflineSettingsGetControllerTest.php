@@ -36,7 +36,6 @@ class OfflineSettingsGetControllerTest extends AppIntegrationTestCase
 
     public function testOfflineSettingsGetController_Success_EmptyBodyWhenNoRow(): void
     {
-        $this->disableFeaturePlugin(OfflineModePlugin::class);
         $this->logInAsUser();
         $this->getJson('/offline/settings.json');
 
