@@ -220,6 +220,43 @@ class SecretsUpdateSecretsServiceTest extends AppTestCase
         $this->assertNull(SecretFactory::get($secretToKeepId)->get('deleted'));
     }
 
+    public function testDeleteLostAccessSecrets_DeletesAllRowsWhenAccessSetIsEmpty()
+    {
+        [$userA, $userB] = UserFactory::make(2)->persist();
+        // Resource has secret rows for both users but no Permissions row for either — mirrors the
+        // state right after the last permission is removed on share, before cleanup runs.
+        $r1 = ResourceFactory::make()
+            ->withSecretRevisions()
+            ->withSecretsFor([$userA, $userB])
+            ->persist();
+
+        // Empty $data + zero permissions on the resource → getUsersIdsHavingAccessTo() returns [].
+        // Before the fix, deleteLostAccessSecrets() early-returned, leaving stale rows and
+        // relying on assertAllSecretsAreProvided() to roll the transaction back.
+        $this->service->updateSecrets($this->makeUac($userA), $r1->id, []);
+
+        $this->assertSame(0, $this->Secrets->findByResourceId($r1->id)->count());
+        $this->assertSecretNotExist($r1->id, $userA->id);
+        $this->assertSecretNotExist($r1->id, $userB->id);
+    }
+
+    public function testDeleteLostAccessSecrets_KeepsRowsForUsersStillWithAccess()
+    {
+        [$userA, $userB] = UserFactory::make(2)->persist();
+        // userA retains access; userB has a stale secret row and no permission.
+        $r1 = ResourceFactory::make()
+            ->withSecretRevisions()
+            ->withPermissionsFor([$userA])
+            ->withSecretsFor([$userA, $userB])
+            ->persist();
+
+        $this->service->updateSecrets($this->makeUac($userA), $r1->id, []);
+
+        $this->assertSame(1, $this->Secrets->findByResourceId($r1->id)->count());
+        $this->assertSecretExists($r1->id, $userA->id);
+        $this->assertSecretNotExist($r1->id, $userB->id);
+    }
+
     public function testUpdateSecrets_Error_If_Revision_Is_Deleted()
     {
         [$userA, $userB] = UserFactory::make(2)->persist();

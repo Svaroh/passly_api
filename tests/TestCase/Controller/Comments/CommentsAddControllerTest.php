@@ -40,7 +40,7 @@ class CommentsAddControllerTest extends AppIntegrationTestCase
             'content' => $commentContent,
         ];
         $resourceId = $resource->get('id');
-        $this->postJson("/comments/resource/$resourceId.json", $postData);
+        $this->postJson("/comments/resource/$resourceId.json?contain[creator]=1&contain[modifier]=1", $postData);
         $this->assertSuccess();
 
         // Check that the groups and its sub-models are saved as expected.
@@ -48,6 +48,8 @@ class CommentsAddControllerTest extends AppIntegrationTestCase
             ->where(['id' => $this->_responseJsonBody->id])
             ->first();
         $this->assertEquals($commentContent, $comment->content);
+
+        $this->assertObjectNotHasAttributes(['creator', 'modifier'], $this->_responseJsonBody);
 
         // Since the resource is not shared, no email are sent
         $this->assertEmailQueueIsEmpty();

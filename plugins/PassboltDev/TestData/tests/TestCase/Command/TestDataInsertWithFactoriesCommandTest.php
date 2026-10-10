@@ -112,6 +112,16 @@ class TestDataInsertWithFactoriesCommandTest extends TestCase
 
         // Folders Permissions
         // 36 part of Permissions
+
+        // Resources / SecretRevisions
+        $resources = ResourceFactory::find('all')->contain(['Secrets', 'SecretRevisions'])->toArray();
+        foreach ($resources as $resource) {
+            $resourceSecretRevisionsId = $resource['secret_revisions'][0]['id'];
+            foreach ($resource['secrets'] as $secret) {
+                $this->assertNotNull($secret['secret_revision_id']);
+                $this->assertSame($resourceSecretRevisionsId, $secret['secret_revision_id']);
+            }
+        }
     }
 
     public function testTestDataInsertWithFactoriesCommand_Demo_withData_Fail_Scenario()
@@ -273,5 +283,26 @@ class TestDataInsertWithFactoriesCommandTest extends TestCase
         $this->exec('passbolt insert_with_factories default');
         $this->assertExitError();
         $this->assertOutputContains('There is already dummy data in the DB, try with the --truncate option.');
+    }
+
+    public function testTestDataInsertWithFactoriesCommand_Large_Truncate_Scenario()
+    {
+        $this->exec('passbolt insert_with_factories large --truncate');
+        $this->assertOutputContains('<success>' . __('Data inserted successfully in '));
+        $this->assertExitSuccess();
+
+        // EmailQueue
+        $emailQueueCount = Configure::read('PassboltTestData.scenarios.large.install.count.email_queue');
+        $this->assertEquals($emailQueueCount, EmailQueueFactory::count());
+
+        // Resources / SecretRevisions
+        $resources = ResourceFactory::find('all')->contain(['Secrets', 'SecretRevisions'])->toArray();
+        foreach ($resources as $resource) {
+            $resourceSecretRevisionsId = $resource['secret_revisions'][0]['id'];
+            foreach ($resource['secrets'] as $secret) {
+                $this->assertNotNull($secret['secret_revision_id']);
+                $this->assertSame($resourceSecretRevisionsId, $secret['secret_revision_id']);
+            }
+        }
     }
 }

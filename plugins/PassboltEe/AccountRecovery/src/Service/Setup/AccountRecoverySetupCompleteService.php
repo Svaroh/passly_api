@@ -95,19 +95,24 @@ class AccountRecoverySetupCompleteService extends SetupCompleteService
     public function complete(string $userId, ?array $saveOptions = []): User
     {
         $this->assertRequestSanity();
-        $user = $this->buildUserEntity($userId); // checks token and user
-        $this->uac = new UserAccessControl($user->role->name, $user->id);
 
-        // Validate additional settings
-        if ($this->isAccountRecoveryUserSettingProvided()) {
-            $userSettingService = new AccountRecoveryUserSettingsSetService($this->uac);
-            $userSetting = $userSettingService->patchEntity(
-                $this->request->getData('account_recovery_user_setting')
-            );
-            $user->set('account_recovery_user_setting', $userSetting);
-        }
+        return $this->AuthenticationTokens->getConnection()->transactional(
+            function () use ($userId, $saveOptions): User {
+                $user = $this->buildUserEntity($userId); // checks token and user
+                $this->uac = new UserAccessControl($user->role->name, $user->id);
 
-        return $this->saveUserEntity($user, $saveOptions);
+                // Validate additional settings
+                if ($this->isAccountRecoveryUserSettingProvided()) {
+                    $userSettingService = new AccountRecoveryUserSettingsSetService($this->uac);
+                    $userSetting = $userSettingService->patchEntity(
+                        $this->request->getData('account_recovery_user_setting'),
+                    );
+                    $user->set('account_recovery_user_setting', $userSetting);
+                }
+
+                return $this->saveUserEntity($user, $saveOptions);
+            },
+        );
     }
 
     /**
@@ -127,7 +132,7 @@ class AccountRecoverySetupCompleteService extends SetupCompleteService
         } elseif ($this->policy->isMandatory()) {
             if (!$this->isPrivateKeyProvided() || !$this->arePasswordsProvided()) {
                 throw new BadRequestException(
-                    __('Account recovery is mandatory. Please provide the mandatory data.')
+                    __('Account recovery is mandatory. Please provide the mandatory data.'),
                 );
             }
         }
@@ -155,7 +160,7 @@ class AccountRecoverySetupCompleteService extends SetupCompleteService
     protected function arePasswordsProvided(): bool
     {
         return is_array($this->request->getData(
-            'account_recovery_user_setting.account_recovery_private_key.account_recovery_private_key_passwords'
+            'account_recovery_user_setting.account_recovery_private_key.account_recovery_private_key_passwords',
         ));
     }
 
@@ -175,7 +180,7 @@ class AccountRecoverySetupCompleteService extends SetupCompleteService
                 throw new ValidationException(
                     'Could not save the account recovery setting.',
                     $user->get('account_recovery_user_setting'),
-                    $this->AccountRecoveryUserSettings
+                    $this->AccountRecoveryUserSettings,
                 );
             }
 
@@ -183,7 +188,7 @@ class AccountRecoverySetupCompleteService extends SetupCompleteService
                 throw new ValidationException(
                     'Could not save the account recovery private key.',
                     $user->get('account_recovery_private_key'),
-                    $this->AccountRecoveryPrivateKeys
+                    $this->AccountRecoveryPrivateKeys,
                 );
             }
         }

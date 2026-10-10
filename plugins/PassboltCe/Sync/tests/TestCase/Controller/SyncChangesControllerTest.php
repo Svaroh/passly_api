@@ -58,7 +58,7 @@ class SyncChangesControllerTest extends AppIntegrationTestCase
                 'entity_id' => true,
                 'op' => true,
                 'created' => true,
-            ]]
+            ]],
         ));
     }
 

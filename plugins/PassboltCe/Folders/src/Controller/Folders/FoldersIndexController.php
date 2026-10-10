@@ -83,7 +83,7 @@ class FoldersIndexController extends AppController
         /** @var \Passbolt\Folders\Model\Table\FoldersTable $foldersTable */
         $foldersTable = $this->fetchTable('Passbolt/Folders.Folders');
         $folders = $foldersTable->findIndex($this->User->id(), $options);
-        $folders->disableHydration();
+        $folders->enableHydration(false);
         $folders = $this->paginate($folders)->items();
         /** @psalm-suppress InvalidArgument **/
         $folders = FolderizableBehavior::unsetPersonalPropertyIfNullOnResultSet($folders);

@@ -1,69 +1,55 @@
-# Developers FAQ
+# Contributing to Passbolt API
+
 ## Prerequisite
-Make sure you have the developement dependencies install.
+
+* git
+* Docker provider ([see supported list](https://ddev.readthedocs.io/en/stable/users/install/docker-installation/))
+* [ddev](https://ddev.com/get-started/)
+* mkcert, nss library installed ([see](https://docs.ddev.com/en/stable/users/install/ddev-installation/))
+
+## Setup
+
+Quickly spin up development environment with default configuration:
+1. Clone passbolt api repo
+2. Start ddev
+    ```sh
+    ddev start
+    ```
+3. Initiate dev environment (run only once)
+    ```sh
+    ddev init_passbolt
+    ```
+
+All set! Navigate to https://passbolt-api.ddev.site/ and start contributing to passbolt 💪
+
+## Running tests
+
+The test database is already created for you.
+
+To run full test suite:
 ```
-composer install
+ddev composer test
 ```
 
-## How do I run the unit tests
-- Configure your test database in app.php datasources section.
-- Run phpunit:
+To run a subset of tests:
 ```
-composer test
+ddev exec -d /var/www/html "vendor/bin/phpunit --filter <TestName>"
 ```
 
-## How do I check the code standards
-- To display the error and warning
-```
-composer cs-check
-```
-- To autofix what is fixable
-```
-composer cs-fix
-```
+## Run code quality checks
 
-## How to regenerate the fixtures
-```
-sudo su -s /bin/bash -c "./bin/cake PassboltTestData.fixturize default" www-data
-```
+- Coding style violations: `ddev composer cs-check`
+- Autofix coding style errors: `ddev composer cs-fix`
+- Static analysis: `ddev composer stan` and `ddev composer psalm`
+- All in one command (run PHPStan, Psalm and coding standards check): `ddev analyze`
 
-## How do I contribute to the js application
+## Contributing to the Clients
 
-Clone the appjs repository in a separate folder
-```
-git clone https://github.com/passbolt/passbolt-appjs.git
-```
-
-In your passbolt_api folder install the javascript dependencies
-```
-npm install
-```
-
-Link the source of passbolt-appjs project to your passbolt_api project
-```
-cd node_modules
-rm -fr passbolt-appjs
-npm link ../../passbolt-appjs
-cd ../
-```
-
-Listen to any change on the passbolt-appjs product
-```
-grunt appjs-watch
-```
-
-If you want to save the browser refresh operation, and you are aware about the security implication, you can
-install browser-sync
-```
-npm install grunt-browser-sync
-```
-
-Listen to the appjs change and refresh the browser
-```
-grunt appjs-watch-browser-sync
-```
+* Browser extension(Firefox, Edge & Chrome): https://github.com/passbolt/passbolt_browser_extension
+* Styleguide: https://github.com/passbolt/passbolt_styleguide
+* CLI: https://github.com/passbolt/go-passbolt-cli
+* Windows desktop application: https://github.com/passbolt/passbolt-windows
 
 ## How do I contribute to the translation
 
 For contributing to the translations of this repository, you will need to create an account and propose changes at https://passbolt.crowdin.com/.
-

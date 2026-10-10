@@ -106,6 +106,28 @@ abstract class AbstractCompleteService
     }
 
     /**
+     * Atomically consume a Setup/Recover token; loser of a concurrent race
+     * throws the same `CustomValidationException` shape as `getActiveOrFail`.
+     *
+     * @param \App\Model\Entity\AuthenticationToken $token token entity previously fetched via `getAndAssertToken`
+     * @return void
+     * @throws \App\Error\Exception\CustomValidationException if the token was already consumed
+     */
+    protected function consumeTokenOrFail(AuthenticationToken $token): void
+    {
+        if (!$this->AuthenticationTokens->setInactive($token->token)) {
+            $error = [
+                'token' => [
+                    'isActive' => __('The token is already consumed.'),
+                ],
+            ];
+            throw new CustomValidationException(__('The authentication token is not valid.'), $error);
+        }
+        $token->set('active', false);
+        $token->setDirty('active', false);
+    }
+
+    /**
      * Return the gpg key entity for matching the requesting id
      *
      * @param string $userId the user uuid

@@ -24,7 +24,6 @@ use App\Service\Users\UserGetService;
 use Cake\Core\Configure;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Http\Exception\BadRequestException;
-use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Log\Log;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -70,6 +69,7 @@ class RecoverAbortService
      * @param string $token token.token
      * @param string $userId User ID
      * @return void
+     * @throws \Cake\Http\Exception\BadRequestException if the token is missing, expired, invalid, or already consumed
      */
     protected function assertAndConsumeToken(string $token, string $userId): void
     {
@@ -85,9 +85,9 @@ class RecoverAbortService
 
         /** @var \App\Model\Table\AuthenticationTokensTable $authenticationTokensTable */
         $authenticationTokensTable = $this->fetchTable('AuthenticationTokens');
-        $tokenEntity->active = false;
-        if (!$authenticationTokensTable->save($tokenEntity)) {
-            throw new InternalErrorException(__('The authentication token could not be saved.'));
+        if (!$authenticationTokensTable->setInactive($tokenEntity->token)) {
+            // Lost the concurrent-consume race.
+            throw new BadRequestException(__('The authentication token is not valid.'));
         }
     }
 

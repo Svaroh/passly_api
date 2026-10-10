@@ -29,12 +29,14 @@ use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\I18n\DateTime;
+use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
 use Cake\Validation\Validation;
 use Exception;
 use InvalidArgumentException;
+use Passbolt\Rbacs\Model\Entity\Rbac;
 
 /**
  * @method \Cake\Event\EventManager getEventManager()
@@ -55,7 +57,7 @@ trait UsersFindersTrait
     private function _filterQueryByGroupsUsers(
         SelectQuery $query,
         array $groupsIds,
-        bool $areManager = false
+        bool $areManager = false,
     ): SelectQuery {
         // If there is only one group use a left join
         if (count($groupsIds) == 1) {
@@ -124,7 +126,7 @@ trait UsersFindersTrait
     public function filterQueryByResourcesAccess(
         SelectQuery $query,
         array|Query $resourceIds,
-        array $permissionTypes = []
+        array $permissionTypes = [],
     ): SelectQuery {
         if (is_array($resourceIds) && empty($resourceIds)) {
             return $query;
@@ -159,7 +161,7 @@ trait UsersFindersTrait
                 ['OR' => [
                     ['PermissionsFilterAccess.aro_foreign_key' => new IdentifierExpression('Users.id')],
                     ['PermissionsFilterAccess.aro_foreign_key IN' => $groupIdsSubquery],
-                ]]
+                ]],
             );
     }
 
@@ -230,8 +232,9 @@ trait UsersFindersTrait
      */
     public function findIndex(string $role, ?array $options = []): SelectQuery
     {
+        $showLastLoggedIn = $role === Role::ADMIN;
         /** @var \Cake\ORM\Query\SelectQuery $query */
-        $query = $this->find();
+        $query = $this->find('all', showLastLoggedIn: $showLastLoggedIn);
 
         $event = TableFindIndexBefore::create($query, FindIndexOptions::createFromArray($options), $this);
 
@@ -257,7 +260,8 @@ trait UsersFindersTrait
             $query->contain(['Profiles' => AvatarsTable::addContainAvatar()]);
         }
         if (isset($options['contain']['groups_users']) && $options['contain']['groups_users']) {
-            $query->contain('GroupsUsers');
+            // Force select strategy: ORDER BY (e.g. a joined Profiles column) + a GROUP BY, which MySQL 5.7 only_full_group_by rejects.
+            $query->contain(['GroupsUsers' => ['strategy' => 'select']]);
         }
 
         // Filter out guests and deleted users
@@ -380,12 +384,13 @@ trait UsersFindersTrait
     public function findAuthIdentifier(SelectQuery $query): SelectQuery
     {
         return $query
-            ->find('activeNotDeletedContainRole')
+            ->find('activeNotDeletedContainRole', showLastLoggedIn: true)
             ->find('notDisabled')
             ->select([
                 'Users.id',
                 'Users.role_id',
                 'Users.username',
+                'Users.last_logged_in',
                 'Roles.id',
                 'Roles.name',
             ]);
@@ -472,8 +477,7 @@ trait UsersFindersTrait
             ->groupBy('LOWER(Users.username)')
             ->having('count(*) > 1');
 
-        return $this->find('list', keyField: 'id', valueField: 'username')
-            ->disableHydration()
+        return $this->unhydratedFind('list', keyField: 'id', valueField: 'username')
             ->select(['id', 'username'])
             ->where([
                 'LOWER(username) IN' => $subQueryOfLowerCasedUsernameDuplicates,
@@ -586,10 +590,46 @@ trait UsersFindersTrait
                     'Users.deleted' => false,
                     'Users.active' => true,
                     'Roles.name' => Role::ADMIN,
-                ]
+                ],
             )
             ->orderBy(['Users.created' => 'ASC'])
             ->contain(['Roles']);
+    }
+
+    /**
+     * Filter users to those allowed to perform an RBAC-controlled action:
+     * admins by role, plus non-admins whose role has the given RBAC action granted with control_function=Allow.
+     *
+     * Selects on role / RBAC grant only: callers must chain 'activeNotDeleted' and 'notDisabled' as needed.
+     *
+     * Only returns admins-only when the Rbacs association is not registered (i.e. the Rbacs plugin is not loaded).
+     *
+     * @param \Cake\ORM\Query\SelectQuery $query Query to augment.
+     * @param string $rbacActionName Fully-qualified RBAC action name (e.g. 'AccountRecoveryRequestsView.view').
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function findAdminsOrRbacActionGrantees(SelectQuery $query, string $rbacActionName): SelectQuery
+    {
+        $query->innerJoinWith('Roles');
+
+        if (!$this->Roles->hasAssociation('Rbacs')) {
+            return $query->where(['Roles.name' => Role::ADMIN]);
+        }
+
+        $grantedRoleIds = $this->Roles->getAssociation('Rbacs')->find()
+            ->select(['Rbacs.role_id'])
+            ->where([
+                'Rbacs.foreign_model' => Rbac::FOREIGN_MODEL_ACTION,
+                'Rbacs.foreign_id' => UuidFactory::uuid($rbacActionName),
+                'Rbacs.control_function' => Rbac::CONTROL_FUNCTION_ALLOW,
+            ]);
+
+        return $query->where(function (QueryExpression $exp) use ($grantedRoleIds): QueryExpression {
+            return $exp->or([
+                'Roles.name' => Role::ADMIN,
+                'Users.role_id IN' => $grantedRoleIds,
+            ]);
+        });
     }
 
     /**
@@ -622,6 +662,32 @@ trait UsersFindersTrait
                     ->gt($this->aliasField('disabled'), DateTime::now());
             });
         });
+    }
+
+    /**
+     * Unset users' last logged in date if the user role is not admin.
+     *
+     * @param \Cake\ORM\Query\SelectQuery $query query
+     * @param bool|null $showLastLoggedIn role
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function findUnsetLastLoggedInForNonAdmin(SelectQuery $query, ?bool $showLastLoggedIn): SelectQuery
+    {
+        if (!$showLastLoggedIn) {
+            $query->formatResults(function ($results) {
+                return $results->map(function ($user) {
+                    if (is_array($user)) {
+                        unset($user['last_logged_in']);
+                    } elseif ($user instanceof Entity) {
+                        $user->unset('last_logged_in');
+                    }
+
+                    return $user;
+                });
+            });
+        }
+
+        return $query;
     }
 
     /**
@@ -681,6 +747,19 @@ trait UsersFindersTrait
     public function findActiveNotDeletedContainRole(SelectQuery $query): SelectQuery
     {
         return $query->find('activeNotDeleted')->contain('Roles');
+    }
+
+    /**
+     * Active and non deleted not disabled users only with role
+     *
+     * @param \Cake\ORM\Query\SelectQuery $query Query to carve.
+     * @return \Cake\ORM\Query\SelectQuery
+     */
+    public function findActiveNotDeletedNotDisabledContainRole(SelectQuery $query): SelectQuery
+    {
+        return $query->find('activeNotDeleted')
+            ->find('notDisabled')
+            ->contain('Roles');
     }
 
     /**

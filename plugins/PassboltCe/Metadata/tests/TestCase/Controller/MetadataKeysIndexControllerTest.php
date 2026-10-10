@@ -88,6 +88,7 @@ class MetadataKeysIndexControllerTest extends AppIntegrationTestCaseV5
         // creator data is returned
         $expectedCreator = $metadataKey->get('creator');
         $creator = $response[0]['creator'];
+        $this->assertArrayNotHasKey('last_logged_in', $creator);
         $this->assertEqualsCanonicalizing(
             [
                 'id' => $expectedCreator->get('id'),
@@ -98,7 +99,6 @@ class MetadataKeysIndexControllerTest extends AppIntegrationTestCaseV5
                 'disabled' => $expectedCreator->get('disabled'),
                 'created' => $expectedCreator->get('created')->toIso8601String(),
                 'modified' => $expectedCreator->get('modified')->toIso8601String(),
-                'last_logged_in' => $expectedCreator->get('last_logged_in')->toIso8601String(),
             ],
             [
                 'id' => $creator['id'],
@@ -109,8 +109,7 @@ class MetadataKeysIndexControllerTest extends AppIntegrationTestCaseV5
                 'disabled' => $creator['disabled'],
                 'created' => $creator['created'],
                 'modified' => $creator['modified'],
-                'last_logged_in' => $creator['last_logged_in'],
-            ]
+            ],
         );
         // assert profile data
         $this->assertArrayHasKey('profile', $creator);
@@ -132,7 +131,7 @@ class MetadataKeysIndexControllerTest extends AppIntegrationTestCaseV5
                 'last_name' => $profile['last_name'],
                 'created' => $profile['created'],
                 'modified' => $profile['modified'],
-            ]
+            ],
         );
         $this->assertArrayHasKey('avatar', $profile);
         $this->assertArrayHasKey('url', $profile['avatar']);

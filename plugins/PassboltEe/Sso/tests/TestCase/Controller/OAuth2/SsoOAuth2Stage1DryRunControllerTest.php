@@ -20,21 +20,57 @@ namespace Passbolt\Sso\Test\TestCase\Controller\OAuth2;
 use App\Test\Factory\UserFactory;
 use App\Utility\UuidFactory;
 use Cake\Core\Configure;
+use Cake\Routing\Router;
 use Passbolt\Sso\Middleware\SsoEndpointsSecurityMiddleware;
+use Passbolt\Sso\Model\Entity\SsoState;
 use Passbolt\Sso\Test\Factory\SsoSettingsFactory;
 use Passbolt\Sso\Test\Lib\SsoIntegrationTestCase;
+use Passbolt\Sso\Test\Lib\SsoProviderTestTrait;
+use Passbolt\Sso\Utility\OAuth2\Provider\OAuth2Provider;
+use Passbolt\Sso\Utility\Provider\SsoProviderFactory;
 
 /**
  * @see \Passbolt\Sso\Controller\OAuth2\SsoOAuth2Stage1DryRunController
  */
 class SsoOAuth2Stage1DryRunControllerTest extends SsoIntegrationTestCase
 {
+    use SsoProviderTestTrait;
+
     /**
      * 200 returns a URL for Oauth2/OIDC provider
      */
     public function testSsoOAuth2Stage1DryRunController_Success(): void
     {
-        $this->markTestIncomplete();
+        /** @var \App\Model\Entity\User $admin */
+        $admin = UserFactory::make()->admin()->persist();
+        $settings = SsoSettingsFactory::make()->oauth2()->draft()->persist();
+        // Mock provider
+        $mockOAuth2Provider = $this->getProviderMockForStage1(OAuth2Provider::class);
+        $clientId = UuidFactory::uuid();
+        $state = SsoState::generate();
+        $url = $this->getDummyOAuth2AuthorizationUrl($admin, $state, ['client_id' => $clientId]);
+        $mockOAuth2Provider->method('getAuthorizationUrl')->willReturn($url);
+        $mockOAuth2Provider->method('getState')->willReturn($state);
+        // Swap actual implementation
+        SsoProviderFactory::set($mockOAuth2Provider);
+
+        $this->logInAs($admin);
+        $this->postJson('/sso/oauth2/login/dry-run.json', ['sso_settings_id' => $settings->get('id')]);
+
+        $this->assertSuccess();
+        $url = $this->_responseJsonBody->url;
+        $this->assertStringContainsString('oauth2.passbolt.test/authorize', $url);
+        $this->assertStringContainsString('nonce', $url);
+        $this->assertStringContainsString('login_hint=' . rawurlencode($admin->username), $url);
+        $this->assertStringContainsString("client_id={$clientId}", $url);
+        $this->assertStringContainsString(
+            'scope=' . rawurlencode(implode(' ', ['openid', 'profile', 'email'])),
+            $url,
+        );
+        $this->assertStringContainsString(
+            'redirect_uri=' . rawurlencode(Router::url('/sso/oauth2/redirect', true)),
+            $url,
+        );
     }
 
     /**

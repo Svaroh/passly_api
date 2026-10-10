@@ -318,14 +318,14 @@ class AuthLoginControllerTest extends AppIntegrationTestCase
                 $this->assertTrue(isset($headers['X-GPGAuth-Debug']), 'A debug message should be set in the headers');
                 $this->assertFalse(
                     strpos($headers['X-GPGAuth-Debug'], 'Invalid verify token format') === false,
-                    'The debug message should contain "Invalid verify token format" got: ' . $headers['X-GPGAuth-Debug']
+                    'The debug message should contain "Invalid verify token format" got: ' . $headers['X-GPGAuth-Debug'],
                 );
             } else {
                 $this->assertTrue(isset($headers['X-GPGAuth-Verify-Response']), 'The verify response header should be set for ' . $token);
                 $this->assertEquals(
                     $headers['X-GPGAuth-Verify-Response'],
                     $token,
-                    'The verify response header should match the original token. It is ' . $headers['X-GPGAuth-Verify-Response'] . ' instead of ' . $token
+                    'The verify response header should match the original token. It is ' . $headers['X-GPGAuth-Verify-Response'] . ' instead of ' . $token,
                 );
             }
         }
@@ -399,7 +399,7 @@ class AuthLoginControllerTest extends AppIntegrationTestCase
         // try to decrypt the message
         $this->assertTrue(
             $this->gpg->setDecryptKeyFromFingerprint($this->adaKeyId, ''),
-            'CONFIG - It is not possible to use the key provided in the fixtures to decrypt.'
+            'CONFIG - It is not possible to use the key provided in the fixtures to decrypt.',
         );
         $msg = stripslashes(urldecode($headers['X-GPGAuth-User-Auth-Token']));
         $this->gpg->setVerifyKeyFromFingerprint(Configure::read('passbolt.gpg.serverKey.fingerprint'));
@@ -482,6 +482,7 @@ class AuthLoginControllerTest extends AppIntegrationTestCase
         ]);
 
         $this->assertSuccess();
+        $this->assertObjectNotHasAttribute('last_logged_in', $this->_responseJsonBody);
         $headers = $this->getHeaders();
         $this->assertSame('true', $headers['X-GPGAuth-Authenticated']);
         $this->assertSame('complete', $headers['X-GPGAuth-Progress']);
@@ -491,6 +492,30 @@ class AuthLoginControllerTest extends AppIntegrationTestCase
         $this->assertEquals($lastLoggedIn->toIso8601String(), $updatedUser['last_logged_in']->toIso8601String());
         // Reset date time object state
         DateTime::setTestNow();
+    }
+
+    public function testAuthLoginController_Stage2_SecondCallWithSameTokenRejected(): void
+    {
+        $user = UserFactory::make()
+            ->with('Gpgkeys', GpgkeyFactory::make()->withAdaKey())
+            ->user()
+            ->active()
+            ->persist();
+        $authenticationToken = AuthenticationTokenFactory::make(['user_id' => $user->id])
+            ->type(AuthenticationToken::TYPE_LOGIN)
+            ->active()
+            ->persist();
+        $token = 'gpgauthv1.3.0|36|' . $authenticationToken->get('token') . '|gpgauthv1.3.0';
+
+        $payload = ['data' => ['gpg_auth' => ['keyid' => $this->adaKeyId, 'user_token_result' => $token]]];
+
+        $this->postJson('/auth/login.json', $payload);
+        $this->assertSame('true', $this->getHeaders()['X-GPGAuth-Authenticated']);
+
+        $this->postJson('/auth/login.json', $payload);
+        $headers = $this->getHeaders();
+        $this->assertSame('false', $headers['X-GPGAuth-Authenticated']);
+        $this->assertSame('true', $headers['X-GPGAuth-Error']);
     }
 
     public static function invalidUserTokenProvider(): array

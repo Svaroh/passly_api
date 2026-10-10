@@ -71,11 +71,11 @@ class ResourceTypesIndexControllerTest extends AppIntegrationTestCaseV5
         $this->assertAuthenticationError();
     }
 
-    public function testResourceTypesIndexController_FilterByDeleted()
+    public function testResourceTypesIndexController_AdminCanListDeletedResourceTypes()
     {
         $typeDeletedId = ResourceTypeFactory::make()->deleted()->persist()->get('id');
         ResourceTypeFactory::make()->persist();
-        $this->logInAsUser();
+        $this->logInAsAdmin();
         $this->getJson('/resource-types.json?filter[is-deleted]=1');
 
         $this->assertSuccess();
@@ -83,9 +83,34 @@ class ResourceTypesIndexControllerTest extends AppIntegrationTestCaseV5
         $this->assertSame($typeDeletedId, $this->_responseJsonBody[0]->id);
     }
 
+    public function testResourceTypesIndexController_NonAdminCannotListDeletedResourceTypes()
+    {
+        $activeTypeId = ResourceTypeFactory::make()->persist()->get('id');
+        ResourceTypeFactory::make()->deleted()->persist();
+        $this->logInAsUser();
+        $this->getJson('/resource-types.json?filter[is-deleted]=1');
+
+        $this->assertSuccess();
+        $this->assertCount(1, $this->_responseJsonBody);
+        $this->assertSame($activeTypeId, $this->_responseJsonBody[0]->id);
+    }
+
+    public function testResourceTypesIndexController_NonAdminDefaultListUnchanged()
+    {
+        $activeTypeId = ResourceTypeFactory::make()->persist()->get('id');
+        ResourceTypeFactory::make()->deleted()->persist();
+        $this->logInAsUser();
+        $this->getJson('/resource-types.json');
+
+        $this->assertSuccess();
+        $this->assertCount(1, $this->_responseJsonBody);
+        $this->assertSame($activeTypeId, $this->_responseJsonBody[0]->id);
+    }
+
     public function testResourceTypesIndexController_FilterByDeleted_Non_Boolean()
     {
-        $this->logInAsUser();
+        // Validation only runs when the filter is whitelisted, which is now admin-only.
+        $this->logInAsAdmin();
         $this->getJson('/resource-types.json?filter[is-deleted]=foo');
         $this->assertBadRequestError('Invalid filter. "foo" is not a valid value for filter is-deleted.');
     }

@@ -44,13 +44,13 @@ class UsersDataCommand extends DataCommand
             'modified_by' => UuidFactory::uuid('user.id.admin'),
         ];
         $users[] = [
-            'id' => UuidFactory::uuid('user.id.anonymous'),
-            'username' => 'anonymous@passbolt.com',
-            'role_id' => UuidFactory::uuid('role.id.guest'),
+            'id' => UuidFactory::uuid('user.id.ada'),
+            'username' => 'ada@passbolt.com',
+            'role_id' => UuidFactory::uuid('role.id.user'),
             'active' => 1,
             'deleted' => 0,
-            'created' => date('Y-m-d H:i:s'),
-            'modified' => date('Y-m-d H:i:s'),
+            'created' => date('Y-m-d H:i:s', strtotime('-2 months')),
+            'modified' => date('Y-m-d H:i:s', strtotime('-1 months')),
             'created_by' => UuidFactory::uuid('user.id.admin'),
             'modified_by' => UuidFactory::uuid('user.id.admin'),
         ];

@@ -39,6 +39,7 @@ return [
                         'expiry' => filter_var(env('PASSBOLT_SCIM_SECURITY_SECRET_TOKEN_EXPIRY', '1 year'), FILTER_CALLBACK, ['options' => new AuthTokenExpiryConfigValidator()]), // phpcs:ignore
                     ],
                     'allowSuspendAdministrators' => filter_var(env('PASSBOLT_PLUGINS_SCIM_SECURITY_ALLOW_SUSPEND_ADMINISTRATORS', false), FILTER_VALIDATE_BOOLEAN), // phpcs:ignore
+                    'allowDeleteAdministrators' => filter_var(env('PASSBOLT_PLUGINS_SCIM_SECURITY_ALLOW_DELETE_ADMINISTRATORS', false), FILTER_VALIDATE_BOOLEAN), // phpcs:ignore
                 ],
             ],
         ],

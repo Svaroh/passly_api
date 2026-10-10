@@ -41,6 +41,29 @@ trait SsoProviderTestTrait
         return new Client(['handler' => $handlerStack]);
     }
 
+    public function getDummyOAuth2AuthorizationUrl(User $user, string $state, array $options = []): string
+    {
+        $defaultOptions = [
+            'client_id' => UuidFactory::uuid(),
+            'response_type' => 'code',
+            'response_mode' => Configure::read(AbstractSsoService::SSO_SECURITY_REDIRECT_METHOD_CONFIG) === 'POST' ? 'form_post' : 'query',
+            'login_hint' => $user->username,
+            'scope' => 'openid profile email',
+            'redirect_uri' => Router::url('/sso/oauth2/redirect', true),
+            'state' => $state,
+            'nonce' => SsoState::generate(),
+        ];
+        $options = array_merge($defaultOptions, $options);
+        // login hint is disabled
+        if (!$options['login_hint']) {
+            unset($options['login_hint']);
+        }
+
+        $queryParams = http_build_query($options, '', null, PHP_QUERY_RFC3986);
+
+        return 'https://oauth2.passbolt.test/authorize?' . $queryParams;
+    }
+
     public function getDummyAdfsAuthorizationUrl(User $user, string $state, array $options = []): string
     {
         $defaultOptions = [

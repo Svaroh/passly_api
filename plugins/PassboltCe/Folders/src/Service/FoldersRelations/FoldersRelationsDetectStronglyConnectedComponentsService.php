@@ -47,7 +47,7 @@ class FoldersRelationsDetectStronglyConnectedComponentsService
      */
     public function detectFirstInSharedFolders(): array
     {
-        $foldersRelationsDtos = $this->getAllNotPersonalFoldersRelationsDtos();
+        $foldersRelationsDtos = $this->getAllFoldersRelationsDtos();
         $sccSets = $this->detectInFoldersRelations($foldersRelationsDtos);
 
         foreach ($sccSets as $sccSet) {
@@ -131,6 +131,8 @@ class FoldersRelationsDetectStronglyConnectedComponentsService
 
     /**
      * Retrieve all the folders relations tuple foreign_id and folder_parent_id.
+     * Personal folders are included: a cycle traversing one still corrupts the owner's
+     * tree and must be detected so the repair service can break it.
      * The function doesn't return an array of entities for performance reasons.
      *
      * @return array<array> Return an array of folders relations dtos represented as following.
@@ -142,15 +144,14 @@ class FoldersRelationsDetectStronglyConnectedComponentsService
      *   ...
      * ]
      */
-    private function getAllNotPersonalFoldersRelationsDtos(): array
+    private function getAllFoldersRelationsDtos(): array
     {
-        $query = $this->foldersRelationsTable->find();
-        $query = $this->foldersRelationsTable->filterByForeignModel($query, FoldersRelation::FOREIGN_MODEL_FOLDER);
-        $query = $this->foldersRelationsTable->filterQueryByIsNotPersonalFolder($query);
-
-        return $query->select(['foreign_id', 'folder_parent_id'])
+        // The foreign_model filter is inlined (rather than via filterByForeignModel()) so the
+        // UnhydratedSelectQuery type is preserved through to toArray() for the array return type.
+        return $this->foldersRelationsTable->unhydratedFind()
+            ->where(['foreign_model' => FoldersRelation::FOREIGN_MODEL_FOLDER])
+            ->select(['foreign_id', 'folder_parent_id'])
             ->distinct()
-            ->disableHydration()
             ->all()
             ->toArray();
     }
@@ -172,10 +173,9 @@ class FoldersRelationsDetectStronglyConnectedComponentsService
      */
     private function getFoldersRelationsInvolveInScc(array $foldersRelations): array
     {
-        return $this->foldersRelationsTable->find()
+        return $this->foldersRelationsTable->unhydratedFind()
             ->select(['foreign_id', 'folder_parent_id', 'user_id'])
             ->where($this->buildFoldersRelationsTupleComparisonExpression($foldersRelations))
-            ->disableHydration()
             ->all()->toArray();
     }
 
@@ -191,7 +191,7 @@ class FoldersRelationsDetectStronglyConnectedComponentsService
      */
     private function buildFoldersRelationsTupleComparisonExpression(
         array $foldersRelations,
-        ?bool $isInOperator = true
+        ?bool $isInOperator = true,
     ): TupleComparison {
         $operator = $isInOperator ? 'IN' : 'NOT IN';
         $foldersRelationsTupleData = array_map(function (FoldersRelation $folderRelation) {
@@ -202,7 +202,7 @@ class FoldersRelationsDetectStronglyConnectedComponentsService
             ['FoldersRelations.foreign_id', 'FoldersRelations.folder_parent_id'],
             $foldersRelationsTupleData,
             [],
-            $operator
+            $operator,
         );
     }
 
@@ -232,7 +232,7 @@ class FoldersRelationsDetectStronglyConnectedComponentsService
             $result[] = $this->formatDetectInGraphResultInFoldersRelations(
                 $nodes,
                 $graphForeignIdsMap,
-                $foldersRelationsDtos
+                $foldersRelationsDtos,
             );
         }
 
@@ -258,7 +258,7 @@ class FoldersRelationsDetectStronglyConnectedComponentsService
     private function formatDetectInGraphResultInFoldersRelations(
         array $nodes,
         array $graphForeignIdsMap,
-        array $foldersRelationsDtos
+        array $foldersRelationsDtos,
     ): array {
         $result = [];
 
@@ -358,7 +358,7 @@ class FoldersRelationsDetectStronglyConnectedComponentsService
     private function searchFolderRelationInArray(
         array $foldersRelationsDtos,
         string $foreignId,
-        ?string $folderParentId = null
+        ?string $folderParentId = null,
     ): array {
         foreach ($foldersRelationsDtos as $folderRelationDto) {
             if (
@@ -390,10 +390,10 @@ class FoldersRelationsDetectStronglyConnectedComponentsService
      */
     public function detectInUserTree(string $userId): array
     {
-        $query = $this->foldersRelationsTable->findByUserId($userId);
+        $query = $this->foldersRelationsTable->unhydratedFind()->where(['user_id' => $userId]);
         $query = $this->foldersRelationsTable->filterByForeignModel($query, FoldersRelation::FOREIGN_MODEL_FOLDER);
         $foldersRelationsDtos = $query->select(['foreign_id', 'folder_parent_id'])
-            ->disableHydration()->all()->toArray();
+            ->all()->toArray();
         $sccs = $this->detectInFoldersRelations($foldersRelationsDtos);
 
         if (!empty($sccs)) {

@@ -35,10 +35,10 @@ use App\Notification\Email\Redactor\Role\RoleCreatedAdminEmailRedactor;
 use App\Notification\Email\Redactor\Role\RoleUpdatedAdminEmailRedactor;
 use App\Notification\Email\Redactor\Setup\SetupRecoverAbortAdminEmailRedactor;
 use App\Notification\Email\Redactor\Share\ShareEmailRedactor;
-use App\Notification\Email\Redactor\User\AdminDeleteEmailRedactor;
 use App\Notification\Email\Redactor\User\AdminDisableEmailRedactor;
 use App\Notification\Email\Redactor\User\UserAdminRoleRevokedEmailRedactor;
-use App\Notification\Email\Redactor\User\UserDeleteEmailRedactor;
+use App\Notification\Email\Redactor\User\UserDeleteAdminEmailRedactor;
+use App\Notification\Email\Redactor\User\UserDeleteGroupManagerEmailRedactor;
 use App\Notification\Email\Redactor\User\UserDisableEmailRedactor;
 use App\Notification\Email\Redactor\User\UserRegisterEmailRedactor;
 use App\Notification\Email\Redactor\User\UserRoleUpdatedEmailRedactor;
@@ -68,7 +68,7 @@ class CoreEmailRedactorPool extends AbstractSubscribedEmailRedactorPool
         $redactors[] = new GroupUserAddEmailRedactor();
         $redactors[] = new GroupDeleteEmailRedactor();
         $redactors[] = new GroupUserUpdateEmailRedactor();
-        $redactors[] = new UserDeleteEmailRedactor();
+        $redactors[] = new UserDeleteGroupManagerEmailRedactor();
         $redactors[] = new GroupUserDeleteEmailRedactor();
         $redactors[] = new GroupUpdateAdminSummaryEmailRedactor();
         $redactors[] = new GroupUserAddRequestEmailRedactor();
@@ -81,8 +81,8 @@ class CoreEmailRedactorPool extends AbstractSubscribedEmailRedactorPool
         if (Configure::read(UserAdminRoleRevokedEmailRedactor::CONFIG_KEY_EMAIL_ENABLED)) {
             $redactors[] = new UserAdminRoleRevokedEmailRedactor();
         }
-        if (Configure::read(AdminDeleteEmailRedactor::CONFIG_KEY_EMAIL_ENABLED)) {
-            $redactors[] = new AdminDeleteEmailRedactor();
+        if (Configure::read(UserDeleteAdminEmailRedactor::CONFIG_KEY_EMAIL_ENABLED)) {
+            $redactors[] = new UserDeleteAdminEmailRedactor();
         }
 
         return $redactors;

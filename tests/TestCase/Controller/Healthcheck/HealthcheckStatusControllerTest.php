@@ -17,6 +17,8 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Controller\Healthcheck;
 
 use App\Test\Lib\AppIntegrationTestCase;
+use App\Test\Lib\Cache\Engine\WriteFailCacheEngine;
+use Cake\Cache\Cache;
 
 /**
  * @covers \App\Controller\Healthcheck\HealthcheckStatusController
@@ -38,6 +40,25 @@ class HealthcheckStatusControllerTest extends AppIntegrationTestCase
         $this->assertSame('OK', $this->_responseJson->body);
     }
 
+    public function testHealthcheckStatusController_Success_JsonWithXmlHttpRequestHeader(): void
+    {
+        $this->configRequest(['headers' => ['X-Requested-With' => 'XMLHttpRequest']]);
+        $this->getJson('/healthcheck/status.json');
+        $this->assertResponseSuccess();
+        $this->assertContentType('application/json');
+        $this->assertSame('OK', $this->_responseJson->header->message);
+        $this->assertSame('OK', $this->_responseJson->body);
+    }
+
+    public function testHealthcheckStatusController_Success_NoJsonWithXmlHttpRequestHeader(): void
+    {
+        $this->configRequest(['headers' => ['X-Requested-With' => 'XMLHttpRequest']]);
+        $this->get('/healthcheck/status');
+        $this->assertResponseOk();
+        $this->assertContentType('text/html');
+        $this->assertSame('OK', $this->_getBodyAsString());
+    }
+
     public function testHealthcheckStatusHeadOk(): void
     {
         $this->head('/healthcheck/status.json');
@@ -46,5 +67,21 @@ class HealthcheckStatusControllerTest extends AppIntegrationTestCase
         $body = json_decode($this->_getBodyAsString(), true);
         $this->assertSame('OK', $body['header']['message']);
         $this->assertSame('OK', $body['body']);
+    }
+
+    public function testHealthcheckStatusController_Error_CacheServerUnavailable(): void
+    {
+        // Set cache config that doesn't work
+        $originalDefaultConfig = Cache::getConfig('default');
+        Cache::drop('default');
+        // Set cache engine which fails all write calls
+        Cache::setConfig('default', ['className' => WriteFailCacheEngine::class]);
+
+        $this->getJson('/healthcheck/status.json');
+        $this->assertResponseCode(503);
+
+        // Clean up, set config back
+        Cache::drop('default');
+        Cache::setConfig('default', $originalDefaultConfig);
     }
 }

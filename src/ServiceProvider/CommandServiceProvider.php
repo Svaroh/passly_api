@@ -22,6 +22,7 @@ use App\Command\InstallCommand;
 use App\Command\KeyringInitCommand;
 use App\Command\MigrateCommand;
 use App\Command\MigratePostgresCommand;
+use App\Command\PurgeSessionsCommand;
 use App\Command\RecoverUserCommand;
 use App\Command\RegisterUserCommand;
 use App\Command\SubscriptionCheckCommand;
@@ -41,6 +42,7 @@ class CommandServiceProvider extends ServiceProvider
         GetUserCommandService::class,
         SubscriptionCheckInCommandServiceInterface::class,
         HealthcheckCommand::class,
+        PurgeSessionsCommand::class,
         InstallCommand::class,
         KeyringInitCommand::class,
         MigrateCommand::class,
@@ -64,6 +66,7 @@ class CommandServiceProvider extends ServiceProvider
             ProcessUserService::class,
             HealthcheckServiceCollector::class,
         ]);
+        $container->add(PurgeSessionsCommand::class)->addArgument(ProcessUserService::class);
         $container->add(InstallCommand::class)->addArguments([
             ProcessUserService::class,
             SubscriptionCheckInCommandServiceInterface::class,

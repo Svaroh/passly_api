@@ -2,7 +2,7 @@
 services:
     openldap:
         container_name: ddev-${DDEV_SITENAME}-openldap
-        image: osixia/openldap:latest
+        image: osixia/openldap:latest@sha256:3f68751292b43564a2586fc29fb7337573e2dad692b92d4e78e49ad5c22e567b
         command: --copy-service # needed to copy init file
         labels:
             com.ddev.site-name: ${DDEV_SITENAME}
@@ -46,7 +46,7 @@ services:
             - 636
 
     phpldapadmin:
-        image: osixia/phpldapadmin:latest
+        image: osixia/phpldapadmin:latest@sha256:9831569a2f3d1d764aabcb5abe6e463771b9595f1565fe3007fe77c4c3979043
         container_name: ddev-${DDEV_SITENAME}-phpldapadmin
         labels:
             com.ddev.site-name: ${DDEV_SITENAME}

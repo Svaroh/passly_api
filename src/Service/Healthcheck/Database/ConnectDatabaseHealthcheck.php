@@ -25,10 +25,26 @@ class ConnectDatabaseHealthcheck extends AbstractDatabaseHealthcheck
 {
     protected bool $isDriverSupported = false;
 
-    public const SUPPORTED_DRIVERS = [
+    public const DEFAULT_SUPPORTED_DRIVERS = [
         'Cake\Database\Driver\Mysql',
         'Cake\Database\Driver\Postgres',
     ];
+
+    /**
+     * @var array
+     */
+    private array $supportedDrivers;
+
+    /**
+     * Only the drivers defined in DEFAULT_SUPPORTED_DRIVERS are officially supported by Passbolt;
+     * any additional driver is added at your own risk.
+     *
+     * @param array|null $additionalSupportedDrivers Custom database drivers to support on top of the default ones.
+     */
+    public function __construct(?array $additionalSupportedDrivers = null)
+    {
+        $this->supportedDrivers = array_merge(self::DEFAULT_SUPPORTED_DRIVERS, $additionalSupportedDrivers ?? []);
+    }
 
     /**
      * @inheritDoc
@@ -81,11 +97,11 @@ class ConnectDatabaseHealthcheck extends AbstractDatabaseHealthcheck
             __(
                 'Ensure that the driver defined in {0} is one of the following: {1}.',
                 CONFIG . 'passbolt.php',
-                implode(', ', self::SUPPORTED_DRIVERS)
+                implode(', ', $this->supportedDrivers),
             ),
             __(
                 'Double check the host, database name, username and password in {0}.',
-                CONFIG . 'passbolt.php'
+                CONFIG . 'passbolt.php',
             ),
             __('Make sure the database exists and is accessible for the given database user.'),
         ];
@@ -104,13 +120,13 @@ class ConnectDatabaseHealthcheck extends AbstractDatabaseHealthcheck
      *
      * @return bool
      */
-    protected function isDriverSupported(): bool
+    public function isDriverSupported(): bool
     {
         $result = false;
 
         $connection = ConnectionManager::get($this->getDatasource());
         $config = $connection->config();
-        if (in_array($config['driver'], self::SUPPORTED_DRIVERS)) {
+        if (in_array($config['driver'], $this->supportedDrivers)) {
             $result = true;
         }
 

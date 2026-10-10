@@ -8,7 +8,7 @@ return [
             'inFormIntegration' => [
                 'enabled' => Configure::read(
                     'passbolt.plugins.inFormIntegration.enabled',
-                    env('PASSBOLT_PLUGINS_IN_FORM_INTEGRATION_ENABLED', true)
+                    filter_var(env('PASSBOLT_PLUGINS_IN_FORM_INTEGRATION_ENABLED', true), FILTER_VALIDATE_BOOLEAN),
                 ),
                 'version' => '1.0.0',
                 'settingsVisibility' => [

@@ -20,6 +20,7 @@ namespace App\Test\TestCase\Controller\Users;
 use App\Test\Factory\RoleFactory;
 use App\Test\Factory\UserFactory;
 use App\Test\Lib\AppIntegrationTestCase;
+use Cake\I18n\DateTime;
 use Cake\Utility\Hash;
 
 /**
@@ -47,6 +48,44 @@ class UsersIndexControllerTest extends AppIntegrationTestCase
         $this->assertContains($disabled->id, $usersIds);
         $this->assertNotContains($deleted->id, $usersIds);
         $this->assertContains($admin->id, $usersIds);
+    }
+
+    public function testUsersIndexController_Success_ShowLastLoggedInAsAdmin(): void
+    {
+        RoleFactory::make()->guest()->persist();
+        UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(2))->persist();
+        UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(3))->persist();
+        UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(5))->persist();
+        UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(10))->persist();
+        $admin = UserFactory::make()->admin()->active()->lastLoggedIn(DateTime::now()->subDays(1))->persist();
+
+        $this->logInAs($admin);
+        $this->getJson('/users.json');
+        $this->assertSuccess();
+        $users = $this->_responseJsonBody;
+
+        foreach ($users as $user) {
+            $this->assertObjectHasAttribute('last_logged_in', $user);
+        }
+    }
+
+    public function testUsersIndexController_Success_HideLastLoggedInAsNonAdmin(): void
+    {
+        RoleFactory::make()->guest()->persist();
+        $nonAdmin = UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(2))->persist();
+        UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(3))->persist();
+        UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(5))->persist();
+        UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(10))->persist();
+        UserFactory::make()->admin()->active()->lastLoggedIn(DateTime::now()->subDays(1))->persist();
+
+        $this->logInAs($nonAdmin);
+        $this->getJson('/users.json');
+        $this->assertSuccess();
+        $users = $this->_responseJsonBody;
+
+        foreach ($users as $user) {
+            $this->assertObjectNotHasAttribute('last_logged_in', $user);
+        }
     }
 
     public function testUsersIndexController_Success_FilterActiveAsAdmin(): void

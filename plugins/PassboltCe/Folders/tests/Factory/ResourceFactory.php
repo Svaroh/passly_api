@@ -17,7 +17,8 @@ declare(strict_types=1);
 namespace Passbolt\Folders\Test\Factory;
 
 use App\Test\Factory\ResourceFactory as ResourceCoreFactory;
-use Passbolt\Folders\FoldersPlugin;
+use Cake\Event\Event;
+use Passbolt\Folders\EventListener\ResourcesModelInitializeEventListener;
 use Passbolt\Folders\Model\Entity\Folder;
 use Passbolt\Folders\Model\Entity\FoldersRelation;
 
@@ -29,7 +30,10 @@ class ResourceFactory extends ResourceCoreFactory
     public function initialize(): void
     {
         parent::initialize();
-        FoldersPlugin::addAssociationsToResourcesTable($this->getTable());
+        // The factory registry strips Model.initialize, so the association is
+        // wired directly by invoking the listener against the factory's table.
+        $event = new Event('Model.initialize', $this->getTable());
+        (new ResourcesModelInitializeEventListener())->addFoldersRelationsAssociation($event);
     }
 
     /**

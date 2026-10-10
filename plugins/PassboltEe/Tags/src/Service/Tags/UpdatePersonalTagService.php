@@ -57,7 +57,6 @@ class UpdatePersonalTagService
                     'metadata' => true,
                     'metadata_key_id' => true,
                     'metadata_key_type' => true,
-                    'is_shared' => true,
                 ],
                 'validate' => 'v5',
             ];
@@ -72,16 +71,15 @@ class UpdatePersonalTagService
                     'metadata' => $dtoArray['metadata'],
                     'metadata_key_id' => $dtoArray['metadata_key_id'],
                     'metadata_key_type' => $dtoArray['metadata_key_type'],
-                    'is_shared' => $dtoArray['is_shared'],
                 ],
-                $options
+                $options,
             );
 
             if (!$tagsTable->save($entity)) {
                 throw new CustomValidationException(
                     __('Unable to save the tag.'),
                     $entity->getErrors(),
-                    $tagsTable
+                    $tagsTable,
                 );
             }
 
@@ -93,7 +91,7 @@ class UpdatePersonalTagService
 
             if (!is_null($slug) && mb_substr($slug, 0, 1) === '#') {
                 throw new BadRequestException(
-                    __('You do not have the permission to change a personal tag into shared tag.')
+                    __('You do not have the permission to change a personal tag into shared tag.'),
                 );
             }
 
@@ -107,7 +105,7 @@ class UpdatePersonalTagService
                 $resourcesTagsTable,
                 $tag,
                 $slug,
-                $uac
+                $uac,
             ) {
                 $newTag = $tagsTable->findOrCreateTag($slug, $uac);
 
@@ -120,7 +118,7 @@ class UpdatePersonalTagService
                     $resourcesTagsTable->updateUserTag(
                         $uac->getId(),
                         $tag->get('id'),
-                        $newTag->get('id')
+                        $newTag->get('id'),
                     );
                 }
 

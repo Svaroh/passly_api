@@ -39,7 +39,7 @@ class SsoHealthcheckIndexControllerTest extends SsoIntegrationTestCase
         $this->mockService('fullBaseUrlReachableClient', function () {
             return $this->getMockedHealthcheckStatusRequest(
                 200,
-                json_encode(['body' => 'OK'])
+                json_encode(['body' => 'OK']),
             );
         });
         $this->mockService('sslHealthcheckClient', function () {
@@ -55,6 +55,11 @@ class SsoHealthcheckIndexControllerTest extends SsoIntegrationTestCase
         $this->assertResponseSuccess();
         $result = $this->getResponseBodyAsArray();
         $this->assertArrayHasKey('sso', $result);
-        $this->assertArrayEqualsCanonicalizing(['sslHostVerification' => true, 'settingsEditEndpointsDisabled' => false], $result['sso']);
+        $expected = [
+            'sslHostVerification' => true,
+            'settingsEditEndpointsDisabled' => false,
+            'egressGuardEnabled' => false,
+        ];
+        $this->assertArrayEqualsCanonicalizing($expected, $result['sso']);
     }
 }

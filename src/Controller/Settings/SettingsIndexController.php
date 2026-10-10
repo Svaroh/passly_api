@@ -18,43 +18,19 @@ declare(strict_types=1);
 namespace App\Controller\Settings;
 
 use App\Controller\AppController;
-use App\Model\Entity\Role;
-use App\Model\Table\UsersTable;
-use App\Model\Validation\EmailValidationRule;
-use Cake\Core\Configure;
+use App\Service\Settings\SettingsGetService;
 use Cake\Event\EventInterface;
-use Cake\Routing\Router;
-use Cake\Utility\Hash;
-use Passbolt\Locale\Service\GetOrgLocaleService;
 
 /**
  * SettingsIndexController Class
  */
 class SettingsIndexController extends AppController
 {
-    protected UsersTable $Users;
-
-    /**
-     * Settings visibility key.
-     *
-     * @var array
-     */
-    public const SETTINGS_VISIBILITY_KEY = 'settingsVisibility';
-
-    /**
-     * Keys that will be always whitelisted, in addition to the ones defined in config. (once logged in).
-     */
-    protected array $alwaysWhiteListed = [
-        'version',
-        'enabled',
-    ];
-
     /**
      * @inheritDoc
      */
     public function beforeFilter(EventInterface $event)
     {
-        $this->Users = $this->fetchTable('Users');
         $this->Authentication->allowUnauthenticated(['index']);
 
         parent::beforeFilter($event);
@@ -75,129 +51,16 @@ class SettingsIndexController extends AppController
             'contain' => ['header'],
         ];
         $options = $this->QueryString->get($whitelist);
-        $withHeader = isset($options['contain']['header']) && $options['contain']['header'] === false ? false : true;
+        $withHeader = !(isset($options['contain']['header']) && $options['contain']['header'] === false);
 
-        $settings = $this->_getSettings($role);
+        $settings = (new SettingsGetService($role))->getSettings()->toArray();
 
-        if ($withHeader == false) {
+        if (!$withHeader) {
             $this->set($settings);
             $this->viewBuilder()->setOption('serialize', array_keys($settings));
 
             return;
         }
         $this->success(__('The operation was successful.'), $settings);
-    }
-
-    /**
-     * Get the list of settings that should be displayed publicly.
-     *
-     * @param string $role role of the user accessing the settings.
-     * @return array
-     */
-    protected function _getSettings(string $role): array
-    {
-        $baseSettings = [
-            'app' => [
-                'url' => Router::url('/', true),
-                'locale' => (new GetOrgLocaleService())->getLocale(),
-            ],
-            'passbolt' => [
-                'legal' => Configure::read('passbolt.legal'),
-                'edition' => Configure::read('passbolt.edition'),
-            ],
-        ];
-        if (is_string(Configure::read(EmailValidationRule::REGEX_CHECK_KEY))) {
-            $baseSettings = Hash::insert(
-                $baseSettings,
-                'passbolt.email.validate.regex',
-                Configure::read(EmailValidationRule::REGEX_CHECK_KEY)
-            );
-        }
-        if ($role !== Role::GUEST) {
-            // Build settings array.
-            $settings = [
-                'app' => [
-                    'version' => [
-                        'number' => Configure::read('passbolt.version'),
-                        'name' => Configure::read('passbolt.name'),
-                    ],
-                    'debug' => Configure::read('debug') ? 1 : 0,
-                    'server_timezone' => date_default_timezone_get(),
-                    // session timeout info in minutes
-                    'session_timeout' => Configure::read(
-                        'Session.timeout',
-                        (int)ini_get('session.gc_maxlifetime') / 60
-                    ),
-                    'image_storage' => [
-                        'public_path' => Configure::read('ImageStorage.publicPath'),
-                    ],
-                ],
-                'passbolt' => [
-                    'plugins' => $this->_getWhiteListedPluginConfig($this->_getPluginWhiteList(false)),
-                ],
-            ];
-        } else {
-            // If user is Guest.
-            $settings = [
-                'passbolt' => [
-                    'plugins' => $this->_getWhiteListedPluginConfig($this->_getPluginWhiteList(true)),
-                ],
-            ];
-        }
-
-        return array_merge_recursive($baseSettings, $settings);
-    }
-
-    /**
-     * Get plugin options that are white listed.
-     *
-     * @param bool $public for public visibility or not (require log in).
-     * @return array list of
-     */
-    protected function _getPluginWhiteList(bool $public = false): array
-    {
-        $confKey = $public === true ? 'whiteListPublic' : 'whiteList';
-        $pluginsConf = Configure::read('passbolt.plugins', []);
-        $res = [];
-
-        foreach ($pluginsConf as $pluginName => $pluginConf) {
-            if (!$public) {
-                foreach ($this->alwaysWhiteListed as $whiteListed) {
-                    $res[] = $pluginName . '.' . $whiteListed;
-                }
-            }
-
-            $whiteListOptions = Hash::extract($pluginConf, self::SETTINGS_VISIBILITY_KEY . '.' . $confKey);
-            if (is_array($whiteListOptions)) {
-                foreach ($whiteListOptions as $whiteList) {
-                    $res[] = $pluginName . '.' . $whiteList;
-                }
-            }
-        }
-
-        return $res;
-    }
-
-    /**
-     * Get white listed config.
-     *
-     * @param array $whiteList white list options array
-     * @return array white listed plugins configurations
-     */
-    protected function _getWhiteListedPluginConfig(array $whiteList)
-    {
-        $pluginsConfig = [];
-        // Add white listed plugin options.
-        foreach ($whiteList as $path) {
-            if (Configure::check('passbolt.plugins.' . $path)) {
-                $pluginsConfig = Hash::insert(
-                    $pluginsConfig,
-                    $path,
-                    Configure::read('passbolt.plugins.' . $path)
-                );
-            }
-        }
-
-        return $pluginsConfig;
     }
 }

@@ -38,7 +38,7 @@ class SsoSuccessDryRunController extends AbstractSsoController
         // Not much to do
         $this->viewBuilder()
             ->setLayout('default')
-            ->setTemplatePath('azure')
+            ->setTemplatePath('success')
             ->setTemplate('stage3');
     }
 }

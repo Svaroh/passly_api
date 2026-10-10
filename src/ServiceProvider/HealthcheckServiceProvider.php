@@ -26,6 +26,7 @@ use App\Service\Healthcheck\Application\SeleniumDisabledApplicationHealthcheck;
 use App\Service\Healthcheck\Application\SelfRegistrationPluginEnabledApplicationHealthcheck;
 use App\Service\Healthcheck\Application\SelfRegistrationProviderApplicationHealthcheck;
 use App\Service\Healthcheck\Application\SelfRegistrationPublicRemovedApplicationHealthcheck;
+use App\Service\Healthcheck\Application\SessionProviderApplicationHealthcheck;
 use App\Service\Healthcheck\Application\SslForceApplicationHealthcheck;
 use App\Service\Healthcheck\Application\SslFullBaseUrlApplicationHealthcheck;
 use App\Service\Healthcheck\ConfigFiles\AppConfigFileHealthcheck;
@@ -39,6 +40,7 @@ use App\Service\Healthcheck\Core\ValidFullBaseUrlCoreHealthcheck;
 use App\Service\Healthcheck\Database\ConnectDatabaseHealthcheck;
 use App\Service\Healthcheck\Database\DefaultContentDatabaseHealthcheck;
 use App\Service\Healthcheck\Database\MariadbMysqlVersionDeprecateHealthcheck;
+use App\Service\Healthcheck\Database\ModelCacheDatabaseHealthcheck;
 use App\Service\Healthcheck\Database\SchemaUpToDateApplicationHealthcheck;
 use App\Service\Healthcheck\Database\TablesCountDatabaseHealthcheck;
 use App\Service\Healthcheck\Environment\DistributionHealthcheck;
@@ -119,6 +121,9 @@ class HealthcheckServiceProvider extends ServiceProvider
         HostAvailabilityCheckEnabledApplicationHealthcheck::class,
         JsProdApplicationHealthcheck::class,
         EmailNotificationEnabledApplicationHealthcheck::class,
+        SessionProviderApplicationHealthcheck::class,
+        ConnectDatabaseHealthcheck::class,
+        ModelCacheDatabaseHealthcheck::class,
     ];
 
     /**
@@ -211,12 +216,14 @@ class HealthcheckServiceProvider extends ServiceProvider
         $container->add(HostAvailabilityCheckEnabledApplicationHealthcheck::class);
         $container->add(JsProdApplicationHealthcheck::class);
         $container->add(EmailNotificationEnabledApplicationHealthcheck::class);
+        $container->add(SessionProviderApplicationHealthcheck::class);
         // Database health checks
         $container->add(ConnectDatabaseHealthcheck::class);
         $container->add(TablesCountDatabaseHealthcheck::class);
         $container->add(DefaultContentDatabaseHealthcheck::class);
         $container->add(MariadbMysqlVersionDeprecateHealthcheck::class);
         $container->add(SchemaUpToDateApplicationHealthcheck::class);
+        $container->add(ModelCacheDatabaseHealthcheck::class);
 
         // Append core health checks to service collector
         $container->add(HealthcheckServiceCollector::class)
@@ -273,11 +280,13 @@ class HealthcheckServiceProvider extends ServiceProvider
             ->addMethodCall('addService', [HostAvailabilityCheckEnabledApplicationHealthcheck::class])
             ->addMethodCall('addService', [JsProdApplicationHealthcheck::class])
             ->addMethodCall('addService', [EmailNotificationEnabledApplicationHealthcheck::class])
+            ->addMethodCall('addService', [SessionProviderApplicationHealthcheck::class])
             ->addMethodCall('addService', [ConnectDatabaseHealthcheck::class])
             ->addMethodCall('addService', [TablesCountDatabaseHealthcheck::class])
             ->addMethodCall('addService', [DefaultContentDatabaseHealthcheck::class])
             ->addMethodCall('addService', [MariadbMysqlVersionDeprecateHealthcheck::class])
-            ->addMethodCall('addService', [SchemaUpToDateApplicationHealthcheck::class]);
+            ->addMethodCall('addService', [SchemaUpToDateApplicationHealthcheck::class])
+            ->addMethodCall('addService', [ModelCacheDatabaseHealthcheck::class]);
 
         // Required for Healthcheck endpoint
         $container->add(IsRequestHttpsSslHealthcheck::class)->addArgument(ServerRequest::class);

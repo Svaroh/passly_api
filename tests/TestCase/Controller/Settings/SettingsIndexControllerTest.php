@@ -40,10 +40,11 @@ class SettingsIndexControllerTest extends AppIntegrationTestCase
         $this->assertSame('en-UK', $this->_responseJsonBody->app->locale);
         $this->assertEquals(
             json_decode(json_encode(Configure::read('passbolt.plugins.locale.options'))),
-            $this->_responseJsonBody->passbolt->plugins->locale->options
+            $this->_responseJsonBody->passbolt->plugins->locale->options,
         );
 
         // Assert some default plugin visibility
+        $this->assertTrue(isset($this->_responseJsonBody->passbolt->plugins->import->config->format));
         $this->assertTrue(isset($this->_responseJsonBody->passbolt->plugins->export->enabled));
         $this->assertTrue(isset($this->_responseJsonBody->passbolt->plugins->accountRecoveryRequestHelp->enabled));
         $this->assertTrue(isset($this->_responseJsonBody->passbolt->plugins->healthcheck->enabled));
@@ -67,7 +68,7 @@ class SettingsIndexControllerTest extends AppIntegrationTestCase
         $this->assertSame('en-UK', $this->_responseJsonBody->app->locale);
         $this->assertEquals(
             json_decode(json_encode(Configure::read('passbolt.plugins.locale.options'))),
-            $this->_responseJsonBody->passbolt->plugins->locale->options
+            $this->_responseJsonBody->passbolt->plugins->locale->options,
         );
 
         // Assert LU only plugin is not visible

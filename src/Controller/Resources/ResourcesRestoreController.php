@@ -74,6 +74,7 @@ class ResourcesRestoreController extends AppController
                 ->contain(['ResourceTypes'])
                 ->where(['Resources.id' => $id])
                 ->firstOrFail();
+            assert($resource instanceof Resource);
         } catch (RecordNotFoundException $e) {
             throw new NotFoundException(__('The resource does not exist.'));
         }
@@ -94,7 +95,7 @@ class ResourcesRestoreController extends AppController
 
         $resource = $this->Resources->findView($this->User->id(), $id, $options)->firstOrFail();
         $resource = FolderizableBehavior::unsetPersonalPropertyIfNull($resource->toArray());
-        $resourceDto = MetadataResourceDto::fromArray($resource);
+        $resourceDto = MetadataResourceDto::createFromArray($resource);
         $resource = (new MetadataResourcesRenderService())->renderResource($resource, $resourceDto->isV5());
 
         $this->success(__('The resource has been restored successfully.'), $resource);
@@ -129,7 +130,7 @@ class ResourcesRestoreController extends AppController
         }
         if (isset($errors['id']['recoverable_data_exists'])) {
             throw new BadRequestException(__(
-                'The resource cannot be restored because its recoverable data is missing.'
+                'The resource cannot be restored because its recoverable data is missing.',
             ));
         }
         if (isset($errors['resource_type_id']['resource_type_not_exists'])) {

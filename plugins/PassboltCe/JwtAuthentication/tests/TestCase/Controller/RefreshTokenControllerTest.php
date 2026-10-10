@@ -80,6 +80,26 @@ class RefreshTokenControllerTest extends JwtAuthenticationIntegrationTestCase
         $this->assertBadRequestError('No active refresh token matching the request could be found.');
     }
 
+    public function testAuthRefreshTokenController_Error_WithValidRefreshTokenCookieForDisabledUser()
+    {
+        $user = UserFactory::make()->user()->disabled()->persist();
+        $oldRefreshToken = AuthenticationTokenFactory::make()
+            ->active()
+            ->type(AuthenticationToken::TYPE_REFRESH_TOKEN)
+            ->userId($user->id)
+            ->persist()
+            ->token;
+
+        $this->cookie(RefreshTokenRenewalService::REFRESH_TOKEN_COOKIE, $oldRefreshToken);
+
+        // This route, with cookie, should have CSRF protection
+        $this->enableCsrfToken();
+        $this->postJson('/auth/jwt/refresh.json');
+
+        $this->assertResponseCode(401);
+        $this->assertResponseContains('Authentication is required to continue');
+    }
+
     public static function dataProviderWithAndWithoutAccessToken(): array
     {
         return [
@@ -162,13 +182,15 @@ class RefreshTokenControllerTest extends JwtAuthenticationIntegrationTestCase
 
     public function testAuthRefreshTokenControllerWithValidRefreshTokenCookie_ButNoCsrf()
     {
+        /** @var \App\Model\Entity\User $user */
         $user = UserFactory::make()->user()->persist();
+        /** @var \App\Model\Entity\AuthenticationToken $oldRefreshToken */
         $oldRefreshToken = AuthenticationTokenFactory::make()
             ->active()
             ->type(AuthenticationToken::TYPE_REFRESH_TOKEN)
             ->userId($user->id)
-            ->persist()
-            ->token;
+            ->persist();
+        $oldRefreshToken = $oldRefreshToken->token;
 
         $this->cookie(RefreshTokenRenewalService::REFRESH_TOKEN_COOKIE, $oldRefreshToken);
 
@@ -203,6 +225,7 @@ class RefreshTokenControllerTest extends JwtAuthenticationIntegrationTestCase
     public function testAuthRefreshTokenControllerWithExpiredPayload()
     {
         UserFactory::make(3)->admin()->persist();
+        /** @var array<\App\Model\Entity\User> $admins */
         $admins = $this->Users->findAdmins()->toArray();
         $user = $admins[0];
 
@@ -240,7 +263,7 @@ class RefreshTokenControllerTest extends JwtAuthenticationIntegrationTestCase
         // Set the refresh key in the cookies
         $this->cookie(
             RefreshTokenRenewalService::REFRESH_TOKEN_COOKIE,
-            $oldRefreshToken
+            $oldRefreshToken,
         );
 
         $this->enableCsrfToken();

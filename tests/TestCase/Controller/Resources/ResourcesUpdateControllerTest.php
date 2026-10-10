@@ -101,11 +101,13 @@ class ResourcesUpdateControllerTest extends AppIntegrationTestCase
         $this->assertNotNull($resource->creator);
         $this->assertUserAttributes($resource->creator);
         $this->assertEquals($userA->id, $resource->creator->id);
+        $this->assertObjectNotHasAttribute('last_logged_in', $resource->creator);
 
         // Check the modifier attribute
         $this->assertNotNull($resource->modifier);
         $this->assertUserAttributes($resource->modifier);
         $this->assertEquals($userB->id, $resource->modifier->id);
+        $this->assertObjectNotHasAttribute('last_logged_in', $resource->modifier);
 
         // Check the secrets attribute
         // Only the logged-in user secrets should be returned.
@@ -128,7 +130,7 @@ class ResourcesUpdateControllerTest extends AppIntegrationTestCase
         $this->assertEventFiredWith(
             ResourcesUpdateService::UPDATE_SUCCESS_EVENT_NAME,
             'isV5',
-            false
+            false,
         );
     }
 

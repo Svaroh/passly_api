@@ -25,7 +25,6 @@ use Cake\ORM\Entity;
  * @property string $id
  * @property string $user_id
  * @property string $resource_id
- * @property \Passbolt\SecretRevisions\Model\Entity\SecretRevision $secret_revision_id
  * @property string $data
  * @property string $secret_revision_id
  * @property \Cake\I18n\DateTime|null $deleted
@@ -37,6 +36,7 @@ use Cake\ORM\Entity;
  * @property \App\Model\Entity\User $user
  * @property \Passbolt\Log\Model\Entity\SecretHistory $secrets_history
  * @property \Passbolt\Log\Model\Entity\SecretAccess[] $secret_accesses
+ * @property \Passbolt\SecretRevisions\Model\Entity\SecretRevision $secret_revision
  */
 class Secret extends Entity
 {

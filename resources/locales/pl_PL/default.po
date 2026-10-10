@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 41c2572bd9bd4cc908d3e09e0cbed6e5\n"
-"POT-Creation-Date: 2026-04-02 12:51+0000\n"
-"PO-Revision-Date: 2026-04-28 08:25\n"
+"POT-Creation-Date: 2026-07-10 05:55+0000\n"
+"PO-Revision-Date: 2026-07-11 20:11\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -12,8 +12,8 @@ msgstr ""
 "X-Crowdin-Project: 41c2572bd9bd4cc908d3e09e0cbed6e5\n"
 "X-Crowdin-Project-ID: 2\n"
 "X-Crowdin-Language: pl\n"
-"X-Crowdin-File: /[passbolt.passbolt-pro-api] release/resources/locales/en_UK/default.po\n"
-"X-Crowdin-File-ID: 220\n"
+"X-Crowdin-File: /[passbolt.passbolt-ce-api] release/resources/locales/en_UK/default.po\n"
+"X-Crowdin-File-ID: 212\n"
 "Language: pl_PL\n"
 
 msgid "You need to login to access this location."
@@ -346,17 +346,20 @@ msgstr "Nie można usunąć tego użytkownika."
 msgid "The groups users identifiers must be valid UUID."
 msgstr "Identyfikatory użytkowników grup muszą być prawidłowymi UUID."
 
-msgid "The user does not exist or has been deleted."
-msgstr "Ten użytkownik nie istnieje lub został usunięty."
-
 msgid "Could not validate user data."
 msgstr "Nie udało się zweryfikować danych użytkownika."
+
+msgid "The user does not exist or has been deleted."
+msgstr "Ten użytkownik nie istnieje lub został usunięty."
 
 msgid "Could not find the user data after save. Maybe it has been deleted in the meantime."
 msgstr "Nie można znaleźć danych użytkownika po zapisaniu. Możliwe, że w międzyczasie został usunięty."
 
 msgid "The user has been updated successfully."
 msgstr "Użytkownik został zaktualizowany."
+
+msgid "You are not authorized to edit the role."
+msgstr "Nie masz uprawnień do edycji tej roli."
 
 msgid "Some user data should be provided."
 msgstr "Należy podać część danych użytkownika."
@@ -366,9 +369,6 @@ msgstr "Aktualizacja klucza OpenPGP jest niedozwolona."
 
 msgid "Updating the groups is not allowed."
 msgstr "Aktualizacja grup jest niedozwolona."
-
-msgid "You are not authorized to edit the role."
-msgstr "Nie masz uprawnień do edycji tej roli."
 
 msgid "Multiple has-access filters are not supported."
 msgstr "Nie obsługujemy kilku filtrów dostępu."
@@ -410,7 +410,7 @@ msgid "Invalid expiry time {0}."
 msgstr "Nieprawidłowy czas wygaśnięcia {0}."
 
 msgid "The user role ID must not be of the guest role."
-msgstr ""
+msgstr "ID roli użytkownika nie może być rolą gościa."
 
 msgid "The identifier should not be empty."
 msgstr "Identyfikator nie powinien być pusty."
@@ -959,7 +959,7 @@ msgid "The description should be a valid BMP-UTF8 string."
 msgstr "Opis powinien być prawidłowym ciągiem BMP-UTF8."
 
 msgid "The role cannot be deleted as it is associated with another user."
-msgstr ""
+msgstr "Rola nie może zostać usunięta, ponieważ jest powiązana z innym użytkownikiem."
 
 msgid "A reserved role cannot be deleted."
 msgstr "Nie można usunąć zarezerwowanej roli."
@@ -968,7 +968,10 @@ msgid "A role already exists for the given name."
 msgstr "Rola o tej nazwie już istnieje."
 
 msgid "Only maximum of {0} active roles are allowed."
-msgstr ""
+msgstr "System pozwala maksymalnie na {0} aktywnych ról."
+
+msgid "A reserved role cannot be renamed."
+msgstr "Zarezerwowana rola nie może zostać zmieniona nazwą."
 
 msgid "The resource identifier is required."
 msgstr "Identyfikator zasobu jest wymagany."
@@ -977,13 +980,13 @@ msgid "The resource identifier should not be empty."
 msgstr "Identyfikator zasobu nie powinien być pusty."
 
 msgid "The secret revision identifier should be a valid UUID."
-msgstr ""
+msgstr "Identyfikator wersji sekretu powinien być prawidłowym UUID."
 
 msgid "A secret revision identifier is required."
-msgstr ""
+msgstr "Identyfikator wersji sekretu jest wymagany."
 
 msgid "The secret revision identifier should not be empty."
-msgstr ""
+msgstr "Identyfikator wersji sekretu nie powinien być pusty."
 
 msgid "The message should be a valid ASCII string."
 msgstr "Wiadomość powinna być prawidłowym ciągiem ASCII."
@@ -998,10 +1001,10 @@ msgid "A secret already exists for the given user and resource."
 msgstr "Sekret już występuje u danego użytkownika i zasobu."
 
 msgid "A secret already exists for the given user, resource and secret revision."
-msgstr ""
+msgstr "Sekret już istnieje dla podanego użytkownika, zasobu i wersji sekretu."
 
 msgid "The secret revision does not exist or is deleted."
-msgstr ""
+msgstr "Wersja sekretu nie istnieje lub została usunięta."
 
 msgid "The user identifier by should be a valid UUID."
 msgstr "Identyfikator użytkownika powinien być prawidłowym UUID."
@@ -1034,7 +1037,7 @@ msgid "The username is already in use."
 msgstr "Nazwa użytkownika jest już używana."
 
 msgid "The role does not exist."
-msgstr ""
+msgstr "Rola nie istnieje."
 
 msgid "The user should not be sole owner of shared content, transfer the ownership to other users."
 msgstr "Użytkownik nie powinien być jedynym właścicielem współdzielonych treści. Przenieś własność na innych użytkowników."
@@ -1172,10 +1175,10 @@ msgid "{0} edited the resource {1}"
 msgstr "Użytkownik {0} edytował zasób {1}"
 
 msgid "{0} created a new role {1}"
-msgstr ""
+msgstr "Użytkownik {0} utworzył nową rolę {1}"
 
 msgid "{0} updated the role {1}"
-msgstr ""
+msgstr "Użytkownik {0} zaktualizował rolę {1}"
 
 msgid "{0} cannot complete the account recovery process!"
 msgstr "Użytkownik {0} nie może ukończyć procesu odzyskiwania konta!"
@@ -1382,7 +1385,7 @@ msgid "Could not validate group user data."
 msgstr "Nie udało się zweryfikować danych użytkownika grupy."
 
 msgid "The resource with ID {0} does not have a secret revision."
-msgstr ""
+msgstr "Zasób z ID {0} nie posiada wersji sekretu."
 
 msgid "All email notifications will be sent."
 msgstr "Wszystkie powiadomienia e-mail zostaną wysłane."
@@ -1617,6 +1620,21 @@ msgstr "Ta wersja bazy danych jest obsługiwana."
 
 msgid "The database version is deprecated."
 msgstr "Ta wersja bazy danych jest przestarzała."
+
+msgid "The model schema cache shows no discrepancies with the database schema."
+msgstr "Pamięć podręczna schematu modelu nie wykazuje żadnych rozbieżności ze schematem bazy danych."
+
+msgid "The model schema cache shows discrepancies with the database schema."
+msgstr "Pamięć podręczna schematu modelu wykazuje rozbieżności ze schematem bazy danych."
+
+msgid "{0}: {1}."
+msgstr "{0}: {1}."
+
+msgid "Clear the model schema cache so it is rebuilt from the database."
+msgstr "Wyczyść pamięć podręczną schematu modelu, aby została odbudowana na podstawie bazy danych."
+
+msgid "Consider running `{0}`. More information: {1}"
+msgstr "Rozważ uruchomienie `{0}`. Więcej informacji: {1}"
 
 msgid "The database schema is up to date."
 msgstr "Schemat bazy danych jest aktualny."
@@ -2117,7 +2135,7 @@ msgid "The resource types associated to this resource does not exist."
 msgstr "Powiązane z tym zasobem typy zasobów nie istnieją."
 
 msgid "No secret revision were found for this resource."
-msgstr ""
+msgstr "Nie znaleziono wersji sekretu dla tego zasobu."
 
 msgid "You are not allowed to update this resource."
 msgstr "Nie masz uprawnień do aktualizowania tego zasobu."
@@ -2347,8 +2365,68 @@ msgstr "Parametr {0} nie jest ustawiony."
 msgid "This theme is not supported."
 msgstr "Ten motyw nie jest obsługiwany."
 
+msgid "Subscription key data is required."
+msgstr "Dane klucza subskrypcji są wymagane."
+
+msgid "The subscription was created."
+msgstr "Subskrypcja została stworzona."
+
+msgid "The instance is already on PRO."
+msgstr "Instancja jest już w wersji PRO."
+
+msgid "A subscription key is already present."
+msgstr "Klucz subskrypcji jest już obecny."
+
 msgid "You are not allowed to access this location."
 msgstr "Nie masz uprawnień dostępu do tego miejsca."
+
+msgid "The instance was downgraded to CE."
+msgstr "Instancja została obniżona do wersji CE."
+
+msgid "Edition downgrade is disabled."
+msgstr "Obniżenie wersji edycji jest wyłączone."
+
+msgid "Your session expired due to an edition change. Please log in again."
+msgstr "Twoja sesja wygasła z powodu zmiany edycji. Zaloguj się ponownie."
+
+msgid "{0} downgraded this Passbolt instance to Community Edition"
+msgstr "{0} obniżył tę instancję Passbolt do edycji Community Edition"
+
+msgid "{0} upgraded this Passbolt instance to Pro Edition"
+msgstr "{0} uaktualnił tę instancję Passbolt do edycji Pro Edition"
+
+msgid "The instance is already on CE."
+msgstr "Instancja jest już w wersji CE."
+
+msgid "The edition served is {0}."
+msgstr "Obsługiwana edycja to {0}."
+
+msgid "Edition row is missing from organization_settings; defaulting to CE."
+msgstr "W organization_settings brakuje wiersza edycji; domyślnie ustawiono CE."
+
+msgid "No edition is recorded in organization_settings — the instance is falling back to CE by default."
+msgstr "W organization_settings nie zapisano żadnej edycji — instancja domyślnie przełącza się na CE."
+
+msgid "Run \"bin/cake passbolt populate_edition\" or upload a subscription key from the admin UI."
+msgstr "Uruchom \"bin/cake passbolt populate_edition\" lub prześlij klucz subskrypcji z interfejsu administratora."
+
+msgid "{0} downgraded the instance to Community Edition"
+msgstr "{0} obniżył instancję do edycji Community Edition"
+
+msgid "Your Passbolt instance was downgraded from Pro to Community Edition. Pro-only features and data have been removed."
+msgstr "Twoja instancja Passbolt została obniżona z Pro do Community Edition. Funkcje i dane dostępne tylko w Pro zostały usunięte."
+
+msgid "Log in to Passbolt"
+msgstr "Zaloguj się do Passbolt"
+
+msgid "{0} upgraded the instance to Pro Edition"
+msgstr "{0} uaktualnił instancję do edycji Pro Edition"
+
+msgid "Your Passbolt instance was upgraded from Community Edition to Pro. Pro features are now available."
+msgstr "Twoja instancja Passbolt została uaktualniona z Community Edition do Pro. Funkcje Pro są teraz dostępne."
+
+msgid "Subscription seats: {0}. Valid until {1}."
+msgstr "Miejsca w subskrypcji: {0}. Ważna do {1}."
 
 msgid "This is not a valid Ajax/Json request."
 msgstr "To nie jest prawidłowe żądanie Ajax/Json."
@@ -2360,10 +2438,10 @@ msgid "The supplied email notification settings are not valid"
 msgstr "Podane ustawienia powiadomień e-mail są nieprawidłowe"
 
 msgid "The allow CSV format setting is required."
-msgstr ""
+msgstr "Ustawienie zezwolenia formatu CSV jest wymagane."
 
 msgid "The allow CSV format setting should be a boolean."
-msgstr ""
+msgstr "Ustawienie zezwolenia formatu CSV powinno być wartością logiczną."
 
 msgid "The folder has been added successfully."
 msgstr "Folder został dodany."
@@ -2474,10 +2552,10 @@ msgid "A folder of type personal cannot be shared with other users or a group."
 msgstr "Folder typu prywatnego nie może być udostępniany innym użytkownikom ani grupie."
 
 msgid "You made changes on several folders"
-msgstr ""
+msgstr "Wprowadziłeś/łaś zmiany w kilku folderach"
 
 msgid "{0} has made changes on several folders"
-msgstr ""
+msgstr "Użytkownik {0} wprowadził zmiany w kilku folderach"
 
 msgid "You added the folder {0}"
 msgstr "Udało Ci się dodać folder {0}"
@@ -2576,7 +2654,7 @@ msgid "{0} edited a folder"
 msgstr "Użytkownik {0} edytował folder"
 
 msgid "{0} folders were affected."
-msgstr ""
+msgstr "Naruszone foldery: {0}"
 
 msgid "It would be too much to list them here, but you can go check them on passly."
 msgstr "Nie damy rady ich tu wszystkich zmieścić, ale możesz je sprawdzić bezpośrednio w passbolt."
@@ -2686,14 +2764,14 @@ msgstr "Brakuje prawidłowej pary kluczy JWT."
 msgid "Run the create JWT keys script to create a valid JWT secret and public key pair:"
 msgstr "Uruchom skrypt stworzenia kluczy JWT, aby stworzyć prawidłową parę klucza publicznego i sekretu JWT:"
 
+msgid "The refresh token provided was already used."
+msgstr "Podany token odświeżania został już użyty."
+
 msgid "The refresh token should be a valid UUID."
 msgstr "Token odświeżania powinien być prawidłowym UUID."
 
 msgid "The user ID should be a valid UUID."
 msgstr "ID użytkownika powinien być prawidłowym UUID."
-
-msgid "The refresh token provided was already used."
-msgstr "Podany token odświeżania został już użyty."
 
 msgid "Expired refresh token provided."
 msgstr "Podano wygasły token odświeżania."
@@ -3179,13 +3257,13 @@ msgid "The server metadata private key is not valid."
 msgstr "Prywatny klucz metadanych serwera jest nieprawidłowy."
 
 msgid "The server does not have access to the server metadata private key in Zero-knowledge mode."
-msgstr ""
+msgstr "Serwer nie ma dostępu do klucza prywatnego metadanych serwera w trybie Zero-knowledge."
 
 msgid "The server has access to the server metadata private key while in Zero-knowledge mode."
-msgstr ""
+msgstr "Serwer ma dostęp do klucza prywatnego metadanych serwera w trybie Zero-knowledge."
 
 msgid "When Zero-knowledge mode is enabled, the server should not have access to the server metadata private key."
-msgstr ""
+msgstr "Gdy tryb Zero-knowledge jest włączony, serwer nie powinien mieć dostępu do prywatnego klucza metadanych serwera."
 
 msgid "The metadata key does not exist or has been deleted."
 msgstr "Klucz metadanych nie istnieje lub został usunięty."
@@ -3635,7 +3713,7 @@ msgid "Multi Factor Authentication is configured!"
 msgstr "Uwierzytelnianie wieloskładnikowe jest skonfigurowane!"
 
 msgid "Unable to configure Multi Factor Authentication."
-msgstr ""
+msgstr "Nie można skonfigurować uwierzytelniania wieloskładnikowego."
 
 msgid "MFA authentication is required."
 msgstr "Uwierzytelnienie MFA jest wymagane."
@@ -4076,10 +4154,10 @@ msgid "The password generator exclude look alike chars should be a boolean type.
 msgstr "Funkcja wykluczania podobnych znaków powinna być typem logicznym."
 
 msgid "The rbacs could not be saved."
-msgstr ""
+msgstr "Nie udało się zapisać ustawień rbac (kontroli dostępu na podstawie ról)."
 
 msgid "Could not save the rbacs, please try again later."
-msgstr ""
+msgstr "Nie udało się zapisać ustawień rbac (kontroli dostępu na podstawie ról), spróbuj ponownie później."
 
 msgid "Record not found"
 msgstr "Nie znaleziono rekordu"
@@ -4112,7 +4190,7 @@ msgid "The control function is not allowed for this UI Action."
 msgstr "Funkcja kontrolna nie jest dozwolona dla tej akcji interfejsu."
 
 msgid "The control function is not allowed for this Action."
-msgstr ""
+msgstr "Funkcja kontrolna nie jest dozwolona dla tej akcji."
 
 msgid "An action identifier should be a valid UUID."
 msgstr "Identyfikator akcji powinien być prawidłowym UUID."
@@ -4292,37 +4370,37 @@ msgid "The resource type is not deleted."
 msgstr "Ten typ zasobu nie został usunięty."
 
 msgid "The max revisions should be a valid integer."
-msgstr ""
+msgstr "Maksymalna liczba wersji powinna być prawidłową liczbą całkowitą."
 
 msgid "The max revisions is required."
-msgstr ""
+msgstr "Maksymalna liczba wersji jest wymagana."
 
 msgid "The max revisions should be greater than 0."
-msgstr ""
+msgstr "Maksymalna liczba wersji powinna być większa niż 0."
 
 msgid "The max revisions should not exceed the max revisions limit set by the administrator."
-msgstr ""
+msgstr "Maksymalna liczba wersji nie powinna przekraczać limitu maksymalnej liczby wersji ustawionego przez administratora."
 
 msgid "The allow sharing revisions should be a valid boolean."
-msgstr ""
+msgstr "Ustawienie zezwalania na współdzielenie wersji powinno być prawidłową wartością logiczną."
 
 msgid "The allow sharing revisions is required."
-msgstr ""
+msgstr "Ustawienie zezwalania na współdzielenie wersji jest wymagane."
 
 msgid "The allow sharing revisions is not enabled by the administrator."
-msgstr ""
+msgstr "Ustawienie zezwalania na współdzielenie wersji nie jest włączone przez administratora."
 
 msgid "Secret revisions settings endpoints are disabled."
-msgstr ""
+msgstr "Endpointy ustawień wersji sekretów są wyłączone."
 
 msgid "The identifier of the user who created the secret revision should be a valid UUID."
-msgstr ""
+msgstr "Identyfikator użytkownika, który stworzył wersję sekretu, powinien być prawidłowym UUID."
 
 msgid "The identifier of the user who modified the secret revision should be a valid UUID."
-msgstr ""
+msgstr "Identyfikator użytkownika, który stworzył wersję sekretu, powinien być prawidłowym UUID."
 
 msgid "Could not save secret revision"
-msgstr ""
+msgstr "Nie udało się zapisać wersji sekretu"
 
 msgid "The self registration setting id should be a valid UUID."
 msgstr "ID ustawienia samodzielnej rejestracji powinno być prawidłowym UUID."
@@ -4463,22 +4541,22 @@ msgid "The test email should be a valid email address."
 msgstr "Testowy adres e-mail powinien być prawidłowym adresem e-mail."
 
 msgid "The tenant ID should be a valid UUID."
-msgstr ""
+msgstr "ID grupy dostępowej powinno być prawidłowym UUID."
 
 msgid "The client ID should be a valid UUID."
-msgstr ""
+msgstr "ID klienta powinien być prawidłowym UUID."
 
 msgid "The client secret should be a valid BMP-UTF8 string."
-msgstr ""
+msgstr "Sekret klienta powinien być prawidłowym ciągiem BMP-UTF8."
 
 msgid "The client secret should not exceed 256 characters."
-msgstr ""
+msgstr "Sekret klienta nie powinien przekraczać 256 znaków."
 
 msgid "The OAuth2 username should be a valid email address."
-msgstr ""
+msgstr "Nazwa użytkownika OAuth2 powinna być prawidłowym adresem e-mail."
 
 msgid "The OAuth2 username should not exceed 256 characters."
-msgstr ""
+msgstr "Nazwa użytkownika OAuth2 nie powinna przekraczać 256 znaków."
 
 msgid "The authentication method is required."
 msgstr "Metoda uwierzytelnienia jest wymagana."
@@ -4493,28 +4571,28 @@ msgid "A test recipient is required."
 msgstr "Wymagany jest odbiorca testowy."
 
 msgid "The tenant ID is required."
-msgstr ""
+msgstr "ID grupy dostępowej jest wymagane."
 
 msgid "The tenant ID should not be empty."
-msgstr ""
+msgstr "ID grupy dostępowej nie powinno być puste."
 
 msgid "The client ID is required."
-msgstr ""
+msgstr "ID klienta jest wymagane."
 
 msgid "The client ID should not be empty."
-msgstr ""
+msgstr "ID klienta nie powinno być puste."
 
 msgid "The client secret is required."
-msgstr ""
+msgstr "Sekret klienta jest wymagany."
 
 msgid "The client secret should not be empty."
 msgstr "Sekret klienta nie powinien być pusty."
 
 msgid "The OAuth2 username is required."
-msgstr ""
+msgstr "Nazwa użytkownika OAuth2 jest wymagana."
 
 msgid "The OAuth2 username should not be empty."
-msgstr ""
+msgstr "Nazwa użytkownika OAuth2 nie powinna być pusta."
 
 msgid "SMTP settings endpoints disabled."
 msgstr "Wyłączono endpointy ustawień SMTP."
@@ -4571,7 +4649,7 @@ msgid "env variables"
 msgstr "zmienne środowiskowe"
 
 msgid "Tenant ID should be a valid UUID."
-msgstr ""
+msgstr "ID grupy dostępowej powinno być prawidłowym UUID."
 
 msgid "Client ID should be a valid UUID."
 msgstr "ID klienta powinien być prawidłowym UUID."
@@ -4580,7 +4658,7 @@ msgid "Failed to obtain SMTP OAuth2 access token."
 msgstr "Nie udało się uzyskać tokenu dostępu SMTP OAuth2."
 
 msgid "SMTP OAuth2 token response from Microsoft did not contain an access token."
-msgstr ""
+msgstr "Odpowiedź tokenu SMTP OAuth2 z Microsoft nie zawierała tokena dostępu."
 
 msgid "Could not validate the smtp settings."
 msgstr "Nie można zweryfikować ustawień smtp."
@@ -4681,9 +4759,6 @@ msgstr "Sesja wygasła. Zacznij konfigurację jeszcze raz."
 msgid "System check"
 msgstr "Weryfikacja systemu"
 
-msgid "Subscription key"
-msgstr "Klucz subskrypcji"
-
 msgid "Server keys"
 msgstr "Klucze serwera"
 
@@ -4695,6 +4770,9 @@ msgstr "Adresy e-mail"
 
 msgid "First user"
 msgstr "Pierwszy użytkownik"
+
+msgid "Subscription key"
+msgstr "Klucz subskrypcji"
 
 msgid "Installation"
 msgstr "Instalacja"
@@ -4849,6 +4927,9 @@ msgstr "Nazwisko"
 msgid "mail@yourdomain.com"
 msgstr "mail@twojadomena.com"
 
+msgid "Cancel"
+msgstr "Anuluj"
+
 msgid "Next"
 msgstr "Dalej"
 
@@ -4890,9 +4971,6 @@ msgstr "diagram"
 
 msgid "Schema"
 msgstr "Diagram"
-
-msgid "Cancel"
-msgstr "Anuluj"
 
 msgid "Enter your SMTP server settings."
 msgstr "Wpisz ustawienia Twojego serwera SMTP."
@@ -5022,6 +5100,9 @@ msgstr "Aktywacja Passly Pro."
 
 msgid "Copy paste your Passly Pro subscription key here"
 msgstr "Wklej tutaj swój klucz subskrypcji Passly Pro"
+
+msgid "Skip"
+msgstr "Pomiń"
 
 msgid "Welcome to Passly Pro! Let's get started with the configuration."
 msgstr "Witaj w Passly Pro! Zacznijmy od konfiguracji."
@@ -5561,7 +5642,7 @@ msgid "{0} has initiated an account recovery request."
 msgstr "Użytkownik {0} rozpoczął prośbę o odzyskanie konta."
 
 msgid "Since you’re authorized to handle account recovery requests, please process this one."
-msgstr ""
+msgstr "Ponieważ masz uprawnienia do obsługi próśb o odzyskanie konta, prosimy o przetworzenie tej prośby."
 
 msgid "You will need your organization recovery key to continue."
 msgstr "Aby kontynuować, będziesz potrzebować klucza odzyskiwania Twojej organizacji."
@@ -6196,9 +6277,6 @@ msgstr "Ustawienia polityki haseł zostały zaktualizowane przez użytkownika {0
 msgid "you"
 msgstr "ty"
 
-msgid "view it in passbolt"
-msgstr "sprawdź w passbolt"
-
 msgid "The SCIM setting id should be a valid UUID."
 msgstr "ID ustawienia SCIM powinno być prawidłowym UUID."
 
@@ -6221,7 +6299,7 @@ msgid "The ID for the SCIM settings should be a valid UUID."
 msgstr "ID ustawień SCIM powinno być prawidłowym UUID."
 
 msgid "The SCIM secret token is expired, you are requested to rotate it."
-msgstr ""
+msgstr "Tajny token SCIM wygasł, należy go obrócić."
 
 msgid "Simultaneous SCIM and session authentication is not permitted."
 msgstr "Jednoczesne uwierzytelnianie SCIM i sesyjne nie jest dozwolone."
@@ -6233,7 +6311,7 @@ msgid "An entry for the same related entity already exists"
 msgstr "Istnieje już wpis dla tego samego powiązanego elementu."
 
 msgid "An entry with the same `scim_name` and `foreign_model` already exist."
-msgstr ""
+msgstr "Wpis z taką samą wartością `scim_name` i `foreign_model` już istnieje."
 
 msgid "Users"
 msgstr "Użytkownicy"
@@ -6251,10 +6329,10 @@ msgid "SCIM plugin is disabled."
 msgstr "Wtyczka SCIM jest wyłączona."
 
 msgid "The SCIM secret token is not expired."
-msgstr ""
+msgstr "Tajny token SCIM nie wygasł."
 
 msgid "Rotate the SCIM secret token in the administration settings."
-msgstr ""
+msgstr "Obróć tajny token SCIM w ustawieniach administracyjnych."
 
 msgid "The SCIM settings could not be decrypted with the server gpg key."
 msgstr "Nie można odszyfrować ustawień SCIM kluczem GPG serwera."
@@ -6281,16 +6359,16 @@ msgid "The uuid in the url doesn't match any known setting record."
 msgstr "UUID w adresie URL nie pasuje do żadnego znanego rekordu ustawień."
 
 msgid "The SCIM secret token expiry configuration is invalid."
-msgstr ""
+msgstr "Konfiguracja wygaśnięcia tajnego tokenu SCIM jest nieprawidłowa."
 
 msgid "Missing or invalid SCIM user in configuration settings"
-msgstr ""
+msgstr "Brak użytkownika SCIM w ustawieniach konfiguracji lub jest on nieprawidłowy"
 
 msgid "An unexpected error occurred while creating the user in the database"
-msgstr ""
+msgstr "Wystąpił nieoczekiwany błąd podczas tworzenia użytkownika w bazie danych"
 
 msgid "An administrator user cannot be suspended via SCIM."
-msgstr ""
+msgstr "Użytkownik administratora nie może zostać zawieszony przez SCIM."
 
 msgid "Email"
 msgstr "Adres e-mail"
@@ -6467,16 +6545,16 @@ msgid "The scope is too large."
 msgstr "Zakres jest zbyt duży."
 
 msgid "The URL must be a valid PingOne authentication domain."
-msgstr ""
+msgstr "Adres URL musi być prawidłową domeną uwierzytelniania PingOne."
 
 msgid "An environment id is required."
-msgstr ""
+msgstr "ID środowiska jest wymagane."
 
 msgid "The environment id should not be empty."
-msgstr ""
+msgstr "ID środowiska nie powinno być puste."
 
 msgid "The environment id should be a valid UUID."
-msgstr ""
+msgstr "ID środowiska powinno być prawidłowym UUID."
 
 msgid "SSO settings edit endpoints are disabled."
 msgstr "Wyłączono endpointy edycji ustawień SSO."
@@ -6641,10 +6719,10 @@ msgid "Provided root CA file does not exist"
 msgstr "Podany główny plik CA nie istnieje"
 
 msgid "Invalid provider. Expected PingOne."
-msgstr ""
+msgstr "Nieprawidłowy dostawca. Oczekiwano PingOne."
 
 msgid "Invalid provider data. Expected PingOne settings."
-msgstr ""
+msgstr "Nieprawidłowe dane dostawcy. Oczekiwano ustawień PingOne."
 
 msgid "The user id should be a valid UUID."
 msgstr "ID użytkownika powinno być prawidłowym UUID."
@@ -6766,9 +6844,6 @@ msgstr "Wartość konfiguracji {0} powinna być ciągiem znaków lub NULL."
 msgid "The {0} configuration value should be one of the following: {1}."
 msgstr "Wartość konfiguracji {0} powinna być jednym z następujących: {1}."
 
-msgid "Single-sign on was a success"
-msgstr "Pojedyncze logowanie powiodło się"
-
 msgid "Users are unable to log in via Azure SSO."
 msgstr "Użytkownicy nie mogą zalogować się przez Azure SSO."
 
@@ -6805,11 +6880,11 @@ msgstr "Dostawca SSO {0} został pomyślnie przetestowany i aktywowany przez {1}
 msgid "All users can now use Single Sign-on to perform authentication."
 msgstr "Wszyscy użytkownicy mogą teraz używać pojedynczego logowania do wykonania uwierzytelnienia."
 
-msgid "Viewq  it in passbolt"
-msgstr "Sprawdź w passbolt"
-
 msgid "The SSO setting has been deleted by {0}."
 msgstr "Ustawienie SSO zostały usunięte przez użytkownika {0}."
+
+msgid "Single-sign on was a success"
+msgstr "Pojedyncze logowanie powiodło się"
 
 msgid "The authentication token does not exist or has been deleted."
 msgstr "Token uwierzytelniania jest nieprawidłowy lub został usunięty."
@@ -6837,12 +6912,6 @@ msgstr "Dostęp do tej usługi wymaga zaproszenia. "
 
 msgid "Please contact your administrator to request an invitation link."
 msgstr "Skontaktuj się z administratorem, aby poprosić o link z zaproszeniem."
-
-msgid "Subscription key data is required."
-msgstr "Dane klucza subskrypcji są wymagane."
-
-msgid "The subscription was created."
-msgstr "Subskrypcja została stworzona."
 
 msgid "The subscription was updated."
 msgstr "Subskrypcja została zaktualizowana."
@@ -6973,6 +7042,9 @@ msgstr "Jeśli chcesz o coś zapytać / wysłać opinię / odnowić subskrypcję
 msgid "kindly contact us at <info>sales@passbolt.com</info>"
 msgstr "skontaktuj się z nami pod adresem <info>sales@passbolt.com</info>"
 
+msgid "Only administrators can delete the subscription."
+msgstr "Tylko administratorzy mogą usunąć subskrypcję."
+
 msgid "Only administrators can view the subscription details."
 msgstr "Tylko administratorzy mogą przeglądać szczegóły subskrypcji."
 
@@ -6981,9 +7053,6 @@ msgstr "Nie znaleziono pliku {0}."
 
 msgid "The file {0} could not be read."
 msgstr "Nie udało się odczytać pliku {0}."
-
-msgid "No active admins were found."
-msgstr "Nie znaleziono żadnych aktywnych administratorów."
 
 msgid "Only administrators can update the subscription details."
 msgstr "Tylko administratorzy mogą zaktualizować szczegóły subskrypcji."
@@ -7193,7 +7262,7 @@ msgid "Contact your admin"
 msgstr "Skontaktuj się z administratorem"
 
 msgid "{0} changed the role of {1} to {2}."
-msgstr ""
+msgstr "Użytkownik {0} zmienił rolę użytkownika {1} na {2}."
 
 msgid "{0} can no longer perform administration tasks."
 msgstr "Użytkownik {0} nie może już wykonywać zadań administratorskich."

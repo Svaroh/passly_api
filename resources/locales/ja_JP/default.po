@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 41c2572bd9bd4cc908d3e09e0cbed6e5\n"
-"POT-Creation-Date: 2026-04-02 12:51+0000\n"
-"PO-Revision-Date: 2026-04-02 14:13\n"
+"POT-Creation-Date: 2026-07-10 05:55+0000\n"
+"PO-Revision-Date: 2026-09-10 14:47\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -12,8 +12,8 @@ msgstr ""
 "X-Crowdin-Project: 41c2572bd9bd4cc908d3e09e0cbed6e5\n"
 "X-Crowdin-Project-ID: 2\n"
 "X-Crowdin-Language: ja\n"
-"X-Crowdin-File: /[passbolt.passbolt-pro-api] release/resources/locales/en_UK/default.po\n"
-"X-Crowdin-File-ID: 220\n"
+"X-Crowdin-File: /[passbolt.passbolt-ce-api] release/resources/locales/en_UK/default.po\n"
+"X-Crowdin-File-ID: 212\n"
 "Language: ja_JP\n"
 
 msgid "You need to login to access this location."
@@ -74,7 +74,7 @@ msgid "The request data can not be empty."
 msgstr "リクエストデータを空にすることはできません。"
 
 msgid "You are already logged in."
-msgstr ""
+msgstr "すでにログインしています。"
 
 msgid "You are successfully logged in."
 msgstr "正常にログインしました。"
@@ -278,13 +278,13 @@ msgid "The resource has been updated successfully."
 msgstr "リソースが正常に更新されました。"
 
 msgid "The role was deleted."
-msgstr ""
+msgstr "ロールが削除されました。"
 
 msgid "The role identifier is not valid."
-msgstr ""
+msgstr "ロール識別子は有効ではありません。"
 
 msgid "The role was successfully updated."
-msgstr ""
+msgstr "ロールは正常に更新されました。"
 
 msgid "The secret does not exist."
 msgstr "秘密は存在しません。"
@@ -346,17 +346,20 @@ msgstr "このユーザーは削除できません。"
 msgid "The groups users identifiers must be valid UUID."
 msgstr "グループユーザー識別子は有効なUUIDでなければなりません。"
 
-msgid "The user does not exist or has been deleted."
-msgstr "そのユーザーは存在しないか、削除されました。"
-
 msgid "Could not validate user data."
 msgstr "ユーザーデータを検証できませんでした。"
+
+msgid "The user does not exist or has been deleted."
+msgstr "そのユーザーは存在しないか、削除されました。"
 
 msgid "Could not find the user data after save. Maybe it has been deleted in the meantime."
 msgstr "保存後にユーザーデータが見つかりませんでした。しばらくしてから削除された可能性があります。"
 
 msgid "The user has been updated successfully."
 msgstr "ユーザーが正常に更新されました。"
+
+msgid "You are not authorized to edit the role."
+msgstr "ロールを編集する権限がありません。"
 
 msgid "Some user data should be provided."
 msgstr "ユーザーデータを一部提供する必要があります。"
@@ -366,9 +369,6 @@ msgstr "OpenPGP鍵の更新はできません。"
 
 msgid "Updating the groups is not allowed."
 msgstr "グループの更新はできません。"
-
-msgid "You are not authorized to edit the role."
-msgstr "ロールを編集する権限がありません。"
 
 msgid "Multiple has-access filters are not supported."
 msgstr "複数のhas-accessフィルターはサポートされていません。"
@@ -410,7 +410,7 @@ msgid "Invalid expiry time {0}."
 msgstr "有効期限 {0} が無効です。"
 
 msgid "The user role ID must not be of the guest role."
-msgstr ""
+msgstr "ユーザーロールIDはゲストロールであってはなりません。"
 
 msgid "The identifier should not be empty."
 msgstr "識別子は空にしないでください。"
@@ -950,25 +950,28 @@ msgid "The name should be a valid BMP-UTF8 string."
 msgstr "名前は有効なBMP-UTF8文字列でなければなりません。"
 
 msgid "The name should not be greater than 50 characters."
-msgstr ""
+msgstr "名前は50文字を超えてはなりません。"
 
 msgid "The name should not be reserved role."
-msgstr ""
+msgstr "名前を予約済みロールにすることはできません。"
 
 msgid "The description should be a valid BMP-UTF8 string."
 msgstr "説明は有効なBMP-UTF8文字列でなければなりません。"
 
 msgid "The role cannot be deleted as it is associated with another user."
-msgstr ""
+msgstr "このロールは別のユーザーに関連付けられているため、削除できません。"
 
 msgid "A reserved role cannot be deleted."
-msgstr ""
+msgstr "予約済みロールは削除できません。"
 
 msgid "A role already exists for the given name."
 msgstr "与えられた名前のロールがすでに存在します。"
 
 msgid "Only maximum of {0} active roles are allowed."
-msgstr ""
+msgstr "有効なロールは最大{0}件まで許可されています。"
+
+msgid "A reserved role cannot be renamed."
+msgstr "予約済みのロール名は変更できません。"
 
 msgid "The resource identifier is required."
 msgstr "リソース識別子が必要です。"
@@ -977,13 +980,13 @@ msgid "The resource identifier should not be empty."
 msgstr "リソース識別子は空にしないでください。"
 
 msgid "The secret revision identifier should be a valid UUID."
-msgstr ""
+msgstr "秘密改訂識別子は有効なUUIDでなければなりません。"
 
 msgid "A secret revision identifier is required."
-msgstr ""
+msgstr "秘密改訂識別子が必要です。"
 
 msgid "The secret revision identifier should not be empty."
-msgstr ""
+msgstr "秘密改訂識別子は空にできません。"
 
 msgid "The message should be a valid ASCII string."
 msgstr "メッセージは有効なASCII文字列でなければなりません。"
@@ -998,10 +1001,10 @@ msgid "A secret already exists for the given user and resource."
 msgstr "秘密はすでに、指定されたユーザーとリソースに存在します。"
 
 msgid "A secret already exists for the given user, resource and secret revision."
-msgstr ""
+msgstr "指定されたユーザー、リソース、および秘密改訂には、すでに秘密が存在します。"
 
 msgid "The secret revision does not exist or is deleted."
-msgstr ""
+msgstr "秘密改訂が存在しないか、削除されています。"
 
 msgid "The user identifier by should be a valid UUID."
 msgstr "ユーザー識別子は有効なUUIDでなければなりません。"
@@ -1034,7 +1037,7 @@ msgid "The username is already in use."
 msgstr "このユーザー名はすでに使用されています。"
 
 msgid "The role does not exist."
-msgstr ""
+msgstr "ロールが存在しません。"
 
 msgid "The user should not be sole owner of shared content, transfer the ownership to other users."
 msgstr "そのユーザーは、共有コンテンツの単独所有者ではありません。他のユーザーに所有権を譲渡する必要があります。"
@@ -1172,10 +1175,10 @@ msgid "{0} edited the resource {1}"
 msgstr "{0}さんがリソース {1} を編集しました"
 
 msgid "{0} created a new role {1}"
-msgstr ""
+msgstr "{0}さんが新しいロール {1} を作成しました"
 
 msgid "{0} updated the role {1}"
-msgstr ""
+msgstr "{0}さんがロール {1} を更新しました"
 
 msgid "{0} cannot complete the account recovery process!"
 msgstr "{0} はアカウント復旧プロセスを完了できません！"
@@ -1211,7 +1214,7 @@ msgid "Welcome to passbolt, {0}!"
 msgstr "パスボルトへようこそ、 {0} さん！"
 
 msgid "Your role has been updated"
-msgstr ""
+msgstr "あなたのロールが更新されました"
 
 msgid "The purify subject setting should be a boolean."
 msgstr "件名の消去設定はブール値にする必要があります。"
@@ -1382,7 +1385,7 @@ msgid "Could not validate group user data."
 msgstr "グループユーザーデータを検証できませんでした。"
 
 msgid "The resource with ID {0} does not have a secret revision."
-msgstr ""
+msgstr "ID {0} のリソースには秘密改訂がありません。"
 
 msgid "All email notifications will be sent."
 msgstr "すべてのメール通知が送信されます。"
@@ -1613,10 +1616,25 @@ msgid "Run the install script to install the database tables"
 msgstr "インストールスクリプトを実行してデータベーステーブルをインストールしてください"
 
 msgid "The database version is supported."
-msgstr ""
+msgstr "データベースのバージョンはサポートされています。"
 
 msgid "The database version is deprecated."
-msgstr ""
+msgstr "データベースのバージョンは非推奨です。"
+
+msgid "The model schema cache shows no discrepancies with the database schema."
+msgstr "モデルスキーマキャッシュには、データベーススキーマとの不一致はありません。"
+
+msgid "The model schema cache shows discrepancies with the database schema."
+msgstr "モデルスキーマキャッシュに、データベーススキーマとの不一致があります。"
+
+msgid "{0}: {1}."
+msgstr "{0}: {1}。"
+
+msgid "Clear the model schema cache so it is rebuilt from the database."
+msgstr "モデルスキーマキャッシュをクリアして、データベースから再構築されるようにします。"
+
+msgid "Consider running `{0}`. More information: {1}"
+msgstr "`{0}` を実行することを検討してください。詳細情報: {1}"
 
 msgid "The database schema is up to date."
 msgstr "データベーススキーマは最新です。"
@@ -2117,7 +2135,7 @@ msgid "The resource types associated to this resource does not exist."
 msgstr "このリソースに関連付けられているリソース型が存在しません。"
 
 msgid "No secret revision were found for this resource."
-msgstr ""
+msgstr "このリソースには秘密改訂が見つかりませんでした。"
 
 msgid "You are not allowed to update this resource."
 msgstr "このリソースを更新することはできません。"
@@ -2126,19 +2144,19 @@ msgid "Additional resource types are not enabled on this server."
 msgstr "このサーバーでは追加のリソースタイプが有効になっていません。"
 
 msgid "The role could not be saved."
-msgstr ""
+msgstr "ロールを保存できませんでした。"
 
 msgid "Could not save the role, please try again later."
-msgstr ""
+msgstr "ロールを保存できませんでした。後でもう一度お試しください。"
 
 msgid "The role does not exist or deleted."
-msgstr ""
+msgstr "ロールが存在しないか、削除されています。"
 
 msgid "The role could not be deleted."
-msgstr ""
+msgstr "ロールを削除できませんでした。"
 
 msgid "Could not delete the role, please try again later."
-msgstr ""
+msgstr "ロールを削除できませんでした。後でもう一度お試しください。"
 
 msgid "There should be at least 4 roles"
 msgstr "少なくとも4つのロールが必要です"
@@ -2150,10 +2168,10 @@ msgid "Validation success for role {0}"
 msgstr "ロール {0} の検証に成功しました"
 
 msgid "The role could not be updated."
-msgstr ""
+msgstr "ロールを更新できませんでした。"
 
 msgid "Could not update the role, please try again later."
-msgstr ""
+msgstr "ロールを更新できませんでした。後でもう一度お試しください。"
 
 msgid "Could not validate secrets data."
 msgstr "秘密データを検証できませんでした。"
@@ -2347,8 +2365,68 @@ msgstr "パラメータ {0} が設定されていません。"
 msgid "This theme is not supported."
 msgstr "このテーマはサポートされていません。"
 
+msgid "Subscription key data is required."
+msgstr "サブスクリプションキーのデータが必要です。"
+
+msgid "The subscription was created."
+msgstr "サブスクリプションが作成されました。"
+
+msgid "The instance is already on PRO."
+msgstr "このインスタンスはすでに PRO です。"
+
+msgid "A subscription key is already present."
+msgstr "Subscription key はすでに存在します。"
+
 msgid "You are not allowed to access this location."
 msgstr "この場所にアクセスすることはできません。"
+
+msgid "The instance was downgraded to CE."
+msgstr "このインスタンスは CE にダウングレードされました。"
+
+msgid "Edition downgrade is disabled."
+msgstr "エディションのダウングレードは無効になっています。"
+
+msgid "Your session expired due to an edition change. Please log in again."
+msgstr "エディションの変更によりセッションの有効期限が切れました。もう一度ログインしてください。"
+
+msgid "{0} downgraded this Passbolt instance to Community Edition"
+msgstr "{0} がこの Passbolt インスタンスを Community Edition にダウングレードしました"
+
+msgid "{0} upgraded this Passbolt instance to Pro Edition"
+msgstr "{0} がこの Passbolt インスタンスを Pro Edition にアップグレードしました"
+
+msgid "The instance is already on CE."
+msgstr "このインスタンスはすでに CE です。"
+
+msgid "The edition served is {0}."
+msgstr "提供されているエディションは {0} です。"
+
+msgid "Edition row is missing from organization_settings; defaulting to CE."
+msgstr "organization_settings にエディションの行がありません。デフォルトで CE を使用します。"
+
+msgid "No edition is recorded in organization_settings — the instance is falling back to CE by default."
+msgstr "organization_settings にエディションが記録されていません — インスタンスはデフォルトで CE にフォールバックします。"
+
+msgid "Run \"bin/cake passbolt populate_edition\" or upload a subscription key from the admin UI."
+msgstr "\"bin/cake passbolt populate_edition\" を実行するか、管理 UI から Subscription key をアップロードしてください。"
+
+msgid "{0} downgraded the instance to Community Edition"
+msgstr "{0} がこのインスタンスを Community Edition にダウングレードしました"
+
+msgid "Your Passbolt instance was downgraded from Pro to Community Edition. Pro-only features and data have been removed."
+msgstr "あなたの Passbolt インスタンスは Pro から Community Edition にダウングレードされました。Pro 専用の機能とデータは削除されました。"
+
+msgid "Log in to Passbolt"
+msgstr "Passbolt にログイン"
+
+msgid "{0} upgraded the instance to Pro Edition"
+msgstr "{0} がこのインスタンスを Pro Edition にアップグレードしました"
+
+msgid "Your Passbolt instance was upgraded from Community Edition to Pro. Pro features are now available."
+msgstr "あなたの Passbolt インスタンスは Community Edition から Pro にアップグレードされました。Pro の機能が利用可能になりました。"
+
+msgid "Subscription seats: {0}. Valid until {1}."
+msgstr "サブスクリプションのシート数: {0}。有効期限: {1}。"
 
 msgid "This is not a valid Ajax/Json request."
 msgstr "これは有効な Ajax/Json リクエストではありません。"
@@ -2360,10 +2438,10 @@ msgid "The supplied email notification settings are not valid"
 msgstr "指定されたメール通知設定は有効ではありません"
 
 msgid "The allow CSV format setting is required."
-msgstr ""
+msgstr "CSV形式の許可設定が必要です。"
 
 msgid "The allow CSV format setting should be a boolean."
-msgstr ""
+msgstr "CSV形式の許可設定はブール値でなければなりません。"
 
 msgid "The folder has been added successfully."
 msgstr "フォルダが正常に追加されました。"
@@ -2474,10 +2552,10 @@ msgid "A folder of type personal cannot be shared with other users or a group."
 msgstr "Personalタイプのフォルダーは他のユーザーやグループと共有できません。"
 
 msgid "You made changes on several folders"
-msgstr ""
+msgstr "複数のフォルダで変更を行いました"
 
 msgid "{0} has made changes on several folders"
-msgstr ""
+msgstr "{0} さんが複数のフォルダで変更を行いました"
 
 msgid "You added the folder {0}"
 msgstr "フォルダ {0} を追加しました"
@@ -2576,7 +2654,7 @@ msgid "{0} edited a folder"
 msgstr "{0} さんがフォルダを編集しました"
 
 msgid "{0} folders were affected."
-msgstr ""
+msgstr "{0}個のフォルダが影響を受けました。"
 
 msgid "It would be too much to list them here, but you can go check them on passly."
 msgstr "ここではご紹介しきれないほどですが、パスボルト上でご確認いただけます。"
@@ -2686,14 +2764,14 @@ msgstr "有効なJWT鍵ペアが見つかりません。"
 msgid "Run the create JWT keys script to create a valid JWT secret and public key pair:"
 msgstr "有効なJWT秘密鍵と公開鍵のペアを作成するには、create JWT keysスクリプトを実行してください："
 
+msgid "The refresh token provided was already used."
+msgstr "指定されたリフレッシュトークンはすでに使用されています。"
+
 msgid "The refresh token should be a valid UUID."
 msgstr "リフレッシュトークンは有効なUUIDでなければなりません。"
 
 msgid "The user ID should be a valid UUID."
 msgstr "ユーザーIDは有効なUUIDである必要があります。"
-
-msgid "The refresh token provided was already used."
-msgstr "指定されたリフレッシュトークンはすでに使用されています。"
 
 msgid "Expired refresh token provided."
 msgstr "期限切れの更新トークンが指定されました。"
@@ -3179,13 +3257,13 @@ msgid "The server metadata private key is not valid."
 msgstr "サーバーのメタデータ秘密鍵は無効です。"
 
 msgid "The server does not have access to the server metadata private key in Zero-knowledge mode."
-msgstr ""
+msgstr "ゼロ知識モードでは、サーバーはサーバーメタデータ秘密鍵にアクセスできません。"
 
 msgid "The server has access to the server metadata private key while in Zero-knowledge mode."
-msgstr ""
+msgstr "ゼロ知識モード中に、サーバーがサーバーメタデータ秘密鍵にアクセスできます。"
 
 msgid "When Zero-knowledge mode is enabled, the server should not have access to the server metadata private key."
-msgstr ""
+msgstr "ゼロ知識モードが有効な場合、サーバーはサーバーメタデータ秘密鍵にアクセスできてはなりません。"
 
 msgid "The metadata key does not exist or has been deleted."
 msgstr "メタデータ鍵が存在しないか、削除されています。"
@@ -3626,7 +3704,7 @@ msgid "This functionality is not available using AJAX/JSON."
 msgstr "この機能は、AJAX/JSONでは使用できません。"
 
 msgid "This functionality is only available using AJAX/JSON."
-msgstr ""
+msgstr "この機能は、AJAX/JSONでのみ使用できます。"
 
 msgid "This authentication provider is already setup. Disable it first"
 msgstr "この認証プロバイダーはすでに設定されています。 まず無効にしてください。"
@@ -3635,7 +3713,7 @@ msgid "Multi Factor Authentication is configured!"
 msgstr "多要素認証が設定されています！"
 
 msgid "Unable to configure Multi Factor Authentication."
-msgstr ""
+msgstr "多要素認証を設定できません。"
 
 msgid "MFA authentication is required."
 msgstr "MFA認証が必要です。"
@@ -4076,10 +4154,10 @@ msgid "The password generator exclude look alike chars should be a boolean type.
 msgstr "パスワードジェネレータの類似文字除外設定はブール型である必要があります。"
 
 msgid "The rbacs could not be saved."
-msgstr ""
+msgstr "rbac を保存できませんでした。"
 
 msgid "Could not save the rbacs, please try again later."
-msgstr ""
+msgstr "rbac を保存できませんでした。後でもう一度お試しください。"
 
 msgid "Record not found"
 msgstr "レコードが見つかりません"
@@ -4112,7 +4190,7 @@ msgid "The control function is not allowed for this UI Action."
 msgstr "このUIアクションではcontrol functionは許可されていません。"
 
 msgid "The control function is not allowed for this Action."
-msgstr ""
+msgstr "この制御機能はこのアクションでは許可されていません。"
 
 msgid "An action identifier should be a valid UUID."
 msgstr "アクション識別子は有効なUUIDである必要があります。"
@@ -4292,37 +4370,37 @@ msgid "The resource type is not deleted."
 msgstr "そのリソースタイプは削除されていません。"
 
 msgid "The max revisions should be a valid integer."
-msgstr ""
+msgstr "最大改訂数は有効な整数でなければなりません。"
 
 msgid "The max revisions is required."
-msgstr ""
+msgstr "最大改訂数が必要です。"
 
 msgid "The max revisions should be greater than 0."
-msgstr ""
+msgstr "最大改訂数は0より大きくなければなりません。"
 
 msgid "The max revisions should not exceed the max revisions limit set by the administrator."
-msgstr ""
+msgstr "最大改訂数は、管理者が設定した最大改訂数の上限を超えてはなりません。"
 
 msgid "The allow sharing revisions should be a valid boolean."
-msgstr ""
+msgstr "改訂の共有許可は有効なブール値でなければなりません。"
 
 msgid "The allow sharing revisions is required."
-msgstr ""
+msgstr "改訂の共有許可が必要です。"
 
 msgid "The allow sharing revisions is not enabled by the administrator."
-msgstr ""
+msgstr "改訂の共有許可は管理者によって有効化されていません。"
 
 msgid "Secret revisions settings endpoints are disabled."
-msgstr ""
+msgstr "秘密改訂設定のエンドポイントは無効です。"
 
 msgid "The identifier of the user who created the secret revision should be a valid UUID."
-msgstr ""
+msgstr "秘密改訂を作成したユーザーの識別子は有効なUUIDでなければなりません。"
 
 msgid "The identifier of the user who modified the secret revision should be a valid UUID."
-msgstr ""
+msgstr "秘密改訂を変更したユーザーの識別子は有効なUUIDでなければなりません。"
 
 msgid "Could not save secret revision"
-msgstr ""
+msgstr "秘密改訂を保存できませんでした"
 
 msgid "The self registration setting id should be a valid UUID."
 msgstr "セルフ登録設定IDは有効なUUIDである必要があります。"
@@ -4463,22 +4541,22 @@ msgid "The test email should be a valid email address."
 msgstr "テストメールアドレスは有効なメールアドレスである必要があります。"
 
 msgid "The tenant ID should be a valid UUID."
-msgstr ""
+msgstr "テナントIDは有効なUUIDでなければなりません。"
 
 msgid "The client ID should be a valid UUID."
-msgstr ""
+msgstr "クライアントIDは有効なUUIDでなければなりません。"
 
 msgid "The client secret should be a valid BMP-UTF8 string."
-msgstr ""
+msgstr "クライアントシークレットは有効なBMP-UTF8文字列でなければなりません。"
 
 msgid "The client secret should not exceed 256 characters."
-msgstr ""
+msgstr "クライアントシークレットは256文字を超えてはなりません。"
 
 msgid "The OAuth2 username should be a valid email address."
-msgstr ""
+msgstr "OAuth2ユーザー名は有効なメールアドレスである必要があります。"
 
 msgid "The OAuth2 username should not exceed 256 characters."
-msgstr ""
+msgstr "OAuth2ユーザー名は256文字を超えてはなりません。"
 
 msgid "The authentication method is required."
 msgstr "認証方法が必要です。"
@@ -4493,28 +4571,28 @@ msgid "A test recipient is required."
 msgstr "テスト受信者が必要です。"
 
 msgid "The tenant ID is required."
-msgstr ""
+msgstr "テナントIDが必要です。"
 
 msgid "The tenant ID should not be empty."
-msgstr ""
+msgstr "テナントIDは空にできません。"
 
 msgid "The client ID is required."
-msgstr ""
+msgstr "クライアントIDが必要です。"
 
 msgid "The client ID should not be empty."
-msgstr ""
+msgstr "クライアントIDは空にできません。"
 
 msgid "The client secret is required."
-msgstr ""
+msgstr "クライアントシークレットが必要です。"
 
 msgid "The client secret should not be empty."
 msgstr "クライアントシークレットを空にすることはできません。"
 
 msgid "The OAuth2 username is required."
-msgstr ""
+msgstr "OAuth2ユーザー名が必要です。"
 
 msgid "The OAuth2 username should not be empty."
-msgstr ""
+msgstr "OAuth2ユーザー名は空にできません。"
 
 msgid "SMTP settings endpoints disabled."
 msgstr "SMTP設定のエンドポイントが無効です。"
@@ -4571,16 +4649,16 @@ msgid "env variables"
 msgstr "環境変数"
 
 msgid "Tenant ID should be a valid UUID."
-msgstr ""
+msgstr "テナントIDは有効なUUIDでなければなりません。"
 
 msgid "Client ID should be a valid UUID."
-msgstr ""
+msgstr "クライアントIDは有効なUUIDでなければなりません。"
 
 msgid "Failed to obtain SMTP OAuth2 access token."
-msgstr ""
+msgstr "SMTP OAuth2アクセストークンの取得に失敗しました。"
 
 msgid "SMTP OAuth2 token response from Microsoft did not contain an access token."
-msgstr ""
+msgstr "MicrosoftからのSMTP OAuth2トークン応答にアクセストークンが含まれていませんでした。"
 
 msgid "Could not validate the smtp settings."
 msgstr "smtp設定を検証できませんでした。"
@@ -4681,9 +4759,6 @@ msgstr "セッションの有効期限が切れています。設定を再度開
 msgid "System check"
 msgstr "システムチェック"
 
-msgid "Subscription key"
-msgstr "サブスクリプションキー"
-
 msgid "Server keys"
 msgstr "サーバーキー"
 
@@ -4695,6 +4770,9 @@ msgstr "メール"
 
 msgid "First user"
 msgstr "最初のユーザー"
+
+msgid "Subscription key"
+msgstr "サブスクリプションキー"
 
 msgid "Installation"
 msgstr "インストール"
@@ -4849,6 +4927,9 @@ msgstr "姓"
 msgid "mail@yourdomain.com"
 msgstr "mail@yourdomain.com"
 
+msgid "Cancel"
+msgstr "キャンセル"
+
 msgid "Next"
 msgstr "次"
 
@@ -4891,9 +4972,6 @@ msgstr "スキーマ"
 msgid "Schema"
 msgstr "スキーマ"
 
-msgid "Cancel"
-msgstr "キャンセル"
-
 msgid "Enter your SMTP server settings."
 msgstr "SMTPサーバーの設定を入力します。"
 
@@ -4931,13 +5009,13 @@ msgid "Authentication method"
 msgstr "認証方法"
 
 msgid "Directory (tenant) ID"
-msgstr ""
+msgstr "ディレクトリ（テナント）ID"
 
 msgid "Application (client) ID"
-msgstr ""
+msgstr "アプリケーション（クライアント）ID"
 
 msgid "Client secret"
-msgstr ""
+msgstr "クライアントシークレット"
 
 msgid "Client"
 msgstr "クライアント"
@@ -5022,6 +5100,9 @@ msgstr "パスボルトProのアクティベーション。"
 
 msgid "Copy paste your Passly Pro subscription key here"
 msgstr "パスボルトProのサブスクリプションキーをコピーしてこちらに貼り付けてください"
+
+msgid "Skip"
+msgstr "スキップ"
 
 msgid "Welcome to Passly Pro! Let's get started with the configuration."
 msgstr "パスボルトPro へようこそ！　では設定から始めましょう。"
@@ -5561,7 +5642,7 @@ msgid "{0} has initiated an account recovery request."
 msgstr "{0} がアカウント復旧リクエストを開始しました。"
 
 msgid "Since you’re authorized to handle account recovery requests, please process this one."
-msgstr ""
+msgstr "アカウント復旧リクエストを処理する権限があるため、このリクエストを処理してください。"
 
 msgid "You will need your organization recovery key to continue."
 msgstr "続行するには、組織のアカウント復旧鍵が必要です。"
@@ -6196,9 +6277,6 @@ msgstr "パスワードポリシーの設定は {0} によって更新されま�
 msgid "you"
 msgstr "あなた"
 
-msgid "view it in passbolt"
-msgstr "パスボルトで表示"
-
 msgid "The SCIM setting id should be a valid UUID."
 msgstr "SCIM設定IDは有効なUUIDである必要があります。"
 
@@ -6221,7 +6299,7 @@ msgid "The ID for the SCIM settings should be a valid UUID."
 msgstr "SCIM設定のIDは有効なUUIDである必要があります。"
 
 msgid "The SCIM secret token is expired, you are requested to rotate it."
-msgstr ""
+msgstr "SCIM秘密トークンの有効期限が切れているため、ローテーションする必要があります。"
 
 msgid "Simultaneous SCIM and session authentication is not permitted."
 msgstr "SCIM認証とセッション認証を同時に行うことは許可されていません。"
@@ -6233,7 +6311,7 @@ msgid "An entry for the same related entity already exists"
 msgstr "同じ関連エンティティのエントリーがすでに存在します。"
 
 msgid "An entry with the same `scim_name` and `foreign_model` already exist."
-msgstr ""
+msgstr "同じ`scim_name`および`foreign_model`を持つエントリーはすでに存在します。"
 
 msgid "Users"
 msgstr "ユーザー"
@@ -6251,10 +6329,10 @@ msgid "SCIM plugin is disabled."
 msgstr "SCIMプラグインが無効になっています。"
 
 msgid "The SCIM secret token is not expired."
-msgstr ""
+msgstr "SCIM秘密トークンの有効期限は切れていません。"
 
 msgid "Rotate the SCIM secret token in the administration settings."
-msgstr ""
+msgstr "管理設定でSCIM秘密トークンをローテーションしてください。"
 
 msgid "The SCIM settings could not be decrypted with the server gpg key."
 msgstr "SCIM設定をサーバーのGPGキーで復号できませんでした。"
@@ -6281,16 +6359,16 @@ msgid "The uuid in the url doesn't match any known setting record."
 msgstr "URL 内の UUID が既知の設定レコードと一致しません。"
 
 msgid "The SCIM secret token expiry configuration is invalid."
-msgstr ""
+msgstr "SCIM秘密トークンの有効期限設定が無効です。"
 
 msgid "Missing or invalid SCIM user in configuration settings"
-msgstr ""
+msgstr "設定にSCIMユーザーがないか、無効です"
 
 msgid "An unexpected error occurred while creating the user in the database"
-msgstr ""
+msgstr "データベースでユーザーを作成中に予期しないエラーが発生しました"
 
 msgid "An administrator user cannot be suspended via SCIM."
-msgstr ""
+msgstr "管理者ユーザーをSCIM経由で停止することはできません。"
 
 msgid "Email"
 msgstr "メール"
@@ -6467,16 +6545,16 @@ msgid "The scope is too large."
 msgstr "Scopeが大きすぎます。"
 
 msgid "The URL must be a valid PingOne authentication domain."
-msgstr ""
+msgstr "URLは有効なPingOne認証ドメインである必要があります。"
 
 msgid "An environment id is required."
-msgstr ""
+msgstr "environment idは必須です。"
 
 msgid "The environment id should not be empty."
-msgstr ""
+msgstr "environment idは空にできません。"
 
 msgid "The environment id should be a valid UUID."
-msgstr ""
+msgstr "environment idは有効なUUIDである必要があります。"
 
 msgid "SSO settings edit endpoints are disabled."
 msgstr "SSO設定編集エンドポイントは無効になっています。"
@@ -6641,10 +6719,10 @@ msgid "Provided root CA file does not exist"
 msgstr "指定されたルートCAファイルが存在しません"
 
 msgid "Invalid provider. Expected PingOne."
-msgstr ""
+msgstr "無効なプロバイダーです。PingOneが必要です。"
 
 msgid "Invalid provider data. Expected PingOne settings."
-msgstr ""
+msgstr "無効なプロバイダーデータです。PingOne設定が必要です。"
 
 msgid "The user id should be a valid UUID."
 msgstr "ユーザーIDは有効なUUIDである必要があります。"
@@ -6766,9 +6844,6 @@ msgstr "{0} の設定値は文字列またはNULLである必要があります�
 msgid "The {0} configuration value should be one of the following: {1}."
 msgstr "「{0}」の設定値は次のいずれかでなければなりません: {1}。"
 
-msgid "Single-sign on was a success"
-msgstr "シングルサインオンに成功しました"
-
 msgid "Users are unable to log in via Azure SSO."
 msgstr "ユーザーは Azure SSO でログインできません。"
 
@@ -6805,11 +6880,11 @@ msgstr "SSOプロバイダー {0} は {1} によって正常にテスト＆有�
 msgid "All users can now use Single Sign-on to perform authentication."
 msgstr "すべてのユーザーはシングルサインオンを使用して認証を行うことができます。"
 
-msgid "Viewq  it in passbolt"
-msgstr "パスボルトで表示"
-
 msgid "The SSO setting has been deleted by {0}."
 msgstr "SSO設定は {0} によって削除されました。"
+
+msgid "Single-sign on was a success"
+msgstr "シングルサインオンに成功しました"
 
 msgid "The authentication token does not exist or has been deleted."
 msgstr "認証トークンが存在しないか、削除されました。"
@@ -6837,12 +6912,6 @@ msgstr "このサービスにアクセスするには招待が必要です。 "
 
 msgid "Please contact your administrator to request an invitation link."
 msgstr "招待リンクをリクエストするには、管理者に連絡してください。"
-
-msgid "Subscription key data is required."
-msgstr "サブスクリプションキーのデータが必要です。"
-
-msgid "The subscription was created."
-msgstr "サブスクリプションが作成されました。"
 
 msgid "The subscription was updated."
 msgstr "サブスクリプションが更新されました。"
@@ -6973,6 +7042,9 @@ msgstr "ご質問・フィードバック・サブスクリプションの更新
 msgid "kindly contact us at <info>sales@passbolt.com</info>"
 msgstr "<info>sales@passbolt.com</info> までお気軽にご連絡ください"
 
+msgid "Only administrators can delete the subscription."
+msgstr "サブスクリプションを削除できるのは管理者のみです。"
+
 msgid "Only administrators can view the subscription details."
 msgstr "管理者のみがサブスクリプションの詳細を表示できます。"
 
@@ -6981,9 +7053,6 @@ msgstr "ファイル {0} が見つかりませんでした。"
 
 msgid "The file {0} could not be read."
 msgstr "ファイル {0} を読み込めませんでした。"
-
-msgid "No active admins were found."
-msgstr "アクティブな管理者が見つかりませんでした。"
 
 msgid "Only administrators can update the subscription details."
 msgstr "管理者のみがサブスクリプションの詳細を更新できます。"
@@ -7193,7 +7262,7 @@ msgid "Contact your admin"
 msgstr "管理者に連絡してください"
 
 msgid "{0} changed the role of {1} to {2}."
-msgstr ""
+msgstr "{0}が{1}のロールを{2}に変更しました。"
 
 msgid "{0} can no longer perform administration tasks."
 msgstr "{0} さんはこれ以上管理タスクを実行できません。"
@@ -7205,10 +7274,10 @@ msgid "View user in passly"
 msgstr "パスボルトでユーザーを表示"
 
 msgid "A new role {0} has been created."
-msgstr ""
+msgstr "新しいロール {0} が作成されました。"
 
 msgid "The role {0} has been renamed to {1}."
-msgstr ""
+msgstr "ロール {0} の名前が {1} に変更されました。"
 
 msgid "This user lost their private key and/or passphrase and cannot complete the account recovery process."
 msgstr "このユーザーは秘密鍵またはパスフレーズを失い、アカウント復旧プロセスを完了できません。"
@@ -7409,16 +7478,16 @@ msgid "{0} resources were shared with you."
 msgstr "{0}個のリソースが共有されました。"
 
 msgid "{0} changed your role to {1}."
-msgstr ""
+msgstr "{0}があなたのロールを{1}に変更しました。"
 
 msgid "You can no longer perform administration tasks."
-msgstr ""
+msgstr "管理タスクを実行できなくなりました。"
 
 msgid "This email is an automatic notification sent by"
 msgstr "このメールは自動通知として送信されています"
 
 msgid "To disable these notifications, contact an administrator."
-msgstr ""
+msgstr "これらの通知を無効にするには、管理者に連絡してください。"
 
 msgid "The locale {0} is not valid or not supported."
 msgstr "ロケール {0} は有効でないかサポートされていません。"

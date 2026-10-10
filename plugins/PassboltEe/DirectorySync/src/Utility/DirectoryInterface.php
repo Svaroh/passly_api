@@ -80,4 +80,12 @@ interface DirectoryInterface
      * @return $this
      */
     public function setGroups(array $groups);
+
+    /**
+     * Get the directory type (ad|openldap|freeipa) for the given domain, or the default domain.
+     *
+     * @param string|null $domain Domain name, null for the default domain
+     * @return string
+     */
+    public function getDirectoryType(?string $domain = null): string;
 }

@@ -76,4 +76,27 @@ class ScimAddControllerTest extends ScimApiIntegrationTestCase
         $this->assertResponseContains('"status": 400');
         $this->assertResponseContains('Invalid Resource type `InvalidResourceType`');
     }
+
+    public function testScimControllerUsersAdd_Error_MissingWorkEmail(): void
+    {
+        $payload = array_merge($this->getUserPostData(), [
+            'emails' => [
+                [
+                    'primary' => true,
+                    'type' => 'home',
+                    'value' => self::USER_1_EMAIL,
+                ],
+            ],
+        ]);
+
+        $this->configScimAuth();
+        $this->post($this->getScimEndpoint('Users'), $payload);
+
+        $this->assertResponseCode(400);
+        $expectedResponse = $this->getScimFixtureData(self::FIXTURE_RESPONSE_USERS_ADD_MISSING_WORK_EMAIL);
+        $this->assertResponseEquals($expectedResponse);
+        // Assert database entries
+        $this->assertSame(0, ScimEntryFactory::count());
+        $this->assertSame(0, UserFactory::find()->where(['username' => self::USER_1_EMAIL])->count());
+    }
 }

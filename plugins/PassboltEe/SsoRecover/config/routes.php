@@ -77,6 +77,44 @@ $routes->plugin('Passbolt/SsoRecover', ['path' => '/sso/recover'], function (Rou
         ->setMethods(['GET']);
 
     /**
+     * OAuth2
+     */
+    $routes
+        ->connect('/oauth2', [
+            'prefix' => 'OAuth2',
+            'controller' => 'OAuth2RecoverLogin',
+            'action' => 'login',
+        ])
+        ->setMethods(['POST']);
+
+    $routes
+        ->connect('/oauth2/success', [
+            'prefix' => 'OAuth2',
+            'controller' => 'OAuth2RecoverSuccess',
+            'action' => 'ssoRecoverSuccess',
+        ])
+        ->setMethods(['GET']);
+
+    /**
+     * ADFS
+     */
+    $routes
+        ->connect('/adfs', [
+            'prefix' => 'Adfs',
+            'controller' => 'AdfsRecoverLogin',
+            'action' => 'login',
+        ])
+        ->setMethods(['POST']);
+
+    $routes
+        ->connect('/adfs/success', [
+            'prefix' => 'Adfs',
+            'controller' => 'AdfsRecoverSuccess',
+            'action' => 'ssoRecoverSuccess',
+        ])
+        ->setMethods(['GET']);
+
+    /**
      * Get recover URL
      */
     $routes

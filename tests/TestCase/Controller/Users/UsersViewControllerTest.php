@@ -22,6 +22,7 @@ use App\Test\Factory\UserFactory;
 use App\Test\Lib\AppIntegrationTestCase;
 use App\Test\Lib\Model\GroupsUsersModelTrait;
 use App\Utility\UuidFactory;
+use Cake\I18n\DateTime;
 
 class UsersViewControllerTest extends AppIntegrationTestCase
 {
@@ -58,6 +59,35 @@ class UsersViewControllerTest extends AppIntegrationTestCase
         $this->assertRoleAttributes($this->_responseJsonBody->role);
         $this->assertObjectHasAttribute('groups_users', $this->_responseJsonBody);
         $this->assertGroupUserAttributes($this->_responseJsonBody->groups_users[0]);
+    }
+
+    public function testUsersViewController_Success_ShowLastLoggedInAsAdmin(): void
+    {
+        $user = UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(2))->persist();
+        UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(3))->persist();
+        UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(5))->persist();
+        UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(10))->persist();
+        $admin = UserFactory::make()->admin()->active()->lastLoggedIn(DateTime::now()->subDays(1))->persist();
+
+        $this->logInAs($admin);
+        $this->getJson('/users/' . $user->id . '.json');
+        $this->assertSuccess();
+
+        $this->assertObjectHasAttribute('last_logged_in', $this->_responseJsonBody);
+    }
+
+    public function testUsersViewController_Success_HideLastLoggedInAsNonAdmin(): void
+    {
+        $nonAdmin = UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(2))->persist();
+        $user = UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(3))->persist();
+        UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(5))->persist();
+        UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now()->subDays(10))->persist();
+        UserFactory::make()->admin()->active()->lastLoggedIn(DateTime::now()->subDays(1))->persist();
+
+        $this->logInAs($nonAdmin);
+        $this->getJson('/users/' . $user->id . '.json');
+        $this->assertSuccess();
+        $this->assertObjectNotHasAttribute('last_logged_in', $this->_responseJsonBody);
     }
 
     public function testUsersViewController_Success_Me(): void

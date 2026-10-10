@@ -49,7 +49,7 @@ class HealthcheckIndexControllerTest extends AppIntegrationTestCase
         $this->mockService('fullBaseUrlReachableClient', function () {
             return $this->getMockedHealthcheckStatusRequest(
                 200,
-                json_encode(['body' => 'OK'])
+                json_encode(['body' => 'OK']),
             );
         });
         $this->mockService('sslHealthcheckClient', function () {
@@ -134,6 +134,7 @@ class HealthcheckIndexControllerTest extends AppIntegrationTestCase
                 'supportedBackend' => true,
                 'defaultContent' => true,
                 'mariadbMysqlVersionDeprecate' => $dbVersionCheck,
+                'modelCache' => true,
             ],
             'application' => [
                 'info' => [
@@ -155,6 +156,8 @@ class HealthcheckIndexControllerTest extends AppIntegrationTestCase
                 'hostAvailabilityCheckEnabled' => Configure::read(EmailValidationRule::MX_CHECK_KEY),
                 'jsProd' => (Configure::read('passbolt.js.build') === 'production'),
                 'emailNotificationEnabled' => false,
+                'editionFlag' => false,
+                'sessionProvider' => true,
             ],
             'gpg' => [
                 'canDecryptVerify' => true,
@@ -190,7 +193,7 @@ class HealthcheckIndexControllerTest extends AppIntegrationTestCase
                 'nextMinPhpVersion' => version_compare(
                     PHP_VERSION,
                     Configure::read(NextMinPhpVersionHealthcheck::PHP_NEXT_MIN_VERSION_CONFIG),
-                    '>='
+                    '>=',
                 ),
                 'info' => ['phpVersion' => PHP_VERSION],
                 'pcre' => true,
@@ -245,7 +248,7 @@ class HealthcheckIndexControllerTest extends AppIntegrationTestCase
         $this->logInAsAdmin();
         Configure::write(
             HealthcheckIndexController::PASSBOLT_PLUGINS_HEALTHCHECK_SECURITY_INDEX_ENDPOINT_ENABLED,
-            false
+            false,
         );
         $this->logInAsAdmin();
 

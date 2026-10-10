@@ -20,7 +20,6 @@ namespace Passbolt\Sso\Service\Sso\Adfs;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Routing\Router;
 use Exception;
-use GuzzleHttp\Client;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use Passbolt\Sso\Model\Dto\SsoSettingsAdfsDataDto;
 use Passbolt\Sso\Model\Dto\SsoSettingsDto;
@@ -41,13 +40,6 @@ class SsoAdfsService extends SsoOAuth2Service
         /** @var \Passbolt\Sso\Model\Dto\SsoSettingsAdfsDataDto $data */
         $data = $settings->data;
 
-        $collaborators = [];
-        $httpClient = $this->getCustomHttpClient();
-        // Set custom HTTP client when using self-signed SSL certificate
-        if ($httpClient instanceof Client) {
-            $collaborators['httpClient'] = $httpClient;
-        }
-
         return SsoProviderFactory::create(
             AdfsProvider::class,
             [
@@ -58,7 +50,7 @@ class SsoAdfsService extends SsoOAuth2Service
                 'openIdConfigurationPath' => $data->openid_configuration_path,
                 'emailClaim' => $data->email_claim,
             ],
-            $collaborators
+            ['httpClient' => $this->getCustomHttpClient()],
         );
     }
 

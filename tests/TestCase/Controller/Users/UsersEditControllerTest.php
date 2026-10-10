@@ -162,7 +162,8 @@ class UsersEditControllerTest extends AppIntegrationTestCase
         $this->logInAs($user);
         $data = [];
         $this->postJson('/users/notauuid.json', $data);
-        $this->assertError(400, 'The user identifier should be a valid UUID.');
+        $this->assertError(400, 'Could not validate user data.');
+        $this->assertNotEmpty($this->_responseJsonBody->id->uuid);
     }
 
     public function testUsersEditController_Error_UsersNoDataId(): void

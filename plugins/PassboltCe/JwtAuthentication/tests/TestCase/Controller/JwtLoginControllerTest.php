@@ -102,7 +102,7 @@ class JwtLoginControllerTest extends JwtAuthenticationIntegrationTestCase
         // Check user login success event triggered
         $this->assertEventFired(UpdateUserLastLoggedInListener::EVENT_USER_LOGIN_SUCCESS);
         // Disable hydration to temporarily disable last_logged_in virtual field accessor
-        $updatedUser = UserFactory::find()->where(['id' => $user->get('id')])->disableHydration()->firstOrFail();
+        $updatedUser = UserFactory::find()->where(['id' => $user->get('id')])->enableHydration(false)->firstOrFail();
         $this->assertNotNull($updatedUser['last_logged_in']);
 
         // Assert login action log
@@ -120,7 +120,7 @@ class JwtLoginControllerTest extends JwtAuthenticationIntegrationTestCase
             ->with('Gpgkeys', GpgkeyFactory::make()->validFingerprint())
             ->with(
                 'AuthenticationTokens',
-                AuthenticationTokenFactory::make()->type(AuthenticationToken::TYPE_VERIFY_TOKEN)
+                AuthenticationTokenFactory::make()->type(AuthenticationToken::TYPE_VERIFY_TOKEN),
             )
             ->persist();
 

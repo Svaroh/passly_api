@@ -18,13 +18,14 @@ class ScimAuthenticationService extends AuthenticationService
         $this->loadAuthenticator('Authentication.Token', [
             'header' => 'Authorization',
             'tokenPrefix' => 'Bearer',
-        ]);
-
-        $this->loadIdentifier('Authentication.Token', [
-            'resolver' => [
-                'className' => 'Passbolt/Scim.Scim',
+            'identifier' => [
+                'Authentication.Token' => [
+                    'resolver' => [
+                        'className' => 'Passbolt/Scim.Scim',
+                    ],
+                    'tokenField' => 'secret_token',
+                ],
             ],
-            'tokenField' => 'secret_token',
         ]);
 
         return parent::authenticate($request);

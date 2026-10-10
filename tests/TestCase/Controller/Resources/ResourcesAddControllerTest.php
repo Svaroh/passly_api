@@ -111,11 +111,13 @@ class ResourcesAddControllerTest extends AppIntegrationTestCase
         $this->assertNotNull($resource->creator);
         $this->assertUserAttributes($resource->creator);
         $this->assertEquals($user->id, $resource->creator->id);
+        $this->assertObjectNotHasAttribute('last_logged_in', $resource->creator);
 
         // Check the modifier attribute
         $this->assertNotNull($resource->modifier);
         $this->assertUserAttributes($resource->modifier);
         $this->assertEquals($user->id, $resource->modifier->id);
+        $this->assertObjectNotHasAttribute('last_logged_in', $resource->modifier);
 
         // Check the permission attribute
         $this->assertNotNull($resource->permission);
@@ -186,11 +188,13 @@ class ResourcesAddControllerTest extends AppIntegrationTestCase
         $this->assertNotNull($resource->creator);
         $this->assertUserAttributes($resource->creator);
         $this->assertEquals($user->id, $resource->creator->id);
+        $this->assertObjectNotHasAttribute('last_logged_in', $resource->creator);
 
         // Check the modifier attribute
         $this->assertNotNull($resource->modifier);
         $this->assertUserAttributes($resource->modifier);
         $this->assertEquals($user->id, $resource->modifier->id);
+        $this->assertObjectNotHasAttribute('last_logged_in', $resource->modifier);
 
         // Check the permission attribute
         $this->assertNotNull($resource->permission);

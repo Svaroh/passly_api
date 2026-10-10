@@ -251,6 +251,9 @@ return [
             'rbacs' => [
                 'enabled' => filter_var(env('PASSBOLT_PLUGINS_RBACS_ENABLED', true), FILTER_VALIDATE_BOOLEAN)
             ],
+            'offlineMode' => [
+                'enabled' => filter_var(env('PASSBOLT_PLUGINS_OFFLINE_MODE_ENABLED', true), FILTER_VALIDATE_BOOLEAN)
+            ],
             'export' => [
                 'enabled' => filter_var(env('PASSBOLT_PLUGINS_EXPORT_ENABLED', true), FILTER_VALIDATE_BOOLEAN)
             ],
@@ -385,6 +388,10 @@ return [
             'smtpSettings' => [
                 'endpointsDisabled' => filter_var(env('PASSBOLT_SECURITY_SMTP_SETTINGS_ENDPOINTS_DISABLED', false), FILTER_VALIDATE_BOOLEAN)
             ],
+            // Disable the edition downgrade entry points (DELETE /edition/subscription/key and the edition_downgrade CLI command).
+            'edition' => [
+                'downgradeDisabled' => filter_var(env('PASSBOLT_SECURITY_EDITION_DOWNGRADE_DISABLED', false), FILTER_VALIDATE_BOOLEAN),
+            ],
             // Enables trusting of HTTP_X headers set by most load balancers.
             // Only set to true if your instance runs behind load balancers/proxies that you control.
             'proxies' => [
@@ -410,7 +417,7 @@ return [
                 ),
             ],
             // Check for domain mismatch where possible
-            'checkDomainMismatch' => env('PASSBOLT_CHECK_DOMAIN_MISMATCH', true),
+            'checkDomainMismatch' => filter_var(env('PASSBOLT_CHECK_DOMAIN_MISMATCH', true), FILTER_VALIDATE_BOOLEAN),
             // Disable the edition of metadata settings, allow to lock the configuration and prevent admin edition
             'metadata' => [
                 'settings' => [
@@ -446,6 +453,7 @@ return [
         'logger' => 'App\Error\AppErrorLogger',
         'skipLog' => [
             'Authentication\Authenticator\UnauthenticatedException',
+            'Cake\Routing\Exception\MissingRouteException',
         ],
     ],
 ];

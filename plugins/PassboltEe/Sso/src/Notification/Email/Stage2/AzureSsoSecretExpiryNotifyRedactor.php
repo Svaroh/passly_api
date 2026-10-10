@@ -99,6 +99,7 @@ class AzureSsoSecretExpiryNotifyRedactor implements SubscribedEmailRedactorInter
         /** @var \App\Model\Table\UsersTable $usersTable */
         $usersTable = $this->fetchTable('Users');
         // Get all the active admins to notify them
+        /** @var array<\App\Model\Entity\User> $recipients */
         $recipients = $usersTable
             ->findAdmins()
             ->find('notDisabled')
@@ -131,7 +132,7 @@ class AzureSsoSecretExpiryNotifyRedactor implements SubscribedEmailRedactorInter
             $recipient->locale,
             function () {
                 return __('Azure SSO secret expiry date is near');
-            }
+            },
         );
 
         return new Email(
@@ -144,7 +145,7 @@ class AzureSsoSecretExpiryNotifyRedactor implements SubscribedEmailRedactorInter
                 ],
                 'title' => $subject,
             ],
-            self::TEMPLATE
+            self::TEMPLATE,
         );
     }
 }

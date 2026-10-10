@@ -20,22 +20,57 @@ namespace Passbolt\Sso\Test\TestCase\Controller\Adfs;
 use App\Test\Factory\UserFactory;
 use App\Utility\UuidFactory;
 use Cake\Core\Configure;
+use Cake\Routing\Router;
 use Passbolt\Sso\Middleware\SsoEndpointsSecurityMiddleware;
+use Passbolt\Sso\Model\Entity\SsoState;
 use Passbolt\Sso\Test\Factory\SsoSettingsFactory;
 use Passbolt\Sso\Test\Lib\SsoIntegrationTestCase;
+use Passbolt\Sso\Test\Lib\SsoProviderTestTrait;
+use Passbolt\Sso\Utility\Adfs\Provider\AdfsProvider;
+use Passbolt\Sso\Utility\Provider\SsoProviderFactory;
 
 /**
  * @see \Passbolt\Sso\Controller\Adfs\SsoAdfsStage1DryRunController
  */
 class SsoAdfsStage1DryRunControllerTest extends SsoIntegrationTestCase
 {
+    use SsoProviderTestTrait;
+
     /**
      * 200 returns a URL for ADFS provider
      */
     public function testSsoAdfsStage1DryRunController_Success(): void
     {
-        // Requires mocking ADFS service or working ADFS instance
-        $this->markTestIncomplete();
+        /** @var \App\Model\Entity\User $admin */
+        $admin = UserFactory::make()->admin()->persist();
+        $settings = SsoSettingsFactory::make()->adfs()->draft()->persist();
+        // Mock provider
+        $mockAdfsProvider = $this->getProviderMockForStage1(AdfsProvider::class);
+        $clientId = UuidFactory::uuid();
+        $state = SsoState::generate();
+        $url = $this->getDummyAdfsAuthorizationUrl($admin, $state, ['client_id' => $clientId]);
+        $mockAdfsProvider->method('getAuthorizationUrl')->willReturn($url);
+        $mockAdfsProvider->method('getState')->willReturn($state);
+        // Swap actual implementation
+        SsoProviderFactory::set($mockAdfsProvider);
+
+        $this->logInAs($admin);
+        $this->postJson('/sso/adfs/login/dry-run.json', ['sso_settings_id' => $settings->get('id')]);
+
+        $this->assertSuccess();
+        $url = $this->_responseJsonBody->url;
+        $this->assertStringContainsString('adfs.passbolt.test/authorize', $url);
+        $this->assertStringContainsString('nonce', $url);
+        $this->assertStringContainsString('login_hint=' . rawurlencode($admin->username), $url);
+        $this->assertStringContainsString("client_id={$clientId}", $url);
+        $this->assertStringContainsString(
+            'scope=' . rawurlencode(implode(' ', ['openid', 'profile', 'email'])),
+            $url,
+        );
+        $this->assertStringContainsString(
+            'redirect_uri=' . rawurlencode(Router::url('/sso/adfs/redirect', true)),
+            $url,
+        );
     }
 
     /**

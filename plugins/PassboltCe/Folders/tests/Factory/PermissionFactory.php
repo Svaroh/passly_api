@@ -18,7 +18,8 @@ namespace Passbolt\Folders\Test\Factory;
 
 use App\Model\Table\PermissionsTable;
 use App\Test\Factory\PermissionFactory as AppPermissionFactory;
-use Passbolt\Folders\FoldersPlugin;
+use Cake\Event\Event;
+use Passbolt\Folders\EventListener\PermissionsModelInitializeEventListener;
 use Passbolt\Folders\Model\Entity\Folder;
 
 /**
@@ -33,7 +34,10 @@ class PermissionFactory extends AppPermissionFactory
     public function initialize(): void
     {
         parent::initialize();
-        FoldersPlugin::addAssociationsToPermissionsTable($this->getTable());
+        // The factory registry strips Model.initialize, so the association is
+        // wired directly by invoking the listener against the factory's table.
+        $event = new Event('Model.initialize', $this->getTable());
+        (new PermissionsModelInitializeEventListener())->addFoldersAssociation($event);
     }
 
     /**

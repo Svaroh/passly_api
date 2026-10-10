@@ -190,13 +190,12 @@ class SecretRevisionsTable extends Table
         // If we are to keep some secret revisions
         if ($maxNumberOfDeletedRevisionsToKeep > 0) {
             $deletedRevisionsToKeepSecretsFor = $this
-                ->find('list')
+                ->unhydratedFind('list')
                 ->select('id')
                 ->where(['resource_id' => $resourceId])
                 ->whereNotNull('deleted')
                 ->limit($maxNumberOfDeletedRevisionsToKeep)
                 ->orderByDesc('deleted')
-                ->disableHydration()
                 ->all()
                 ->toList();
         }

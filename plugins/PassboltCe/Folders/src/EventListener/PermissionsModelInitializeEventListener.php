@@ -22,13 +22,6 @@ use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 use Passbolt\Folders\Model\Behavior\PermissionsCleanupBehavior;
 
-/**
- * Listen when the PermissionsTable class is initialized and attach the folders permissions cleanup behaviors to it.
- *
- * Class PermissionsModelInitializeEventListener
- *
- * @package Passbolt\Folders\EventListener
- */
 class PermissionsModelInitializeEventListener implements EventListenerInterface
 {
     /**
@@ -37,8 +30,28 @@ class PermissionsModelInitializeEventListener implements EventListenerInterface
     public function implementedEvents(): array
     {
         return [
-            'Model.initialize' => 'addPermissionsCleanupBehavior',
+            'Model.initialize' => [
+                'addFoldersAssociation',
+                'addPermissionsCleanupBehavior',
+            ],
         ];
+    }
+
+    /**
+     * @param \Cake\Event\EventInterface $event Event
+     * @return void
+     */
+    public function addFoldersAssociation(EventInterface $event): void
+    {
+        $table = $event->getSubject();
+        if (!$table instanceof PermissionsTable || $table->hasAssociation('Folders')) {
+            return;
+        }
+
+        $table->belongsTo('Folders', [
+            'className' => 'Passbolt/Folders.Folders',
+            'foreignKey' => 'aco_foreign_key',
+        ]);
     }
 
     /**
@@ -47,10 +60,11 @@ class PermissionsModelInitializeEventListener implements EventListenerInterface
      */
     public function addPermissionsCleanupBehavior(EventInterface $event): void
     {
-        if ($event->getSubject() instanceof PermissionsTable) {
-            /** @var \Cake\ORM\Table $table */
-            $table = $event->getSubject();
-            $table->addBehavior(PermissionsCleanupBehavior::class);
+        $table = $event->getSubject();
+        if (!$table instanceof PermissionsTable || $table->behaviors()->has('PermissionsCleanup')) {
+            return;
         }
+
+        $table->addBehavior(PermissionsCleanupBehavior::class);
     }
 }

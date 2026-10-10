@@ -121,7 +121,6 @@ class SecretsHistoryTable extends Table
     {
         return $this->newEntity($data, [
             'accessibleFields' => [
-                'id' => true,
                 'user_id' => true,
                 'resource_id' => true,
             ],

@@ -57,10 +57,9 @@ class FindLastLoggedInTest extends AppTestCase
      */
     public function testFindLastLoggedIn(?DateTime $value): void
     {
-        $user = UserFactory::make()->user()->active()->lastLoggedIn($value)->persist();
-        $userId = $user->get('id');
+        UserFactory::make()->user()->active()->lastLoggedIn($value)->persist();
 
-        $result = $this->usersTable->findById($userId)->find('lastLoggedIn')->first();
+        $result = $this->usersTable->find('lastLoggedIn', showLastLoggedIn: true)->first();
 
         $this->assertObjectHasAttribute('last_logged_in', $result);
         if (is_null($value)) {

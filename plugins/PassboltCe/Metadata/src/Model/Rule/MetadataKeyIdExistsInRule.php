@@ -19,6 +19,7 @@ namespace Passbolt\Metadata\Model\Rule;
 
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\TableRegistry;
+use Passbolt\Metadata\Model\Entity\MetadataKey;
 
 class MetadataKeyIdExistsInRule
 {
@@ -32,7 +33,7 @@ class MetadataKeyIdExistsInRule
         $metadataKeyType = $entity->get('metadata_key_type');
         $id = $entity->get('metadata_key_id');
 
-        if ($metadataKeyType === 'user_key') {
+        if ($metadataKeyType === MetadataKey::TYPE_USER_KEY) {
             $table = TableRegistry::getTableLocator()->get('Gpgkeys');
             $conditions = ['id' => $id, 'deleted' => false];
         } else {

@@ -43,7 +43,7 @@ class MetadataPaginationComponent extends Component
     ];
 
     /**
-     * @var array|array<string>
+     * @var array<string>
      */
     protected array $components = ['ApiPagination'];
 
