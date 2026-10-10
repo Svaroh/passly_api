@@ -101,16 +101,17 @@ class UsersIndexCommand extends PassboltCommand
             ->orderBy([ 'Roles.name' => 'ASC', 'Profiles.last_name' => 'ASC', 'Profiles.first_name' => 'ASC']);
 
         if ($this->isFeaturePluginEnabled('MultiFactorAuthentication')) {
-            $mfaQ = (new IsMfaEnabledQueryService());
+            $mfaQ = new IsMfaEnabledQueryService();
             // need the uuid to be set because IsMfaEnabledQueryService->decorateForView will check for it existance
             $simulatedUuid = UuidFactory::uuid();
             $mfaQ->decorateForView(
                 $query,
                 new UserAccessControl(ROLE::ADMIN, $simulatedUuid),
-                $simulatedUuid
+                $simulatedUuid,
             );
         }
 
+        /** @var array<\App\Model\Entity\User> $users */
         $users = $query->toArray();
 
         if (count($users) === 0) {
@@ -130,11 +131,11 @@ class UsersIndexCommand extends PassboltCommand
                 $user->username,
                 $user->profile->last_name ?? '',
                 $user->profile->first_name ?? '',
-                $user->created?->toAtomString() ?? '',
+                $user->created->toAtomString(),
                 $user->active ? 'yes' : 'no',
                 $user->disabled ? 'yes' : 'no',
                 $user->deleted ? 'yes' : 'no',
-                $user->is_mfa_enabled ? 'yes' : 'no',
+                $user->get('is_mfa_enabled') ? 'yes' : 'no',
             ];
         }
 

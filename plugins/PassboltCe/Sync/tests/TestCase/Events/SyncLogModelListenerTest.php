@@ -72,7 +72,7 @@ class SyncLogModelListenerTest extends TestCase
                 'entity_id' => $resource->get('id'),
                 'op' => SyncLogTable::OP_UPSERT,
             ],
-            $this->journal()
+            $this->journal(),
         );
     }
 
@@ -90,7 +90,7 @@ class SyncLogModelListenerTest extends TestCase
                 'entity_id' => $resource->get('id'),
                 'op' => SyncLogTable::OP_DELETE,
             ],
-            $this->journal()
+            $this->journal(),
         );
     }
 
@@ -111,12 +111,12 @@ class SyncLogModelListenerTest extends TestCase
         $journal = $this->journal();
         $resourceEvents = array_filter(
             $journal,
-            fn (array $row): bool => $row['entity_type'] === SyncLogTable::ENTITY_TYPE_RESOURCE
-                && $row['entity_id'] === $resource->get('id')
+            fn(array $row): bool => $row['entity_type'] === SyncLogTable::ENTITY_TYPE_RESOURCE
+                && $row['entity_id'] === $resource->get('id'),
         );
 
         $this->assertGreaterThanOrEqual(2, count($resourceEvents), 'expected the create and the permission change');
-        $this->assertEmpty(array_filter($journal, fn (array $row): bool => $row['entity_type'] === 'permission'));
+        $this->assertEmpty(array_filter($journal, fn(array $row): bool => $row['entity_type'] === 'permission'));
     }
 
     public function testAGroupMembershipChangeIsRecordedOnEveryResourceSharedWithTheGroup(): void
@@ -140,13 +140,13 @@ class SyncLogModelListenerTest extends TestCase
                 'user_id' => $user->get('id'),
                 'is_admin' => false,
             ],
-            ['accessibleFields' => ['group_id' => true, 'user_id' => true, 'is_admin' => true]]
+            ['accessibleFields' => ['group_id' => true, 'user_id' => true, 'is_admin' => true]],
         ));
 
         $journal = $this->journal();
         $resourceIds = array_column(
-            array_filter($journal, fn (array $r): bool => $r['entity_type'] === SyncLogTable::ENTITY_TYPE_RESOURCE),
-            'entity_id'
+            array_filter($journal, fn(array $r): bool => $r['entity_type'] === SyncLogTable::ENTITY_TYPE_RESOURCE),
+            'entity_id',
         );
 
         $this->assertContains($sharedResource->get('id'), $resourceIds);
@@ -154,7 +154,7 @@ class SyncLogModelListenerTest extends TestCase
         $this->assertSame(
             1,
             count(array_keys($resourceIds, $unrelatedResource->get('id'), true)),
-            'the unrelated resource should only carry its own creation event'
+            'the unrelated resource should only carry its own creation event',
         );
     }
 }

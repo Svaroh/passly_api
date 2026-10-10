@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Passbolt\Sso\Service\Sso\OAuth2;
 
 use App\Utility\ExtendedUserAccessControl;
-use Cake\Core\Configure;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Routing\Router;
 use Exception;
@@ -29,7 +28,9 @@ use Passbolt\Sso\Model\Dto\SsoSettingsOAuth2DataDto;
 use Passbolt\Sso\Model\Entity\SsoSetting;
 use Passbolt\Sso\Service\Sso\AbstractSsoService;
 use Passbolt\Sso\Service\SsoSettings\SsoSettingsGetService;
+use Passbolt\Sso\Utility\Http\SsoHttpClientFactory;
 use Passbolt\Sso\Utility\OAuth2\Provider\OAuth2Provider;
+use Passbolt\Sso\Utility\Provider\SsoProviderFactory;
 
 class SsoOAuth2Service extends AbstractSsoService
 {
@@ -56,36 +57,14 @@ class SsoOAuth2Service extends AbstractSsoService
     }
 
     /**
-     * Build custom HTTP client used to pass to SSO provider.
-     * Sets `verify` option (depending on what is specified in the config) when instantiating the HTTP client.
+     * Build the guarded HTTP client (SSL verify configuration + SSRF egress guard) injected into the
+     * underlying SSO provider.
      *
-     * @return \GuzzleHttp\Client|null Returns custom HTTP client if config is adjusted, `null` otherwise.
+     * @return \GuzzleHttp\Client
      */
-    protected function getCustomHttpClient(): ?Client
+    protected function getCustomHttpClient(): Client
     {
-        $ssoSslVerify = Configure::read('passbolt.security.sso.sslVerify');
-        $ssoSslCafile = Configure::read('passbolt.security.sso.sslCafile');
-
-        if ($ssoSslVerify && is_null($ssoSslCafile)) {
-            return null;
-        }
-
-        if (!$ssoSslVerify) {
-            // Skip SSL verify check
-            $verify = false;
-        } else {
-            if (!is_string($ssoSslCafile)) {
-                throw new BadRequestException(__('Invalid value provided in `passbolt.security.sso.sslCafile` config'));
-            } elseif (!file_exists($ssoSslCafile)) {
-                throw new BadRequestException(__('Provided root CA file does not exist'));
-            }
-
-            // Use custom root CA certificate file
-            $verify = $ssoSslCafile;
-        }
-
-        // @see https://docs.guzzlephp.org/en/stable/request-options.html#verify
-        return new Client(['verify' => $verify]);
+        return SsoHttpClientFactory::create();
     }
 
     // ABSTRACT CLASS PROTECTED FUNCTIONS DEFINITION
@@ -99,13 +78,8 @@ class SsoOAuth2Service extends AbstractSsoService
         /** @var \Passbolt\Sso\Model\Dto\SsoSettingsOAuth2DataDto $data */
         $data = $settings->data;
 
-        $collaborators = [];
-        $httpClient = $this->getCustomHttpClient();
-        if ($httpClient instanceof Client) {
-            $collaborators['httpClient'] = $httpClient;
-        }
-
-        return new OAuth2Provider(
+        return SsoProviderFactory::create(
+            OAuth2Provider::class,
             [
                 'clientId' => $data->client_id,
                 'clientSecret' => $data->client_secret,
@@ -113,7 +87,7 @@ class SsoOAuth2Service extends AbstractSsoService
                 'openIdBaseUri' => $data->url,
                 'openIdConfigurationPath' => $data->openid_configuration_path,
             ],
-            $collaborators
+            ['httpClient' => $this->getCustomHttpClient()],
         );
     }
 

@@ -85,7 +85,7 @@ class OrganizationSettingsTable extends Table
             ->regex(
                 'property',
                 '/^[a-zA-Z][a-zA-Z.]+[a-z]$/',
-                __('The property should be an alphabetical string and only dot is accepted as special characters.')
+                __('The property should be an alphabetical string and only dot is accepted as special characters.'),
             );
 
         $validator
@@ -177,6 +177,7 @@ class OrganizationSettingsTable extends Table
             ->first();
         if ($settingItem) {
             $settingValues['modified_by'] = $control->getId();
+            /** @var \App\Model\Entity\OrganizationSetting $settingItem */
             $settingItem = $this->patchEntity($settingItem, $settingValues);
         } else {
             $settingValues['created_by'] = $settingValues['modified_by'] = $control->getId();

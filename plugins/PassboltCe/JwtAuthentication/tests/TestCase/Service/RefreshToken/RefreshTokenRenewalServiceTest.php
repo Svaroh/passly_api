@@ -97,4 +97,46 @@ class RefreshTokenRenewalServiceTest extends TestCase
         $service->renewToken(new ServerRequest(), $authToken, '');
         $this->assertEventFired(ConsumedRefreshTokenAccessException::class);
     }
+
+    public function testRefreshTokenRenewalService_ConcurrentConsume_OnlyOneSucceeds(): void
+    {
+        $user = UserFactory::make()->persist();
+        $userId = $user->get('id');
+        /** @var \App\Model\Entity\AuthenticationToken $originalToken */
+        $originalToken = AuthenticationTokenFactory::make()
+            ->type(AuthenticationToken::TYPE_REFRESH_TOKEN)
+            ->userId($userId)
+            ->active()
+            ->persist();
+
+        /** @var \App\Model\Entity\AuthenticationToken $copyA */
+        $copyA = $this->AuthenticationTokens->get($originalToken->id);
+        /** @var \App\Model\Entity\AuthenticationToken $copyB */
+        $copyB = $this->AuthenticationTokens->get($originalToken->id);
+
+        $service = new RefreshTokenRenewalService();
+
+        $service->renewToken(new ServerRequest(), $copyA, 'winner-access-token');
+
+        $exceptionThrown = false;
+        try {
+            $service->renewToken(new ServerRequest(), $copyB, 'loser-access-token');
+        } catch (ConsumedRefreshTokenAccessException $e) {
+            $exceptionThrown = true;
+        }
+        $this->assertTrue($exceptionThrown, 'The losing concurrent consume must throw ConsumedRefreshTokenAccessException.');
+
+        // Assert row is now inactive
+        $updatedRow = $this->AuthenticationTokens->exists([
+            'id' => $originalToken->id,
+            'active' => false,
+        ]);
+        $this->assertTrue($updatedRow);
+        $activeCount = $this->AuthenticationTokens->find()->where([
+            'user_id' => $userId,
+            'type' => AuthenticationToken::TYPE_REFRESH_TOKEN,
+            'active' => true,
+        ])->count();
+        $this->assertSame(1, $activeCount, 'Exactly one successor refresh token must exist after a concurrent consume race.');
+    }
 }

@@ -24,8 +24,10 @@ use App\Test\Lib\Utility\PassboltCommandTestTrait;
 use App\Utility\UserAccessControl;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Core\Configure;
+use Cake\Event\EventManager;
 use Cake\I18n\DateTime;
 use Cake\ORM\TableRegistry;
+use Passbolt\MultiFactorAuthentication\Event\UsersModelInitializeEventListener;
 use Passbolt\MultiFactorAuthentication\MultiFactorAuthenticationPlugin;
 use Passbolt\MultiFactorAuthentication\Test\Lib\MfaAccountSettingsTestTrait;
 use Passbolt\MultiFactorAuthentication\Test\Lib\MfaOrgSettingsTestTrait;
@@ -51,6 +53,9 @@ class MfaUserSettingsDisableCommandTest extends AppTestCase
         parent::setUp();
 
         $this->enableFeaturePlugin(MultiFactorAuthenticationPlugin::class);
+        // Register the association-wiring listener early: the CIT exec() path
+        // caches `Users` before plugin bootstrap runs otherwise.
+        EventManager::instance()->on(new UsersModelInitializeEventListener());
         $this->mockProcessUserService('www-data');
     }
 
@@ -114,7 +119,7 @@ class MfaUserSettingsDisableCommandTest extends AppTestCase
                         $user->get('role')->get('name'),
                         $user->get('id'),
                         $user->get('username'),
-                    )
+                    ),
                 ),
             ],
         ];
@@ -164,7 +169,7 @@ class MfaUserSettingsDisableCommandTest extends AppTestCase
                         $userUpper->get('role')->get('name'),
                         $userUpper->get('id'),
                         $userUpper->get('username'),
-                    )
+                    ),
                 ),
             ],
         ];
@@ -179,7 +184,7 @@ class MfaUserSettingsDisableCommandTest extends AppTestCase
                         $userLower->get('role')->get('name'),
                         $userLower->get('id'),
                         $userLower->get('username'),
-                    )
+                    ),
                 ),
             ],
         ];

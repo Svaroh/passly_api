@@ -27,14 +27,13 @@ use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\MiddlewareQueue;
-use Cake\ORM\TableRegistry;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Passbolt\Scim\Command\ScimSettingsCreateCommand;
 use Passbolt\Scim\Command\ScimSettingsDeleteCommand;
 use Passbolt\Scim\Event\ScimContainUserScimEntryListener;
+use Passbolt\Scim\Event\ScimModelInitializeEventListener;
 use Passbolt\Scim\Middleware\ScimAuthMiddleware;
 use Passbolt\Scim\Middleware\ScimLogMiddleware;
-use Passbolt\Scim\Model\Entity\ScimEntry;
 use Passbolt\Scim\Service\Healthcheck\ScimHealthcheck;
 use Passbolt\Scim\Service\Healthcheck\ScimSecretTokenExpiryHealthcheck;
 use Passbolt\Scim\Utility\ScimConstants;
@@ -57,8 +56,6 @@ class ScimPlugin extends BasePlugin
     {
         parent::bootstrap($app);
         $this->attachListeners($app->getEventManager());
-        $this->addScimAssociationToUsers();
-        $this->addScimAssociationToScimUsers();
     }
 
     /**
@@ -69,7 +66,9 @@ class ScimPlugin extends BasePlugin
      */
     protected function attachListeners(EventManagerInterface $eventManager): void
     {
-        $eventManager->on(new ScimContainUserScimEntryListener());
+        $eventManager
+            ->on(new ScimModelInitializeEventListener())
+            ->on(new ScimContainUserScimEntryListener());
     }
 
     /**
@@ -130,41 +129,5 @@ class ScimPlugin extends BasePlugin
         }
 
         return $commands;
-    }
-
-    /**
-     * @return void
-     */
-    protected function addScimAssociationToUsers(): void
-    {
-        $UsersTable = TableRegistry::getTableLocator()->get('Users');
-        if ($UsersTable->hasAssociation('ScimEntries')) {
-            return;
-        }
-        $UsersTable->hasOne('ScimEntries', [
-            'className' => 'Passbolt/Scim.ScimEntries',
-            'foreignKey' => 'foreign_key',
-            'conditions' => [
-                'ScimEntries.foreign_model' => ScimEntry::FOREIGN_MODEL_USERS,
-            ],
-        ]);
-    }
-
-    /**
-     * @return void
-     */
-    protected function addScimAssociationToScimUsers(): void
-    {
-        $ScimUsersTable = TableRegistry::getTableLocator()->get('Passbolt/Scim.ScimUsers');
-        if ($ScimUsersTable->hasAssociation('ScimEntries')) {
-            return;
-        }
-        $ScimUsersTable->hasOne('ScimEntries', [
-            'className' => 'Passbolt/Scim.ScimEntries',
-            'foreignKey' => 'foreign_key',
-            'conditions' => [
-                'ScimEntries.foreign_model' => ScimEntry::FOREIGN_MODEL_USERS,
-            ],
-        ]);
     }
 }

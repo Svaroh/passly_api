@@ -1,0 +1,24 @@
+name: passbolt-api-postgres
+database:
+    type: postgres
+    version: "14"
+web_environment:
+    - APP_FULL_BASE_URL=https://passbolt-api-postgres.ddev.site
+    # main database
+    - DATASOURCES_DEFAULT_DRIVER=Cake\\Database\\Driver\\Postgres
+    - DATASOURCES_DEFAULT_HOST=db
+    - DATASOURCES_DEFAULT_USERNAME=db
+    - DATASOURCES_DEFAULT_PASSWORD=db
+    - DATASOURCES_DEFAULT_DATABASE=passbolt
+    - DATASOURCES_DEFAULT_PORT=5432
+    - DATASOURCES_DEFAULT_SCHEMA=public
+    - DATASOURCES_DEFAULT_ENCODING=UTF8
+    # test database
+    - DATASOURCES_TEST_DRIVER=Cake\\Database\\Driver\\Postgres
+    - DATASOURCES_TEST_HOST=db
+    - DATASOURCES_TEST_USERNAME=db
+    - DATASOURCES_TEST_PASSWORD=db
+    - DATASOURCES_TEST_DATABASE=test_passbolt
+    - DATASOURCES_TEST_PORT=5432
+    - DATASOURCES_TEST_SCHEMA=public
+    - DATASOURCES_TEST_ENCODING=UTF8

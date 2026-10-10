@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Passbolt\Sso\Test\TestCase\Utility\Azure\Provider;
 
 use App\Utility\UuidFactory;
+use Cake\Http\Exception\InternalErrorException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Exception;
@@ -28,6 +29,7 @@ use Passbolt\Sso\Test\Lib\AzureProviderTestTrait;
 use Passbolt\Sso\Test\Lib\SsoProviderTestTrait;
 use Passbolt\Sso\Utility\Azure\Provider\AzureProvider;
 use Passbolt\Sso\Utility\Provider\AbstractOauth2Provider;
+use stdClass;
 
 /**
  * @covers \Passbolt\Sso\Utility\Azure\Provider\AzureProvider
@@ -164,5 +166,91 @@ class AzureProviderTest extends TestCase
         $this->assertEquals(SsoSetting::AZURE_EMAIL_CLAIM_ALIAS_EMAIL, $provider->emailClaim);
         $this->assertEquals('https://login.microsoftonline.com//v2.0', $provider->getOpenIdBaseUri());
         $this->assertEquals('', $provider->getTenant());
+    }
+
+    public function testSsoAzureProvider_validateOpenIdConfiguration_PassesOnValidConfiguration(): void
+    {
+        $this->expectNotToPerformAssertions();
+
+        $this->azureProvider->validateOpenIdConfiguration([
+            'jwks_uri' => 'https://idp.example.com/jwks',
+            'authorization_endpoint' => 'https://idp.example.com/authorize',
+            'token_endpoint' => 'https://idp.example.com/token',
+        ]);
+    }
+
+    public static function openIdConfigurationValuesProvider(): array
+    {
+        return [
+            [null, 'NULL', false],
+            ['<html><body>Bad Gateway</body></html>', 'string', true],
+            [new stdClass(), 'object', false],
+            [22, 'integer', false],
+        ];
+    }
+
+    /**
+     * @dataProvider openIdConfigurationValuesProvider
+     * @param mixed $response Response to check.
+     * @param mixed $expectedType Expected response type.
+     * @param bool $shouldIncludeResponseText Flag to check if response text assertion should perform.
+     * @return void
+     */
+    public function testSsoAzureProvider_validateOpenIdConfiguration_ThrowsOnNullResponse_MessageIncludesType(
+        mixed $response,
+        mixed $expectedType,
+        bool $shouldIncludeResponseText,
+    ): void {
+        try {
+            $this->azureProvider->validateOpenIdConfiguration($response);
+            $this->fail('Expected InternalErrorException was not thrown.');
+        } catch (InternalErrorException $e) {
+            $this->assertStringContainsString('Invalid response.', $e->getMessage());
+            $this->assertStringContainsString(sprintf('Expected array, got "%s"', $expectedType), $e->getMessage());
+            if ($shouldIncludeResponseText) {
+                $this->assertStringContainsString('Response text (truncated)', $e->getMessage());
+                $this->assertStringContainsString(json_encode($response), $e->getMessage());
+            } else {
+                $this->assertStringNotContainsString('Response text (truncated)', $e->getMessage());
+            }
+        }
+    }
+
+    public function testSsoAzureProvider_validateOpenIdConfiguration_LongStringResponse_IsTruncated(): void
+    {
+        $body = str_repeat('a', 1000);
+
+        try {
+            $this->azureProvider->validateOpenIdConfiguration($body);
+            $this->fail('Expected InternalErrorException was not thrown.');
+        } catch (InternalErrorException $e) {
+            $message = $e->getMessage();
+            $this->assertStringContainsString('Response text (truncated)', $message);
+            // Exactly 200 'a' characters should appear (the cap) — never more.
+            $this->assertStringContainsString(str_repeat('a', 200), $message);
+            $this->assertStringNotContainsString(str_repeat('a', 201), $message);
+        }
+    }
+
+    public function testSsoAzureProvider_validateOpenIdConfiguration_EscapesNewlinesAndControlCharsInExcerpt(): void
+    {
+        // A body with newlines, tab, and a control char that must not leak into the log unescaped.
+        $body = "line1\nline2\tcol\x07bell";
+
+        try {
+            $this->azureProvider->validateOpenIdConfiguration($body);
+            $this->fail('Expected InternalErrorException was not thrown.');
+        } catch (InternalErrorException $e) {
+            $message = $e->getMessage();
+            $this->assertStringContainsString('Response text (truncated)', $message);
+            // Raw control characters must NOT appear in the message — json_encode escapes them.
+            $notExpectedCharacters = ["\n", "\t", "\x07"];
+            foreach ($notExpectedCharacters as $notExpectedCharacter) {
+                $this->assertStringNotContainsString($notExpectedCharacter, $message);
+            }
+            // JSON-escaped equivalents
+            $this->assertStringContainsString('\\n', $message);
+            $this->assertStringContainsString('\\t', $message);
+        }
     }
 }

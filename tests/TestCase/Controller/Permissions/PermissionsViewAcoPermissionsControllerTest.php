@@ -61,6 +61,7 @@ class PermissionsViewAcoPermissionsControllerTest extends AppIntegrationTestCase
         // Contain user.
         $this->assertObjectHasAttribute('user', $permission);
         $this->assertUserAttributes($permission->user);
+        $this->assertObjectNotHasAttribute('last_logged_in', $permission->user);
         // Contain user profile.
         $this->assertObjectHasAttribute('profile', $permission->user);
         $this->assertProfileAttributes($permission->user->profile);

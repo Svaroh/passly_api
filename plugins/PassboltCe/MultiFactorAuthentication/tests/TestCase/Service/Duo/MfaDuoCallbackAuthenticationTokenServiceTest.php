@@ -52,13 +52,13 @@ class MfaDuoCallbackAuthenticationTokenServiceTest extends TestCase
             $uac,
             AuthenticationToken::TYPE_MFA_SETUP,
             $authToken->token,
-            $duoState
+            $duoState,
         );
 
         $this->assertEquals($verifiedAuthToken->id, $authToken->id);
         $this->assertEquals($verifiedAuthToken->token, $authToken->token);
         $this->assertEquals($verifiedAuthToken->type, AuthenticationToken::TYPE_MFA_SETUP);
-        $this->assertEquals($verifiedAuthToken->active, true);
+        $this->assertFalse($verifiedAuthToken->active);
         $verifiedAuthTokenData = json_decode($verifiedAuthToken->data, true);
         $this->assertEquals($verifiedAuthTokenData['provider'], MfaSettings::PROVIDER_DUO);
         $this->assertEquals($verifiedAuthTokenData['state'], $duoState);
@@ -85,7 +85,7 @@ class MfaDuoCallbackAuthenticationTokenServiceTest extends TestCase
                 $uac,
                 AuthenticationToken::TYPE_MFA_SETUP,
                 $authToken->token,
-                UuidFactory::uuid()
+                UuidFactory::uuid(),
             );
         } catch (Throwable $e) {
         }
@@ -103,7 +103,7 @@ class MfaDuoCallbackAuthenticationTokenServiceTest extends TestCase
                 new UserAccessControl(Role::USER, UuidFactory::uuid()),
                 AuthenticationToken::TYPE_MFA_SETUP,
                 'not-a-valid-token',
-                UuidFactory::uuid()
+                UuidFactory::uuid(),
             );
         } catch (Throwable $e) {
         }
@@ -120,7 +120,7 @@ class MfaDuoCallbackAuthenticationTokenServiceTest extends TestCase
                 new UserAccessControl(Role::USER, UuidFactory::uuid()),
                 'invalid-token-type',
                 UuidFactory::uuid(),
-                UuidFactory::uuid()
+                UuidFactory::uuid(),
             );
         } catch (Throwable $e) {
         }
@@ -137,7 +137,7 @@ class MfaDuoCallbackAuthenticationTokenServiceTest extends TestCase
                 new UserAccessControl(Role::USER, UuidFactory::uuid()),
                 AuthenticationToken::TYPE_MFA_SETUP,
                 UuidFactory::uuid(),
-                UuidFactory::uuid()
+                UuidFactory::uuid(),
             );
         } catch (Throwable $e) {
         }
@@ -166,7 +166,7 @@ class MfaDuoCallbackAuthenticationTokenServiceTest extends TestCase
                 $uac,
                 AuthenticationToken::TYPE_MFA_SETUP,
                 $authToken->token,
-                $duoState
+                $duoState,
             );
         } catch (Throwable $e) {
         }
@@ -195,7 +195,7 @@ class MfaDuoCallbackAuthenticationTokenServiceTest extends TestCase
                 $uac,
                 AuthenticationToken::TYPE_MFA_SETUP,
                 $authToken->token,
-                $duoState
+                $duoState,
             );
         } catch (Throwable $e) {
         }
@@ -222,7 +222,7 @@ class MfaDuoCallbackAuthenticationTokenServiceTest extends TestCase
                 $uac,
                 AuthenticationToken::TYPE_MFA_SETUP,
                 $authToken->token,
-                UuidFactory::uuid()
+                UuidFactory::uuid(),
             );
         } catch (Throwable $e) {
         }

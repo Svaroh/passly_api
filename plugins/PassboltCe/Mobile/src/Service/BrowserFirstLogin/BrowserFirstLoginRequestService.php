@@ -100,6 +100,7 @@ class BrowserFirstLoginRequestService
         if (!$request) {
             throw new RecordNotFoundException(__('The browser first-login request could not be found.'));
         }
+        assert($request instanceof BrowserFirstLoginRequest);
         if ($request->expires->isPast()) {
             throw new UnauthorizedException(__('The browser first-login request has expired.'));
         }

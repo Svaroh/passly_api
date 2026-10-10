@@ -81,7 +81,7 @@ class ResourcesTagsAddService
             throw new ValidationException(
                 __('Could not save the tags, try again later.'),
                 $resource,
-                $this->Resources
+                $this->Resources,
             );
         } catch (Exception $e) {
             $msg = __('Could not save the tags, try again later.');
@@ -133,7 +133,11 @@ class ResourcesTagsAddService
                     unset($clearTextTags[$tagFoundIndex]);
                 }
             } else {
-                // For V5 unlink anyway
+                // V5
+                if ($tag->is_shared && !$isOwner) {
+                    $msg = __('You do not have the permission to edit shared tags on this resource.');
+                    throw new BadRequestException($msg);
+                }
                 unset($resource['tags'][$i]);
             }
         }
@@ -149,9 +153,10 @@ class ResourcesTagsAddService
         // The tag the user is adding already exist, associate it to the resource.
         $encryptedTagsIds = Hash::extract($encryptedTags, '{n}.id');
         if ($clearTextTags || $encryptedTagsIds) {
+            /** @var array<\Passbolt\Tags\Model\Entity\Tag> $existingTags */
             $existingTags = $this->Tags->findAllBySlugsOrIds($uac, $clearTextTags, $encryptedTagsIds)->all()->toArray();
             foreach ($existingTags as $existingTag) {
-                $tagDto = MetadataTagDto::fromArray($existingTag->toArray());
+                $tagDto = MetadataTagDto::createFromArray($existingTag->toArray());
 
                 // To prevent duplication, unset from array so it don't get build as a new entity
                 if (!$tagDto->isV5()) {
@@ -162,9 +167,9 @@ class ResourcesTagsAddService
                 }
 
                 if ($tagDto->isPersonal()) {
-                    $existingTag->_joinData = $this->Tags->ResourcesTags->newEntity([
+                    $existingTag->set('_joinData', $this->Tags->ResourcesTags->newEntity([
                         'user_id' => $userId,
-                    ]);
+                    ]));
                 }
 
                 $tags = $resource->get('tags') ?? [];

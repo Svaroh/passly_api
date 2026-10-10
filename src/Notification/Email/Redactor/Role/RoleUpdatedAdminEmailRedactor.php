@@ -109,7 +109,7 @@ class RoleUpdatedAdminEmailRedactor implements SubscribedEmailRedactorInterface
 
         foreach ($recipients as $recipient) {
             $emailCollection->addEmail(
-                $this->createEmail($recipient, $role, $operator, $oldName)
+                $this->createEmail($recipient, $role, $operator, $oldName),
             );
         }
 
@@ -129,7 +129,7 @@ class RoleUpdatedAdminEmailRedactor implements SubscribedEmailRedactorInterface
             $recipient->locale,
             function () use ($operator, $oldName) {
                 return __('{0} updated the role {1}', $operator->profile->full_name, $oldName);
-            }
+            },
         );
 
         $operator->profile->setVirtual(['full_name']);
@@ -146,7 +146,7 @@ class RoleUpdatedAdminEmailRedactor implements SubscribedEmailRedactorInterface
                 ],
                 'title' => $subject,
             ],
-            self::TEMPLATE
+            self::TEMPLATE,
         );
     }
 
@@ -156,12 +156,15 @@ class RoleUpdatedAdminEmailRedactor implements SubscribedEmailRedactorInterface
      */
     private function getAdministrators(string $operatorId): array
     {
-        return $this->Users
+        /** @var array<\App\Model\Entity\User> $admins */
+        $admins = $this->Users
             ->findAdmins()
             ->find('notDisabled')
             ->find('locale')
             ->contain(['Profiles' => AvatarsTable::addContainAvatar()])
             ->where(['Users.id !=' => $operatorId])
             ->toArray();
+
+        return $admins;
     }
 }

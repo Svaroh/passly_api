@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 41c2572bd9bd4cc908d3e09e0cbed6e5\n"
-"POT-Creation-Date: 2026-04-02 12:51+0000\n"
-"PO-Revision-Date: 2026-04-06 03:12\n"
+"POT-Creation-Date: 2026-07-10 05:55+0000\n"
+"PO-Revision-Date: 2026-07-10 09:22\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -12,8 +12,8 @@ msgstr ""
 "X-Crowdin-Project: 41c2572bd9bd4cc908d3e09e0cbed6e5\n"
 "X-Crowdin-Project-ID: 2\n"
 "X-Crowdin-Language: ko\n"
-"X-Crowdin-File: /[passbolt.passbolt-pro-api] release/resources/locales/en_UK/default.po\n"
-"X-Crowdin-File-ID: 220\n"
+"X-Crowdin-File: /[passbolt.passbolt-ce-api] release/resources/locales/en_UK/default.po\n"
+"X-Crowdin-File-ID: 212\n"
 "Language: ko_KR\n"
 
 msgid "You need to login to access this location."
@@ -346,17 +346,20 @@ msgstr "사용자를 삭제할 수 없습니다."
 msgid "The groups users identifiers must be valid UUID."
 msgstr "그룹 사용자 식별자는 올바른 UUID여야 합니다."
 
-msgid "The user does not exist or has been deleted."
-msgstr "사용자가 존재하지 않거나 이미 삭제되었습니다."
-
 msgid "Could not validate user data."
 msgstr "사용자 데이터를 검사할 수 없습니다."
+
+msgid "The user does not exist or has been deleted."
+msgstr "사용자가 존재하지 않거나 이미 삭제되었습니다."
 
 msgid "Could not find the user data after save. Maybe it has been deleted in the meantime."
 msgstr "저장한 후 사용자 데이터를 찾을 수 없습니다. 아마 그 사이에 삭제되었을 것입니다."
 
 msgid "The user has been updated successfully."
 msgstr "사용자가 성공적으로 수정되었습니다."
+
+msgid "You are not authorized to edit the role."
+msgstr "역할을 수정할 수 있는 권한이 없습니다."
 
 msgid "Some user data should be provided."
 msgstr "일부 사용자 데이터가 제공되어야 합니다."
@@ -366,9 +369,6 @@ msgstr "OpenPGP 키의 수정은 허용하지 않습니다."
 
 msgid "Updating the groups is not allowed."
 msgstr "그룹의 수정은 허용하지 않습니다."
-
-msgid "You are not authorized to edit the role."
-msgstr "역할을 수정할 수 있는 권한이 없습니다."
 
 msgid "Multiple has-access filters are not supported."
 msgstr "다중 접근 필터는 지원되지 않습니다."
@@ -969,6 +969,9 @@ msgstr "지정한 이름에 대한 역할이 이미 있습니다."
 
 msgid "Only maximum of {0} active roles are allowed."
 msgstr "최대 {0}개의 활성 역할만 허용됩니다."
+
+msgid "A reserved role cannot be renamed."
+msgstr "예약된 역할의 이름은 변경할 수 없습니다."
 
 msgid "The resource identifier is required."
 msgstr "리소스 식별자가 필요합니다."
@@ -1617,6 +1620,21 @@ msgstr "데이터베이스 버전이 지원됩니다."
 
 msgid "The database version is deprecated."
 msgstr "데이터베이스 버전이 더 이상 사용되지 않습니다."
+
+msgid "The model schema cache shows no discrepancies with the database schema."
+msgstr "모델 스키마 캐시에 데이터베이스 스키마와의 불일치가 없습니다."
+
+msgid "The model schema cache shows discrepancies with the database schema."
+msgstr "모델 스키마 캐시에 데이터베이스 스키마와의 불일치가 있습니다."
+
+msgid "{0}: {1}."
+msgstr "{0}: {1}."
+
+msgid "Clear the model schema cache so it is rebuilt from the database."
+msgstr "모델 스키마 캐시를 지워 데이터베이스에서 다시 빌드되도록 하세요."
+
+msgid "Consider running `{0}`. More information: {1}"
+msgstr "`{0}` 실행을 고려하세요. 자세한 정보: {1}"
 
 msgid "The database schema is up to date."
 msgstr "데이터베이스 스키마가 최신 상태입니다."
@@ -2347,8 +2365,68 @@ msgstr "매개변수 {0} 이 설정되지 않았습니다."
 msgid "This theme is not supported."
 msgstr "이 테마는 지원되지 않습니다."
 
+msgid "Subscription key data is required."
+msgstr "구독 키 데이터가 필요합니다."
+
+msgid "The subscription was created."
+msgstr "구독이 생성되었습니다."
+
+msgid "The instance is already on PRO."
+msgstr "이 인스턴스는 이미 PRO입니다."
+
+msgid "A subscription key is already present."
+msgstr "Subscription key가 이미 있습니다."
+
 msgid "You are not allowed to access this location."
 msgstr "이 위치에 접근할 수 없습니다."
+
+msgid "The instance was downgraded to CE."
+msgstr "이 인스턴스가 CE로 다운그레이드되었습니다."
+
+msgid "Edition downgrade is disabled."
+msgstr "에디션 다운그레이드가 비활성화되어 있습니다."
+
+msgid "Your session expired due to an edition change. Please log in again."
+msgstr "에디션 변경으로 인해 세션이 만료되었습니다. 다시 로그인해 주세요."
+
+msgid "{0} downgraded this Passbolt instance to Community Edition"
+msgstr "{0}님이 이 Passbolt 인스턴스를 Community Edition으로 다운그레이드했습니다"
+
+msgid "{0} upgraded this Passbolt instance to Pro Edition"
+msgstr "{0}님이 이 Passbolt 인스턴스를 Pro Edition으로 업그레이드했습니다"
+
+msgid "The instance is already on CE."
+msgstr "이 인스턴스는 이미 CE입니다."
+
+msgid "The edition served is {0}."
+msgstr "제공되는 에디션은 {0}입니다."
+
+msgid "Edition row is missing from organization_settings; defaulting to CE."
+msgstr "organization_settings에 에디션 행이 없습니다. 기본값으로 CE를 사용합니다."
+
+msgid "No edition is recorded in organization_settings — the instance is falling back to CE by default."
+msgstr "organization_settings에 기록된 에디션이 없습니다 — 인스턴스는 기본적으로 CE를 사용합니다."
+
+msgid "Run \"bin/cake passbolt populate_edition\" or upload a subscription key from the admin UI."
+msgstr "\"bin/cake passbolt populate_edition\"을 실행하거나 관리자 UI에서 Subscription key를 업로드하세요."
+
+msgid "{0} downgraded the instance to Community Edition"
+msgstr "{0}님이 인스턴스를 Community Edition으로 다운그레이드했습니다"
+
+msgid "Your Passbolt instance was downgraded from Pro to Community Edition. Pro-only features and data have been removed."
+msgstr "Passbolt 인스턴스가 Pro에서 Community Edition으로 다운그레이드되었습니다. Pro 전용 기능과 데이터가 제거되었습니다."
+
+msgid "Log in to Passbolt"
+msgstr "Passbolt에 로그인"
+
+msgid "{0} upgraded the instance to Pro Edition"
+msgstr "{0}님이 인스턴스를 Pro Edition으로 업그레이드했습니다"
+
+msgid "Your Passbolt instance was upgraded from Community Edition to Pro. Pro features are now available."
+msgstr "Passbolt 인스턴스가 Community Edition에서 Pro로 업그레이드되었습니다. 이제 Pro 기능을 사용할 수 있습니다."
+
+msgid "Subscription seats: {0}. Valid until {1}."
+msgstr "구독 좌석 수: {0}. 유효 기간: {1}까지."
 
 msgid "This is not a valid Ajax/Json request."
 msgstr "올바른 Ajax/Json 요청이 아닙니다."
@@ -2686,14 +2764,14 @@ msgstr "유효한 JWT 키 쌍이 없습니다."
 msgid "Run the create JWT keys script to create a valid JWT secret and public key pair:"
 msgstr "JWT 키 만들기 스크립트를 실행하여 유효한 JWT 비밀 키와 공개 키 쌍을 만듭니다."
 
+msgid "The refresh token provided was already used."
+msgstr "제공된 리프레쉬 토큰이 이미 사용되었습니다."
+
 msgid "The refresh token should be a valid UUID."
 msgstr "리프레쉬 토큰은 유효한 UUID여야 합니다."
 
 msgid "The user ID should be a valid UUID."
 msgstr "사용자 Id는 올바른 UUID여야 합니다."
-
-msgid "The refresh token provided was already used."
-msgstr "제공된 리프레쉬 토큰이 이미 사용되었습니다."
 
 msgid "Expired refresh token provided."
 msgstr "만료된 리프레쉬 토큰이 제공됨."
@@ -4681,9 +4759,6 @@ msgstr "세션이 만료되었습니다. 구성을 다시 시작하세요."
 msgid "System check"
 msgstr "시스템 체크"
 
-msgid "Subscription key"
-msgstr "구독 키"
-
 msgid "Server keys"
 msgstr "서버 키"
 
@@ -4695,6 +4770,9 @@ msgstr "이메일"
 
 msgid "First user"
 msgstr "첫 사용자"
+
+msgid "Subscription key"
+msgstr "구독 키"
 
 msgid "Installation"
 msgstr "설치"
@@ -4849,6 +4927,9 @@ msgstr "성"
 msgid "mail@yourdomain.com"
 msgstr "mail@yourdomain.com"
 
+msgid "Cancel"
+msgstr "취소"
+
 msgid "Next"
 msgstr "다음"
 
@@ -4890,9 +4971,6 @@ msgstr "스키마"
 
 msgid "Schema"
 msgstr "스키마"
-
-msgid "Cancel"
-msgstr "취소"
 
 msgid "Enter your SMTP server settings."
 msgstr "SMTP 서버 설정 입력"
@@ -5022,6 +5100,9 @@ msgstr "Passly Pro 활성화."
 
 msgid "Copy paste your Passly Pro subscription key here"
 msgstr "여기에 Passbolt 구독 키를 복사 붙여넣기"
+
+msgid "Skip"
+msgstr "건너뛰기"
 
 msgid "Welcome to Passly Pro! Let's get started with the configuration."
 msgstr "Passly Pro에 어서 오세요! 이제 구성을 시작하겠습니다."
@@ -6196,9 +6277,6 @@ msgstr "{0} 이(가) 비밀번호 정책 설정을 업데이트하였습니다."
 msgid "you"
 msgstr "당신"
 
-msgid "view it in passbolt"
-msgstr "Passbolt에서 보기"
-
 msgid "The SCIM setting id should be a valid UUID."
 msgstr "SCIM 설정 id는 올바른 UUID여야 합니다."
 
@@ -6766,9 +6844,6 @@ msgstr "{0} 구성 값은 문자열이거나 NULL이어야 합니다."
 msgid "The {0} configuration value should be one of the following: {1}."
 msgstr "{0} 구성 값은 다음 중 하나여야 합니다: {1}."
 
-msgid "Single-sign on was a success"
-msgstr "싱글 사인온 성공"
-
 msgid "Users are unable to log in via Azure SSO."
 msgstr "사용자가 Azure SSO를 통해 로그인할 수 없습니다."
 
@@ -6805,11 +6880,11 @@ msgstr "SSO 공급자 {0}이(가) {1}에 의해 테스트되고 활성화되었�
 msgid "All users can now use Single Sign-on to perform authentication."
 msgstr "이제 모든 사용자가 SSO를 사용하여 인증할 수 있습니다."
 
-msgid "Viewq  it in passbolt"
-msgstr "Passbolt에서 Viewq를 확인하세요"
-
 msgid "The SSO setting has been deleted by {0}."
 msgstr "SSO 설정이 {0}에 의해 삭제되었습니다."
+
+msgid "Single-sign on was a success"
+msgstr "싱글 사인온 성공"
 
 msgid "The authentication token does not exist or has been deleted."
 msgstr "인증 토큰이 존재하지 않거나 삭제되었습니다."
@@ -6837,12 +6912,6 @@ msgstr "서비스 접근은 초대가 필요합니다. "
 
 msgid "Please contact your administrator to request an invitation link."
 msgstr "관리자에게 문의하여 초대 링크를 요청하세요."
-
-msgid "Subscription key data is required."
-msgstr "구독 키 데이터가 필요합니다."
-
-msgid "The subscription was created."
-msgstr "구독이 생성되었습니다."
 
 msgid "The subscription was updated."
 msgstr "구독이 업데이트되었습니다."
@@ -6973,6 +7042,9 @@ msgstr "질문 / 피드백 / 구독 갱신에 대한 문의사항은,"
 msgid "kindly contact us at <info>sales@passbolt.com</info>"
 msgstr "<info>sales@passbolt.com</info>으로 문의해 주세요."
 
+msgid "Only administrators can delete the subscription."
+msgstr "관리자만 구독을 삭제할 수 있습니다."
+
 msgid "Only administrators can view the subscription details."
 msgstr "관리자만 구독 상세 정보를 볼 수 있습니다."
 
@@ -6981,9 +7053,6 @@ msgstr "{0} 파일을 찾을수 없습니다."
 
 msgid "The file {0} could not be read."
 msgstr "{0} 파일을 읽을 수 없습니다."
-
-msgid "No active admins were found."
-msgstr "활성 관리자가 없습니다."
 
 msgid "Only administrators can update the subscription details."
 msgstr "관리자만 구독 상세 정보를 업데이트할 수 있습니다."

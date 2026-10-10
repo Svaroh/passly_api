@@ -16,7 +16,10 @@ declare(strict_types=1);
  */
 namespace Passbolt\MfaPolicies\Test\TestCase\MultiFactorAuthentication\Controllers\Yubikey;
 
+use App\Model\Entity\AuthenticationToken;
+use App\Test\Factory\AuthenticationTokenFactory;
 use Passbolt\MfaPolicies\Test\Factory\MfaPoliciesSettingFactory;
+use Passbolt\MultiFactorAuthentication\Form\Yubikey\YubikeyVerifyForm;
 use Passbolt\MultiFactorAuthentication\Test\Lib\MfaIntegrationTestCase;
 use Passbolt\MultiFactorAuthentication\Test\Scenario\Yubikey\MfaYubikeyScenario;
 
@@ -50,5 +53,28 @@ class YubikeyVerifyPostControllerTest extends MfaIntegrationTestCase
         $this->assertResponseError('This OTP is not valid.');
         $this->assertResponseNotContains('<input type="checkbox" name="remember"');
         $this->assertResponseNotContains('Remember this device for a month');
+    }
+
+    public function testMfaVerifyPostYubikeySettingRememberMeWhenPolicyDisallow_Fails(): void
+    {
+        $user = $this->logInAsUser();
+        $this->loadFixtureScenario(MfaYubikeyScenario::class, $user);
+        MfaPoliciesSettingFactory::make()->setRememberMeForAMonth(false)->persist();
+        $this->mockValidMfaFormInterface(YubikeyVerifyForm::class, $this->makeUac($user));
+
+        $this->post('/mfa/verify/yubikey.json?api-version=v2', [
+            'hotp' => 'i-am-mocked',
+            'remember' => true,
+        ]);
+
+        $this->assertResponseSuccess();
+        /** @var \App\Model\Entity\AuthenticationToken $mfaToken */
+        $mfaToken = AuthenticationTokenFactory::find()
+            ->where([
+                'type' => AuthenticationToken::TYPE_MFA,
+                'user_id' => $user->id,
+            ])->firstOrFail();
+        $data = $mfaToken->getJsonDecodedData();
+        $this->assertFalse($data['remember']);
     }
 }

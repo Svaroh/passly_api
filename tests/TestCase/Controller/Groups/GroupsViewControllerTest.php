@@ -105,13 +105,16 @@ class GroupsViewControllerTest extends AppIntegrationTestCase
         $this->assertObjectHasAttribute('modifier', $this->_responseJsonBody);
         $this->assertUserAttributes($this->_responseJsonBody->modifier);
         $this->assertObjectHasAttribute('profile', $this->_responseJsonBody->modifier);
+        $this->assertObjectNotHasAttribute('last_logged_in', $this->_responseJsonBody->modifier);
         $this->assertProfileAttributes($this->_responseJsonBody->modifier->profile);
         $this->assertObjectHasAttribute('users', $this->_responseJsonBody);
+        $this->assertObjectNotHasAttribute('last_logged_in', $this->_responseJsonBody->users[0]);
         $this->assertUserAttributes($this->_responseJsonBody->users[0]);
         $this->assertObjectHasAttribute('groups_users', $this->_responseJsonBody);
         $this->assertGroupUserAttributes($this->_responseJsonBody->groups_users[0]);
         $this->assertObjectHasAttribute('user', $this->_responseJsonBody->groups_users[0]);
         $this->assertObjectHasAttribute('profile', $this->_responseJsonBody->groups_users[0]->user);
+        $this->assertObjectNotHasAttribute('last_logged_in', $this->_responseJsonBody->groups_users[0]->user);
         $this->assertProfileAttributes($this->_responseJsonBody->groups_users[0]->user->profile);
         $this->assertObjectHasAttribute('my_group_user', $this->_responseJsonBody);
         $this->assertNull($this->_responseJsonBody->my_group_user);

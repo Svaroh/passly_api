@@ -143,7 +143,7 @@ class DeleteFolderEmailRedactor implements SubscribedEmailRedactorInterface
                 }
 
                 return __('{0} deleted the folder {1}', $userFirstName, $folder->name);
-            }
+            },
         );
 
         $data = [

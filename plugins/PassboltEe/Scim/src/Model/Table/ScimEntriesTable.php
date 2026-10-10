@@ -156,10 +156,9 @@ class ScimEntriesTable extends Table
         if ($scimEntry->id) {
             $conditions[$this->aliasField('id') . ' !='] = $scimEntry->id;
         }
-        $exist = $this->find()
+        $exist = $this->unhydratedFind()
                 ->select(['existing' => 1])
                 ->limit(1)
-                ->disableHydration()
                 ->where($conditions)
                 ->whereNull($this->aliasField('deleted'));
 

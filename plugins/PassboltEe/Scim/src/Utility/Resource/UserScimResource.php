@@ -223,18 +223,20 @@ class UserScimResource implements ScimResourceInterface
         if (!Validation::uuid($internalId)) {
             throw new BadRequestException(__('The user identifier should be a valid UUID.'));
         }
-        $this->userEntity = $this->Users
+        /** @var \App\Model\Entity\User|null $userEntity */
+        $userEntity = $this->Users
             ->findForScim([$this->Users->aliasField('id') => $internalId], findDeleted: true)
             ->contain(['Profiles', 'ScimEntries'])
             ->first();
+        $this->userEntity = $userEntity;
         if (!$this->userEntity) {
             throw new ResourceNotFoundException(
-                sprintf('The %s resource with id `%s` was not found', $this->getType(), $internalId)
+                sprintf('The %s resource with id `%s` was not found', $this->getType(), $internalId),
             );
         }
         if ($this->userEntity->deleted) {
             throw new ResourceNotFoundException(
-                sprintf('The %s resource with id `%s` is already deleted', $this->getType(), $internalId)
+                sprintf('The %s resource with id `%s` is already deleted', $this->getType(), $internalId),
             );
         }
 
@@ -269,7 +271,7 @@ class UserScimResource implements ScimResourceInterface
                 $this->createScimEntry($user);
 
                 return $user;
-            }
+            },
         );
 
         $this->setFromDatabase($user->id);
@@ -280,13 +282,14 @@ class UserScimResource implements ScimResourceInterface
     /**
      * Validate preconditions before attempting user creation.
      *
-     * @throws \Passbolt\Scim\Exception\ConflictException
+     * @throws \Passbolt\Scim\Exception\BadRequestException When "work" email is missing in the payload.
+     * @throws \Passbolt\Scim\Exception\ConflictException When resource id is already present.
      */
     private function validateCreatePreconditions(): void
     {
         if (!$this->email) {
-            throw new ConflictException(
-                sprintf('The email was not found for the %s resource', $this->getType()),
+            throw new BadRequestException(
+                sprintf('No email with type "work" was found in the %s payload.', $this->getType()),
                 scimType: ScimException::SCIM_TYPE_INVALID_VALUE,
             );
         }
@@ -295,7 +298,7 @@ class UserScimResource implements ScimResourceInterface
                 sprintf(
                     'The %s resource with id `%s` could not be created due to a uniqueness conflict',
                     $this->getType(),
-                    $this->id
+                    $this->id,
                 ),
                 scimType: ScimException::SCIM_TYPE_UNIQUENESS,
             );
@@ -336,9 +339,8 @@ class UserScimResource implements ScimResourceInterface
         if (!empty($user->scim_entry)) {
             throw new ConflictException(
                 sprintf(
-                    'The %s resource with id `%s` could not be created due to a uniqueness conflict',
+                    'The %s resource could not be created due to a uniqueness conflict',
                     $this->getType(),
-                    $user->id
                 ),
                 scimType: ScimException::SCIM_TYPE_UNIQUENESS,
             );
@@ -372,14 +374,14 @@ class UserScimResource implements ScimResourceInterface
         } catch (ValidationException $exception) {
             throw new ConflictException(
                 $this->getValidationErrorMessage($exception->getEntity()),
-                scimType: ScimException::SCIM_TYPE_INVALID_VALUE
+                scimType: ScimException::SCIM_TYPE_INVALID_VALUE,
             );
         } catch (InternalErrorException $exception) {
             ScimLog::error($exception->getMessage());
             ScimLog::error($exception->getTraceAsString());
             throw new ConflictException(
                 'Unexpected error',
-                scimType: ScimException::SCIM_TYPE_INVALID_VALUE
+                scimType: ScimException::SCIM_TYPE_INVALID_VALUE,
             );
         }
     }
@@ -408,7 +410,7 @@ class UserScimResource implements ScimResourceInterface
         if (!$this->Users->Profiles->save($profile)) {
             throw new ConflictException(
                 $this->getValidationErrorMessage($profile),
-                scimType: ScimException::SCIM_TYPE_INVALID_VALUE
+                scimType: ScimException::SCIM_TYPE_INVALID_VALUE,
             );
         }
 
@@ -451,11 +453,14 @@ class UserScimResource implements ScimResourceInterface
             return null;
         }
 
-        return $this->Users
+        /** @var \App\Model\Entity\User|null $user */
+        $user = $this->Users
             ->find()
             ->contain(['Roles'])
             ->where([$this->Users->aliasField('id') => $scimConfig['scim_user_id']])
             ->first();
+
+        return $user;
     }
 
     /**
@@ -600,7 +605,7 @@ class UserScimResource implements ScimResourceInterface
                             case 'emails':
                                 throw new BadRequestException(
                                     'The email can not be changed',
-                                    scimType: ScimException::SCIM_TYPE_MUTABILITY
+                                    scimType: ScimException::SCIM_TYPE_MUTABILITY,
                                 );
                             default:
                                 // ignore attributes not used in this application
@@ -631,7 +636,7 @@ class UserScimResource implements ScimResourceInterface
                             case 'emails':
                                 throw new BadRequestException(
                                     'The email can not be changed',
-                                    scimType: ScimException::SCIM_TYPE_MUTABILITY
+                                    scimType: ScimException::SCIM_TYPE_MUTABILITY,
                                 );
                             default:
                                 // ignore attributes not used in this application
@@ -657,7 +662,7 @@ class UserScimResource implements ScimResourceInterface
                             case 'emails':
                                 throw new BadRequestException(
                                     'The email can not be changed',
-                                    scimType: ScimException::SCIM_TYPE_MUTABILITY
+                                    scimType: ScimException::SCIM_TYPE_MUTABILITY,
                                 );
                             default:
                                 // ignore attributes not used in this application
@@ -665,7 +670,7 @@ class UserScimResource implements ScimResourceInterface
                         break;
                     default:
                         throw new NotSupportedException(
-                            sprintf('The operation type `%s` is not supported or invalid', $operation->getType())
+                            sprintf('The operation type `%s` is not supported or invalid', $operation->getType()),
                         );
                 }
             }
@@ -702,9 +707,43 @@ class UserScimResource implements ScimResourceInterface
             return;
         }
 
-        // Check if the user is an admin
+        if ($this->isUserAdmin()) {
+            throw new ForbiddenException(__('An administrator user cannot be suspended via SCIM.'));
+        }
+    }
+
+    /**
+     * Assert that the user being deleted is not an administrator.
+     *
+     * @return void
+     * @throws \Cake\Http\Exception\ForbiddenException If trying to delete an admin and the config flag is not set.
+     */
+    protected function assertAdminDeleteAllowed(): void
+    {
+        $allowed = Configure::read('passbolt.plugins.scim.security.allowDeleteAdministrators');
+        // Fallback on allowSuspendAdministrators configuration
+        if (!is_bool($allowed)) {
+            $allowed = Configure::read('passbolt.plugins.scim.security.allowSuspendAdministrators');
+        }
+
+        if ($allowed) {
+            return;
+        }
+
+        if ($this->isUserAdmin()) {
+            throw new ForbiddenException(__('An administrator user cannot be deleted via SCIM.'));
+        }
+    }
+
+    /**
+     * Whether the loaded user holds the administrator role.
+     *
+     * @return bool
+     */
+    protected function isUserAdmin(): bool
+    {
         $query = $this->Users
-            ->find()
+            ->unhydratedFind()
             ->select(['existing' => 1])
             ->contain(['Roles'])
             ->where([
@@ -713,11 +752,8 @@ class UserScimResource implements ScimResourceInterface
             ])
             ->limit(1)
             ->epilog('FOR UPDATE');
-        $isAdmin = (bool)count($query->disableHydration()->toArray());
 
-        if ($isAdmin) {
-            throw new ForbiddenException(__('An administrator user cannot be suspended via SCIM.'));
-        }
+        return (bool)count($query->toArray());
     }
 
     /**
@@ -756,7 +792,7 @@ class UserScimResource implements ScimResourceInterface
 
                         throw new ConflictException(
                             $this->getValidationErrorMessage($this->userEntity),
-                            scimType: ScimException::SCIM_TYPE_INVALID_VALUE
+                            scimType: ScimException::SCIM_TYPE_INVALID_VALUE,
                         );
                     }
                 }
@@ -786,7 +822,7 @@ class UserScimResource implements ScimResourceInterface
 
                         throw new ConflictException(
                             $this->getValidationErrorMessage($scimEntry),
-                            scimType: ScimException::SCIM_TYPE_INVALID_VALUE
+                            scimType: ScimException::SCIM_TYPE_INVALID_VALUE,
                         );
                     }
                 }
@@ -903,10 +939,12 @@ class UserScimResource implements ScimResourceInterface
             throw new ScimException(
                 sprintf(
                     'The values of the %s resource has not been set for the `delete` operation',
-                    $this->getType()
-                )
+                    $this->getType(),
+                ),
             );
         }
+
+        $this->assertAdminDeleteAllowed();
 
         try {
             $result = $this->Users->softDelete($this->userEntity);
@@ -915,7 +953,7 @@ class UserScimResource implements ScimResourceInterface
                 if (isset($errors['id']['soleOwnerOfSharedContent'])) {
                     // @todo: send email
                     throw new ConflictException(
-                        'The user cannot be deleted because its the sole owner of shared content'
+                        'The user cannot be deleted because its the sole owner of shared content',
                     );
                 }
                 throw new ConflictException('The User resource could not be deleted due to validation failure');
@@ -940,8 +978,8 @@ class UserScimResource implements ScimResourceInterface
             throw new ScimException(
                 sprintf(
                     'The values of the %s resource has not been set for the `toSCIM` operation',
-                    $this->getType()
-                )
+                    $this->getType(),
+                ),
             );
         }
         if (empty($this->userEntity->scim_entry)) {

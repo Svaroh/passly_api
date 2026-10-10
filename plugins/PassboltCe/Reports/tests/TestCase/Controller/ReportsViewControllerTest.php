@@ -80,6 +80,7 @@ class ReportsViewControllerTest extends AppIntegrationTestCase
         $this->logInAsAdmin();
         $this->getJson('/reports/' . $slug . '.json?api-version=2');
         $this->assertResponseSuccess();
+        $this->assertObjectNotHasAttribute('last_logged_in', $this->_responseJsonBody->creator);
     }
 
     public function testReportsViewControllerWithArgumentSuccess()
@@ -89,6 +90,7 @@ class ReportsViewControllerTest extends AppIntegrationTestCase
         $this->logInAsAdmin();
         $this->getJson('/reports/' . $slug . '/arg1.json?api-version=2');
         $this->assertResponseSuccess();
+        $this->assertObjectNotHasAttribute('last_logged_in', $this->_responseJsonBody->creator);
     }
 
     private function addSampleReportWithArgument($slug)

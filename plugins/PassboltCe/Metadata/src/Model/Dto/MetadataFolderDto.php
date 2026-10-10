@@ -16,14 +16,16 @@ declare(strict_types=1);
  */
 namespace Passbolt\Metadata\Model\Dto;
 
+use App\Model\Dto\RequestDtoInterface;
 use App\Utility\Application\FeaturePluginAwareTrait;
 use Cake\Core\Configure;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Log\Log;
 use Cake\Utility\Hash;
 use Passbolt\Metadata\MetadataPlugin;
+use Passbolt\Metadata\Model\Entity\MetadataKey;
 
-class MetadataFolderDto extends MetadataDto
+class MetadataFolderDto extends MetadataDto implements RequestDtoInterface
 {
     use FeaturePluginAwareTrait;
 
@@ -52,12 +54,12 @@ class MetadataFolderDto extends MetadataDto
      * @param string|null $metadataKeyId Metadata key identifier.
      * @param string|null $metadataKeyType Metadata key type.
      */
-    public function __construct(
+    final public function __construct(
         ?string $name = null,
         ?string $folderParentId = null,
         ?string $metadata = null,
         ?string $metadataKeyId = null,
-        ?string $metadataKeyType = null
+        ?string $metadataKeyType = null,
     ) {
         $this->name = $name;
         $this->folderParentId = $folderParentId;
@@ -70,9 +72,9 @@ class MetadataFolderDto extends MetadataDto
 
     /**
      * @param array $data Array data.
-     * @return self
+     * @return static
      */
-    public static function fromArray(array $data): self
+    public static function createFromArray(array $data): static
     {
         $name = Hash::get($data, 'name');
         $folderParentId = Hash::get($data, 'folder_parent_id');
@@ -80,7 +82,7 @@ class MetadataFolderDto extends MetadataDto
         $metadataKeyId = Hash::get($data, 'metadata_key_id');
         $metadataKeyType = Hash::get($data, 'metadata_key_type');
 
-        return new self($name, $folderParentId, $metadata, $metadataKeyId, $metadataKeyType);
+        return new static($name, $folderParentId, $metadata, $metadataKeyId, $metadataKeyType);
     }
 
     /**
@@ -102,7 +104,11 @@ class MetadataFolderDto extends MetadataDto
             return;
         }
 
-        if ($this->metadataKeyType === 'user_key') {
+        if (!$this->isV5()) {
+            return;
+        }
+
+        if ($this->metadataKeyType !== MetadataKey::TYPE_SHARED_KEY) {
             throw new BadRequestException(__('Folder can not be shared'));
         }
     }

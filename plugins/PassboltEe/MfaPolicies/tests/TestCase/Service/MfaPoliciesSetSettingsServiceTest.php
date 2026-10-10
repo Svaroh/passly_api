@@ -94,6 +94,7 @@ class MfaPoliciesSetSettingsServiceTest extends AppTestCase
         $this->assertNotNull($result->created_by);
         $this->assertNotNull($result->modified);
         $this->assertNotNull($result->modified_by);
+        /** @var array<\Passbolt\MfaPolicies\Model\Entity\MfaPoliciesSetting> $settings */
         $settings = MfaPoliciesSettingFactory::find()->toArray();
         $this->assertCount(1, $settings);
         $this->assertSame([
@@ -106,7 +107,7 @@ class MfaPoliciesSetSettingsServiceTest extends AppTestCase
         $this->assertEventFiredWith(
             MfaPoliciesSetSettingsService::EVENT_SETTINGS_UPDATED,
             'mfaPoliciesSetting',
-            $result
+            $result,
         );
         $this->assertEventFiredWith(MfaPoliciesSetSettingsService::EVENT_SETTINGS_UPDATED, 'uac', $uac);
     }
@@ -128,6 +129,7 @@ class MfaPoliciesSetSettingsServiceTest extends AppTestCase
         $this->assertNotNull($result->created_by);
         $this->assertNotNull($result->modified);
         $this->assertNotNull($result->modified_by);
+        /** @var array<\Passbolt\MfaPolicies\Model\Entity\MfaPoliciesSetting> $settings */
         $settings = MfaPoliciesSettingFactory::find()->toArray();
         $this->assertCount(1, $settings);
         $this->assertSame([
@@ -140,7 +142,7 @@ class MfaPoliciesSetSettingsServiceTest extends AppTestCase
         $this->assertEventFiredWith(
             MfaPoliciesSetSettingsService::EVENT_SETTINGS_UPDATED,
             'mfaPoliciesSetting',
-            $result
+            $result,
         );
         $this->assertEventFiredWith(MfaPoliciesSetSettingsService::EVENT_SETTINGS_UPDATED, 'uac', $uac);
     }
@@ -166,6 +168,7 @@ class MfaPoliciesSetSettingsServiceTest extends AppTestCase
         $this->assertNotNull($result->created_by);
         $this->assertNotNull($result->modified);
         $this->assertNotNull($result->modified_by);
+        /** @var array<\Passbolt\MfaPolicies\Model\Entity\MfaPoliciesSetting> $settings */
         $settings = MfaPoliciesSettingFactory::find()->toArray();
         $this->assertCount(1, $settings);
         $this->assertSame([
@@ -177,7 +180,7 @@ class MfaPoliciesSetSettingsServiceTest extends AppTestCase
         $this->assertEventFiredWith(
             MfaPoliciesSetSettingsService::EVENT_SETTINGS_UPDATED,
             'mfaPoliciesSetting',
-            $result
+            $result,
         );
         $this->assertEventFiredWith(MfaPoliciesSetSettingsService::EVENT_SETTINGS_UPDATED, 'uac', $uac);
     }
@@ -203,6 +206,7 @@ class MfaPoliciesSetSettingsServiceTest extends AppTestCase
         $this->assertNotNull($result->created_by);
         $this->assertNotNull($result->modified);
         $this->assertNotNull($result->modified_by);
+        /** @var array<\Passbolt\MfaPolicies\Model\Entity\MfaPoliciesSetting> $settings */
         $settings = MfaPoliciesSettingFactory::find()->toArray();
         $this->assertCount(1, $settings);
         $this->assertSame([
@@ -214,7 +218,7 @@ class MfaPoliciesSetSettingsServiceTest extends AppTestCase
         $this->assertEventFiredWith(
             MfaPoliciesSetSettingsService::EVENT_SETTINGS_UPDATED,
             'mfaPoliciesSetting',
-            $result
+            $result,
         );
         $this->assertEventFiredWith(MfaPoliciesSetSettingsService::EVENT_SETTINGS_UPDATED, 'uac', $uac);
     }

@@ -98,7 +98,7 @@ class MetadataFoldersUpdateControllerTest extends AppIntegrationTestCaseV5
         $this->assertEventFiredWith(
             FoldersUpdateService::FOLDERS_UPDATE_FOLDER_EVENT,
             'isV5',
-            true
+            true,
         );
     }
 
@@ -141,7 +141,7 @@ class MetadataFoldersUpdateControllerTest extends AppIntegrationTestCaseV5
         $this->assertEventFiredWith(
             FoldersUpdateService::FOLDERS_UPDATE_FOLDER_EVENT,
             'isV5',
-            true
+            true,
         );
     }
 
@@ -234,6 +234,68 @@ class MetadataFoldersUpdateControllerTest extends AppIntegrationTestCaseV5
         foreach ($expectedErrorPaths as $expectedErrorPath) {
             $this->assertTrue(Hash::check($response, $expectedErrorPath));
         }
+    }
+
+    public function testMetadataFoldersUpdateController_Error_BlankMetadataKeyType()
+    {
+        MetadataTypesSettingsFactory::make()->v5()->persist();
+        /** @var \App\Model\Entity\User $user */
+        $user = UserFactory::make()
+            ->with('Gpgkeys', GpgkeyFactory::make()->withAdaKey())
+            ->user()
+            ->active()
+            ->persist();
+        $clearTextMetadata = json_encode(['object_type' => 'PASSBOLT_FOLDER_METADATA', 'name' => 'marketing']);
+        $metadata = $this->encryptForUser($clearTextMetadata, $user, $this->getAdaNoPassphraseKeyInfo());
+        /** @var \Passbolt\Folders\Model\Entity\Folder $folder */
+        $folder = FolderFactory::make()
+            ->withFoldersRelationsFor([$user])
+            ->withPermissionsFor([$user])
+            ->v5Fields(['metadata' => $metadata, 'metadata_key_id' => $user->gpgkey->id])
+            ->persist();
+        $this->logInAs($user);
+
+        $data = [
+            'metadata' => $metadata,
+            'metadata_key_id' => $user->gpgkey->id,
+            'metadata_key_type' => '',
+        ];
+        $this->postJson("/folders/{$folder->id}.json?api-version=2", $data);
+
+        $this->assertError(400, 'Could not validate folder data');
+        $response = $this->getResponseBodyAsArray();
+        $this->assertTrue(Hash::check($response, 'metadata_key_type._empty'));
+    }
+
+    public function testMetadataFoldersUpdateController_Error_UnknownMetadataKeyType()
+    {
+        MetadataTypesSettingsFactory::make()->v5()->persist();
+        /** @var \App\Model\Entity\User $user */
+        $user = UserFactory::make()
+            ->with('Gpgkeys', GpgkeyFactory::make()->withAdaKey())
+            ->user()
+            ->active()
+            ->persist();
+        $clearTextMetadata = json_encode(['object_type' => 'PASSBOLT_FOLDER_METADATA', 'name' => 'marketing']);
+        $metadata = $this->encryptForUser($clearTextMetadata, $user, $this->getAdaNoPassphraseKeyInfo());
+        /** @var \Passbolt\Folders\Model\Entity\Folder $folder */
+        $folder = FolderFactory::make()
+            ->withFoldersRelationsFor([$user])
+            ->withPermissionsFor([$user])
+            ->v5Fields(['metadata' => $metadata, 'metadata_key_id' => $user->gpgkey->id])
+            ->persist();
+        $this->logInAs($user);
+
+        $data = [
+            'metadata' => $metadata,
+            'metadata_key_id' => $user->gpgkey->id,
+            'metadata_key_type' => 'foo',
+        ];
+        $this->postJson("/folders/{$folder->id}.json?api-version=2", $data);
+
+        $this->assertError(400, 'Could not validate folder data');
+        $response = $this->getResponseBodyAsArray();
+        $this->assertTrue(Hash::check($response, 'metadata_key_type.inList'));
     }
 
     public function testMetadataFoldersUpdateController_Error_V5AndV4BothFieldsAreSent()
@@ -528,7 +590,7 @@ class MetadataFoldersUpdateControllerTest extends AppIntegrationTestCaseV5
             ->persist();
         /** @var \Passbolt\Folders\Model\Entity\Folder $folder */
         $folder = FolderFactory::make()->withFoldersRelationsFor([$ada])->withPermissionsFor([$ada])->persist();
-        $dto = MetadataFolderDto::fromArray($folder->toArray());
+        $dto = MetadataFolderDto::createFromArray($folder->toArray());
         $metadataArray = $dto->getClearTextMetadata();
         $metadata = $this->encryptForUser(json_encode($metadataArray), $ada, $this->getAdaNoPassphraseKeyInfo());
         $this->logInAs($ada);
@@ -559,7 +621,7 @@ class MetadataFoldersUpdateControllerTest extends AppIntegrationTestCaseV5
             ->persist();
         /** @var \Passbolt\Folders\Model\Entity\Folder $folder */
         $folder = FolderFactory::make()->withFoldersRelationsFor([$ada])->withPermissionsFor([$ada])->persist();
-        $dto = MetadataFolderDto::fromArray($folder->toArray());
+        $dto = MetadataFolderDto::createFromArray($folder->toArray());
         $metadataArray = $dto->getClearTextMetadata();
         $metadata = $this->encryptForUser(json_encode($metadataArray), $ada, $this->getAdaNoPassphraseKeyInfo());
         $this->logInAs($ada);

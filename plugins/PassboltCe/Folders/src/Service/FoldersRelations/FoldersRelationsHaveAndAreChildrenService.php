@@ -56,13 +56,12 @@ class FoldersRelationsHaveAndAreChildrenService
                 'folder_parent_id IN' => $foldersIds,
             ]);
 
-        $childrenFoldersRelationsAlsoParentsQuery = $this->foldersRelationsTable->find()
+        $childrenFoldersRelationsAlsoParentsQuery = $this->foldersRelationsTable->unhydratedFind()
             ->where([
                 'foreign_model' => FoldersRelation::FOREIGN_MODEL_FOLDER,
                 'folder_parent_id IS NOT NULL',
                 'foreign_id IN' => $parentsFoldersRelationsQuery,
-            ])->limit(1)
-            ->disableHydration();
+            ])->limit(1);
 
         if (!is_null($userId)) {
             $parentsFoldersRelationsQuery->andWhere(['user_id' => $userId]);

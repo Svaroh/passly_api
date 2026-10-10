@@ -41,12 +41,33 @@ class SecretsDataCommand extends DataCommand
         // As a default key can be shared among user, the encryption will require the key fingerprint.
         // As the key meta data are already stored in db, get the meta data from the db and avoid performance issue
         // by avoiding any gpg extra parsing.
+        /** @var array<\App\Model\Entity\Gpgkey> $gpgkeys */
         $gpgkeys = $gpgkeysTable->find()->all();
         foreach ($gpgkeys as $gpgkey) {
             $this->gpgkeys[$gpgkey->user_id] = $gpgkey->fingerprint;
         }
 
         return parent::execute($args, $io);
+    }
+
+    /**
+     * Set gpgkeys
+     *
+     * @return void
+     */
+    protected function setGpgkeys(): void
+    {
+        $gpgkeysTable = $this->fetchTable('Gpgkeys');
+
+        // Retrieve the key info.
+        // As a default key can be shared among user, the encryption will require the key fingerprint.
+        // As the key meta data are already stored in db, get the meta data from the db and avoid performance issue
+        // by avoiding any gpg extra parsing.
+        /** @var array<\App\Model\Entity\Gpgkey> $gpgkeys */
+        $gpgkeys = $gpgkeysTable->find()->all();
+        foreach ($gpgkeys as $gpgkey) {
+            $this->gpgkeys[$gpgkey->user_id] = $gpgkey->fingerprint;
+        }
     }
 
     /**
@@ -61,6 +82,7 @@ class SecretsDataCommand extends DataCommand
         }
 
         $secrets = [];
+        $this->setGpgkeys();
 
         /** @var \App\Model\Table\UsersTable $usersTable */
         $usersTable = $this->fetchTable('Users');
@@ -69,7 +91,7 @@ class SecretsDataCommand extends DataCommand
 
         $users = $usersTable->findIndex(Role::USER);
         foreach ($users as $user) {
-            $resources = $resourcesTable->findIndex($user->get('id'));
+            $resources = $resourcesTable->findIndex($user->get('id'))->contain(['SecretRevisions']);
             foreach ($resources as $resource) {
                 /** @var \Cake\ORM\Entity $user */
                 $armoredPassword = $this->_encrypt('dummy password', $user);
@@ -77,6 +99,7 @@ class SecretsDataCommand extends DataCommand
                     'id' => UuidFactory::uuid("secret.id.{$resource->get('id')}-{$user->get('id')}"),
                     'user_id' => $user->get('id'),
                     'resource_id' => $resource->get('id'),
+                    'secret_revision_id' => $resource->get('secret_revisions')[0]->get('id'),
                     'data' => $armoredPassword,
                     'created_by' => $user->get('id'),
                     'created' => date('Y-m-d H:i:s'),

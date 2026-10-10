@@ -30,6 +30,7 @@ use Passbolt\AccountRecovery\Model\Entity\AccountRecoveryResponse;
 use Passbolt\AccountRecovery\Service\AccountRecoveryResponses\AccountRecoveryResponsesCreateService;
 use Passbolt\Locale\Service\GetUserLocaleService;
 use Passbolt\Locale\Service\LocaleService;
+use Passbolt\Rbacs\Service\Actions\RbacsControlledActionsInsertService;
 
 /**
  * Class AccountRecoveryResponseCreatedAllAdminsEmailRedactor
@@ -85,17 +86,19 @@ class AccountRecoveryResponseCreatedAllAdminsEmailRedactor implements Subscribed
         /** @var \Passbolt\AccountRecovery\Model\Entity\AccountRecoveryResponse $response */
         $response = $event->getSubject();
 
-        /** @var \App\Model\Entity\User $actingAdmin */
-        $actingAdmin = $this->Users->find()
+        /** @var \App\Model\Entity\User $actingUser */
+        $actingUser = $this->Users->find()
             ->where(['Users.id' => $response->modified_by])
             ->contain('Profiles')
             ->firstOrFail();
 
-        $admins = $this->Users->findAdmins()
-            ->where(['Users.id <>' => $actingAdmin->id])
-            ->contain([
-                'Profiles' => AvatarsTable::addContainAvatar(),
-            ]);
+        $recipients = $this->Users
+            ->find('adminsOrRbacActionGrantees', rbacActionName: RbacsControlledActionsInsertService::NAME_ACCOUNT_RECOVERY_REQUESTS_VIEW) // phpcs:ignore
+            ->find('notDisabled')
+            ->find('activeNotDeleted')
+            ->where(['Users.id <>' => $actingUser->id])
+            ->contain(['Profiles' => AvatarsTable::addContainAvatar()])
+            ->all();
 
         /** @var \App\Model\Entity\User $user */
         $user = $this->Users->find('notDisabled')
@@ -103,9 +106,9 @@ class AccountRecoveryResponseCreatedAllAdminsEmailRedactor implements Subscribed
             ->contain('Profiles')
             ->firstOrFail();
 
-        /** @var \App\Model\Entity\User $admin */
-        foreach ($admins as $admin) {
-            $emailCollection->addEmail($this->makeAdminEmail($user, $admin, $actingAdmin, $response));
+        /** @var \App\Model\Entity\User $recipient */
+        foreach ($recipients as $recipient) {
+            $emailCollection->addEmail($this->makeAdminEmail($user, $recipient, $actingUser, $response));
         }
 
         return $emailCollection;
@@ -113,35 +116,35 @@ class AccountRecoveryResponseCreatedAllAdminsEmailRedactor implements Subscribed
 
     /**
      * @param \App\Model\Entity\User $user User concerned
-     * @param \App\Model\Entity\User $recipient Admin being notified
-     * @param \App\Model\Entity\User $actingAdmin Admin approving the request
+     * @param \App\Model\Entity\User $recipient User being notified
+     * @param \App\Model\Entity\User $actingUser User who set the response status
      * @param \Passbolt\AccountRecovery\Model\Entity\AccountRecoveryResponse $response Account recovery response
      * @return \App\Notification\Email\Email
      */
     private function makeAdminEmail(
         User $user,
         User $recipient,
-        User $actingAdmin,
-        AccountRecoveryResponse $response
+        User $actingUser,
+        AccountRecoveryResponse $response,
     ): Email {
         $status = $response->isApproved() ? __('approved') : __('rejected');
         $locale = (new GetUserLocaleService())->getLocale($recipient->username);
         $subject = (new LocaleService())->translateString(
             $locale,
-            function () use ($status, $actingAdmin) {
+            function () use ($status, $actingUser): string {
                 return __(
                     'Account recovery response set to {0} by {1}.',
                     $status,
-                    $actingAdmin->profile->first_name
+                    $actingUser->profile->first_name,
                 );
-            }
+            },
         );
 
         $data = [
             'body' => [
                 'user' => $user,
                 'admin' => $recipient,
-                'actingAdmin' => $actingAdmin,
+                'actingAdmin' => $actingUser,
                 'created' => $response->modified,
                 'status' => $status,
             ],

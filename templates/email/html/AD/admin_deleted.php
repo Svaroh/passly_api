@@ -11,8 +11,9 @@
  * @license       https://opensource.org/licenses/AGPL-3.0 AGPL License
  * @link          https://www.passbolt.com Passbolt(tm)
  * @since         4.4.0
+ * @deprecated    5.15.0 Superseded by `AD/user_deleted.php`. Kept only for
+ *                backward compatibility with instances that override this file.
  *
- * @see \App\Notification\Email\Redactor\User\AdminDeleteEmailRedactor
  * @var \App\View\AppView $this
  * @var array $body
  */

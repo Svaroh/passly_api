@@ -86,7 +86,7 @@ class GroupsUsersDeleteService
             $deletedSecrets = $this->deleteLostAccessAssociatedSecrets($groupUser);
             $entitiesChangesDto->pushDeletedEntities($deletedSecrets);
             $this->deleteLostAccessAssociatedFavorites($groupUser);
-            $this->dispatchGroupUserRemovedEvent($uac, $groupUser);
+            $this->dispatchGroupUserRemovedEvent($uac, $groupUser, $entitiesChangesDto);
         });
 
         return $entitiesChangesDto;
@@ -127,6 +127,7 @@ class GroupsUsersDeleteService
             'user_id' => $groupUser->user_id,
             'resource_id IN' => $this->findLostAccessResourcesIdsQuery($groupUser),
         ];
+        /** @var array<\App\Model\Entity\Secret> $lostAccessSecrets */
         $lostAccessSecrets = $this->secretsTable->find()
             ->select(['id', 'resource_id', 'user_id'])
             ->where($lostAccessSecretsConditions)
@@ -170,11 +171,19 @@ class GroupsUsersDeleteService
      *
      * @param \App\Utility\UserAccessControl $uac The user at the origin of the operation
      * @param \App\Model\Entity\GroupsUser $groupUser The group user to delete.
+     * @param \App\Model\Dto\EntitiesChangesDto $entitiesChanges Entities changed during the delete (secrets, etc.).
      * @return void
      */
-    private function dispatchGroupUserRemovedEvent(UserAccessControl $uac, GroupsUser $groupUser): void
-    {
-        $eventData = ['groupUser' => $groupUser, 'accessControl' => $uac];
+    private function dispatchGroupUserRemovedEvent(
+        UserAccessControl $uac,
+        GroupsUser $groupUser,
+        EntitiesChangesDto $entitiesChanges,
+    ): void {
+        $eventData = [
+            'groupUser' => $groupUser,
+            'accessControl' => $uac,
+            'entitiesChanges' => $entitiesChanges,
+        ];
         $event = new Event(self::AFTER_GROUP_USER_DELETED_EVENT_NAME, $this, $eventData);
         $this->groupsUsersTable->getEventManager()->dispatch($event);
     }

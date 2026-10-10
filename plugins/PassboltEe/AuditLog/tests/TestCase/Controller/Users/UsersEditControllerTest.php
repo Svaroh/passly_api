@@ -67,12 +67,13 @@ class UsersEditControllerTest extends LogIntegrationTestCase
             'id' => $user->get('id'),
             'role_id' => $admin->role_id, // The user is now admin!
             'username' => $user->username,
-            'last_logged_in' => $user->last_logged_in->toIso8601String(),
             'profile' => [
                 'first_name' => $user->profile->first_name,
                 'last_name' => $user->profile->last_name,
+                'id' => $user->profile->id,
             ],
         ]];
+        $this->assertArrayNotHasKey('last_logged_in', $data);
         $this->assertSame($expected, $data);
         $this->assertSame($admin->id, $creator['id']);
         $this->assertSame($admin->profile->first_name, $creator['profile']['first_name']);

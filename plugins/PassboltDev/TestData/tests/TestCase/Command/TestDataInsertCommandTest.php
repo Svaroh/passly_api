@@ -36,6 +36,7 @@ use Passbolt\Folders\Test\Factory\FoldersRelationFactory;
 use Passbolt\Folders\Test\Factory\PermissionFactory;
 use Passbolt\Folders\Test\Factory\ResourceFactory;
 use Passbolt\ResourceTypes\Test\Factory\ResourceTypeFactory;
+use Passbolt\SecretRevisions\Test\Factory\SecretRevisionFactory;
 
 class TestDataInsertCommandTest extends TestCase
 {
@@ -94,6 +95,9 @@ class TestDataInsertCommandTest extends TestCase
         // Roles
         $this->assertEquals(3, RoleFactory::count());
 
+        // Secret Revisions
+        $this->assertEquals(50, SecretRevisionFactory::count());
+
         // Secrets
         $this->assertEquals(506, SecretFactory::count());
 
@@ -144,6 +148,9 @@ class TestDataInsertCommandTest extends TestCase
         $this->assertEquals(11, ResourceTypeFactory::count());
         // Permissions
         $this->assertEquals(60, PermissionFactory::count());
+
+        // Secret Revisions
+        $this->assertEquals(32, SecretRevisionFactory::count());
 
         // Roles
         $this->assertEquals(3, RoleFactory::count());
@@ -196,6 +203,9 @@ class TestDataInsertCommandTest extends TestCase
 
         // Roles
         $this->assertEquals(3, RoleFactory::count());
+
+        // Secret Revisions
+        $this->assertEquals(3050, SecretRevisionFactory::count());
 
         // Secrets
         $this->assertEquals(28050, SecretFactory::count());

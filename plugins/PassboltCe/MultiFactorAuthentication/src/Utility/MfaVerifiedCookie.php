@@ -39,14 +39,14 @@ class MfaVerifiedCookie
     public static function get(
         ServerRequest $request,
         string $token,
-        ?DateTime $expirationDate = null
+        ?DateTime $expirationDate = null,
     ): Cookie {
         /** @var \Cake\Http\Cookie\Cookie $mfaCookie */
         $mfaCookie = (new Cookie(self::MFA_COOKIE_ALIAS))
             ->withValue($token)
             ->withPath('/')
             ->withHttpOnly(true)
-            ->withSecure(AbstractSecureCookieService::isSslOrCookiesSecure($request));
+            ->withSecure(AbstractSecureCookieService::isHttpsOrCookiesSecure($request));
 
         if ($expirationDate !== null) {
             $mfaCookie = $mfaCookie->withExpiry($expirationDate);
@@ -68,6 +68,6 @@ class MfaVerifiedCookie
             ->withExpired()
             ->withPath('/')
             ->withHttpOnly(true)
-            ->withSecure(AbstractSecureCookieService::isSslOrCookiesSecure($request));
+            ->withSecure(AbstractSecureCookieService::isHttpsOrCookiesSecure($request));
     }
 }

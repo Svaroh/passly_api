@@ -20,7 +20,6 @@ namespace Passbolt\Sso\Service\Sso\PingOne;
 use Cake\Http\Exception\BadRequestException;
 use Cake\Routing\Router;
 use Exception;
-use GuzzleHttp\Client;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use Passbolt\Sso\Model\Dto\SsoSettingsDto;
 use Passbolt\Sso\Model\Dto\SsoSettingsPingOneDataDto;
@@ -41,13 +40,6 @@ class SsoPingOneService extends SsoOAuth2Service
         /** @var \Passbolt\Sso\Model\Dto\SsoSettingsPingOneDataDto $data */
         $data = $settings->data;
 
-        $collaborators = [];
-        $httpClient = $this->getCustomHttpClient();
-        // Set custom HTTP client when using self-signed SSL certificate
-        if ($httpClient instanceof Client) {
-            $collaborators['httpClient'] = $httpClient;
-        }
-
         return SsoProviderFactory::create(
             PingOneProvider::class,
             [
@@ -59,7 +51,7 @@ class SsoPingOneService extends SsoOAuth2Service
                 'environmentId' => $data->environment_id,
                 'emailClaim' => $data->email_claim,
             ],
-            $collaborators
+            ['httpClient' => $this->getCustomHttpClient()],
         );
     }
 

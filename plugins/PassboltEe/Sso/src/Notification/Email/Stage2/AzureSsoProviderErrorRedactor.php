@@ -90,6 +90,7 @@ class AzureSsoProviderErrorRedactor implements SubscribedEmailRedactorInterface
         /** @var \App\Model\Table\UsersTable $usersTable */
         $usersTable = $this->fetchTable('Users');
         // Get all the active admins to notify them
+        /** @var array<\App\Model\Entity\User> $recipients */
         $recipients = $usersTable
             ->findAdmins()
             ->find('notDisabled')
@@ -122,7 +123,7 @@ class AzureSsoProviderErrorRedactor implements SubscribedEmailRedactorInterface
             $recipient->locale,
             function () {
                 return __('Users are unable to log in via Azure SSO');
-            }
+            },
         );
 
         return new Email(
@@ -136,7 +137,7 @@ class AzureSsoProviderErrorRedactor implements SubscribedEmailRedactorInterface
                 ],
                 'title' => $subject,
             ],
-            self::TEMPLATE
+            self::TEMPLATE,
         );
     }
 

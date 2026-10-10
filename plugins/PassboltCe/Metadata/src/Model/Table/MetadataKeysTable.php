@@ -193,7 +193,7 @@ class MetadataKeysTable extends Table
                 ['fingerprint'],
                 __('The fingerprint is already in use.'),
             ),
-            ['errorField' => 'fingerprint']
+            ['errorField' => 'fingerprint'],
         );
         $rules->addCreate(new MaxNoOfActiveMetadataKeysRule(), 'maxNoOfActiveKeys', [
             'errorField' => 'fingerprint',
@@ -219,8 +219,8 @@ class MetadataKeysTable extends Table
     public function findActive(Query $query, array $options): Query
     {
         return $query->where([
-            $query->newExpr()->isNull('deleted'),
-            $query->newExpr()->isNull('expired'),
+            $query->expr()->isNull('deleted'),
+            $query->expr()->isNull('expired'),
         ]);
     }
 

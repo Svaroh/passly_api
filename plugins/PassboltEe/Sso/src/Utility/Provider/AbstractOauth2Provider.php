@@ -136,7 +136,7 @@ abstract class AbstractOauth2Provider extends AbstractProvider
         $request = $factory->getRequestWithOptions(
             'get',
             $this->getOpenIdConfigurationUri(),
-            []
+            [],
         );
 
         try {
@@ -162,7 +162,14 @@ abstract class AbstractOauth2Provider extends AbstractProvider
     public function validateOpenIdConfiguration(mixed $response): void
     {
         if (!is_array($response)) {
-            throw new InternalErrorException('Invalid response.');
+            $msg = sprintf('Invalid response. Expected array, got "%s".', gettype($response));
+            if (is_string($response)) {
+                // Cap excerpt to limit log volume on large/HTML responses; mb_strcut is UTF-8-safe.
+                $excerpt = mb_strcut($response, 0, 200, 'UTF-8');
+                // Escape newlines and control characters via JSON encoding so they don't corrupt log output.
+                $msg .= ' ' . sprintf('Response text (truncated): %s', json_encode($excerpt));
+            }
+            throw new InternalErrorException($msg);
         }
         if (!isset($response['jwks_uri'])) {
             throw new InternalErrorException('Invalid response. Missing JWKS URI');
@@ -304,7 +311,7 @@ abstract class AbstractOauth2Provider extends AbstractProvider
         if (!is_null($defaultAlg) && !is_string($defaultAlg)) {
             throw new InternalErrorException(__(
                 'The {0} configuration value should be a string or NULL.',
-                'passbolt.plugins.sso.security.jwks.defaultAlg'
+                'passbolt.plugins.sso.security.jwks.defaultAlg',
             ));
         }
 
@@ -318,7 +325,7 @@ abstract class AbstractOauth2Provider extends AbstractProvider
             throw new InternalErrorException(__(
                 'The {0} configuration value should be one of the following: {1}.',
                 'passbolt.plugins.sso.security.jwks.defaultAlg',
-                implode(', ', $allowedAlgValues)
+                implode(', ', $allowedAlgValues),
             ));
         }
     }

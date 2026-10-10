@@ -66,7 +66,7 @@ class UsersTableFindIndexTest extends TestCase
     public function testUsersTableFindIndex_ContainLastLoggedIn(): void
     {
         RoleFactory::make()->guest()->persist();
-        $active = UserFactory::make()->user()->active()->persist();
+        UserFactory::make()->user()->active()->persist();
         UserFactory::make()->user()->inactive()->persist();
         UserFactory::make()->user()->disabled()->persist();
         UserFactory::make()->user()->deleted()->persist();
@@ -85,7 +85,7 @@ class UsersTableFindIndexTest extends TestCase
             ->persist();
 
         $options = ['contain' => ['last_logged_in' => 1]];
-        $result = $this->Users->findIndex($active->role->name, $options);
+        $result = $this->Users->findIndex($admin->role->name, $options);
 
         /** @var \App\Model\Entity\User $user */
         foreach ($result->all()->toArray() as $user) {
@@ -116,6 +116,59 @@ class UsersTableFindIndexTest extends TestCase
             } else {
                 $this->assertNull($user->last_logged_in);
             }
+        }
+    }
+
+    /**
+     * Last logged in data should be hidden as the user role in findIndex method is non-admin.
+     *
+     * @covers \App\Model\Traits\Users\UsersFindersTrait
+     * @return void
+     */
+    public function testUsersTableFindIndex_NotContainLastLoggedInAsNonAdmin(): void
+    {
+        RoleFactory::make()->guest()->persist();
+        $active = UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now())->persist();
+        UserFactory::make()->user()->inactive()->lastLoggedIn(DateTime::now())->persist();
+        UserFactory::make()->user()->disabled()->lastLoggedIn(DateTime::now())->persist();
+        UserFactory::make()->user()->deleted()->lastLoggedIn(DateTime::now())->persist();
+        UserFactory::make(['last_logged_in' => DateTime::now()->subDays(2)])
+            ->admin()
+            ->active()
+            ->persist();
+
+        $options = ['contain' => ['last_logged_in' => 1]];
+        $result = $this->Users->findIndex($active->role->name, $options);
+
+        /** @var \App\Model\Entity\User $user */
+        foreach ($result->all()->toArray() as $user) {
+            $this->assertFalse($user->has('last_logged_in'));
+        }
+    }
+
+    /**
+     * Last logged in data should not be hidden as the user role in findIndex method is admin.
+     *
+     * @covers \App\Model\Traits\Users\UsersFindersTrait
+     * @return void
+     */
+    public function testUsersTableFindIndex_ContainLastLoggedInAsAdmin(): void
+    {
+        RoleFactory::make()->guest()->persist();
+        UserFactory::make()->user()->active()->lastLoggedIn(DateTime::now())->persist();
+        UserFactory::make()->user()->inactive()->lastLoggedIn(DateTime::now())->persist();
+        UserFactory::make()->user()->disabled()->lastLoggedIn(DateTime::now())->persist();
+        UserFactory::make()->user()->deleted()->lastLoggedIn(DateTime::now())->persist();
+        $admin = UserFactory::make(['last_logged_in' => DateTime::now()->subDays(2)])
+            ->admin()
+            ->active()
+            ->persist();
+
+        $result = $this->Users->findIndex($admin->role->name);
+
+        /** @var \App\Model\Entity\User $user */
+        foreach ($result->all()->toArray() as $user) {
+            $this->assertTrue($user->has('last_logged_in'));
         }
     }
 }

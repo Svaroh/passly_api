@@ -196,6 +196,75 @@ class ResourceTypesDeleteServiceTest extends AppTestCaseV5
         $sut->delete($uac, '🔥');
     }
 
+    public function testResourceTypesDelete_ErrorCannotDeleteLastActiveTypeAfterPriorSoftDelete(): void
+    {
+        MetadataTypesSettingsFactory::make()->v4()->persist();
+
+        /** @var \App\Model\Entity\User $admin */
+        $admin = UserFactory::make()->admin()->persist();
+        $uac = new UserAccessControl(Role::ADMIN, $admin->id);
+
+        // Target: last active row. Use a v4 slug so the default-version guard short-circuits
+        // and leaves `isTheOnlyOne` as the guard under test.
+        /** @var \Passbolt\ResourceTypes\Model\Entity\ResourceType $target */
+        $target = ResourceTypeFactory::make()->passwordString()->persist();
+        ResourceTypeFactory::make()->passwordAndDescription()->deleted()->persist();
+        ResourceTypeFactory::make()->standaloneTotp()->deleted()->persist();
+        ResourceTypeFactory::make()->v5PasswordString()->deleted()->persist();
+
+        $sut = new ResourceTypesDeleteService();
+        $this->expectException(BadRequestException::class);
+        $this->expectExceptionMessage('You cannot delete the last resource type available.');
+        $sut->delete($uac, $target->id);
+    }
+
+    public function testResourceTypesDelete_ErrorCannotDeleteLastActiveDefaultVersionAfterPriorSoftDelete(): void
+    {
+        MetadataTypesSettingsFactory::make()->v5()->persist();
+
+        /** @var \App\Model\Entity\User $admin */
+        $admin = UserFactory::make()->admin()->persist();
+        $uac = new UserAccessControl(Role::ADMIN, $admin->id);
+
+        // Target: last active v5 type. The default-version guard counts non-v4 types, so this exercises
+        // it directly. Active v4 rows are seeded so `isTheOnlyOne` cannot also fire and shadow the assertion.
+        /** @var \Passbolt\ResourceTypes\Model\Entity\ResourceType $target */
+        $target = ResourceTypeFactory::make()->v5PasswordString()->persist();
+        ResourceTypeFactory::make()->v5Default()->deleted()->persist();
+        ResourceTypeFactory::make()->v5StandaloneTotp()->deleted()->persist();
+        ResourceTypeFactory::make()->passwordString()->persist();
+        ResourceTypeFactory::make()->passwordAndDescription()->persist();
+
+        $sut = new ResourceTypesDeleteService();
+        $this->expectException(BadRequestException::class);
+        $this->expectExceptionMessage('You cannot delete the last resource type of the default version.');
+        $sut->delete($uac, $target->id);
+    }
+
+    public function testResourceTypesDelete_SuccessWhenMultipleActiveTypesRemain(): void
+    {
+        MetadataTypesSettingsFactory::make()->v4()->persist();
+
+        /** @var \App\Model\Entity\User $admin */
+        $admin = UserFactory::make()->admin()->persist();
+        $uac = new UserAccessControl(Role::ADMIN, $admin->id);
+
+        /** @var \Passbolt\ResourceTypes\Model\Entity\ResourceType $target */
+        $target = ResourceTypeFactory::make()->passwordString()->persist();
+        // Enough active rows that neither guard fires.
+        ResourceTypeFactory::make()->passwordAndDescription()->persist();
+        ResourceTypeFactory::make()->standaloneTotp()->persist();
+        ResourceTypeFactory::make()->v5PasswordString()->persist();
+        // Soft-deleted noise — must not inflate any count in a way that changes the outcome.
+        ResourceTypeFactory::make()->passwordDescriptionTotp()->deleted()->persist();
+        ResourceTypeFactory::make()->v5Default()->deleted()->persist();
+
+        (new ResourceTypesDeleteService())->delete($uac, $target->id);
+
+        $updated = ResourceTypeFactory::get($target->id);
+        $this->assertNotNull($updated->deleted);
+    }
+
     public function testResourceTypesDeleteService_UndoDelete_Success(): void
     {
         /** @var \App\Model\Entity\User $admin */

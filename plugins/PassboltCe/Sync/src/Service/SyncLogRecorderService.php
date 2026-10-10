@@ -76,7 +76,7 @@ class SyncLogRecorderService
                         'entity_id' => true,
                         'op' => true,
                         'created' => true,
-                    ]]
+                    ]],
                 );
             }
 
@@ -87,7 +87,7 @@ class SyncLogRecorderService
                 count($entityIds),
                 $op,
                 $entityType,
-                $e->getMessage()
+                $e->getMessage(),
             ));
         }
     }

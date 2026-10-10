@@ -84,7 +84,7 @@ class ResourcesShareService
      * @param \App\Service\Resources\ResourcesExpireResourcesServiceInterface $resourcesExpireResourcesService Service to expire resources that were consumed by users who lost access to them.
      */
     public function __construct(
-        ResourcesExpireResourcesServiceInterface $resourcesExpireResourcesService
+        ResourcesExpireResourcesServiceInterface $resourcesExpireResourcesService,
     ) {
         $this->GroupsUsers = $this->fetchTable('GroupsUsers');
         $this->Resources = $this->fetchTable('Resources');
@@ -109,26 +109,28 @@ class ResourcesShareService
         UserAccessControl $uac,
         string $resourceId,
         array $changes = [],
-        array $secrets = []
+        array $secrets = [],
     ): Resource {
         $resource = $this->getResource($resourceId);
+        $entitiesChanges = new EntitiesChangesDto();
 
         $this->Resources->getConnection()->transactional(
-            function () use ($uac, $resource, $changes, $secrets): void {
-                $entitiesChanges = $this->updatePermissions($uac, $resource, $changes);
+            function () use ($uac, $resource, $changes, $secrets, $entitiesChanges): void {
+                $entitiesChanges->merge($this->updatePermissions($uac, $resource, $changes));
                 $entitiesChanges->merge($this->updateSecrets($uac, $resource, $secrets));
                 $this->postAccessesGranted($uac, $entitiesChanges->getAddedEntities(Permission::class));
                 $this->postAccessesRevoked($uac, $resource, $entitiesChanges->getDeletedEntities(Permission::class));
                 $this->resourcesExpireResourcesService->expireResourcesForSecrets(
-                    $entitiesChanges->getDeletedEntities(Secret::class)
+                    $entitiesChanges->getDeletedEntities(Secret::class),
                 );
-            }
+            },
         );
 
         $event = new Event(self::SHARE_SUCCESS_EVENT_NAME, $this, [
             'resource' => $resource,
             'secrets' => $secrets,
             'ownerId' => $uac->getId(),
+            'entitiesChanges' => $entitiesChanges,
         ]);
         $this->getEventManager()->dispatch($event);
 
@@ -233,6 +235,7 @@ class ResourcesShareService
         if (empty($data)) {
             return $data;
         }
+        /** @var \Passbolt\SecretRevisions\Model\Entity\SecretRevision $secretRevision */
         $secretRevision = $this->Resources->SecretRevisions
             ->find('notDeleted')
             ->select('id')
@@ -332,8 +335,8 @@ class ResourcesShareService
      */
     private function postUserAccessRevoked(Resource $resource, string $userId): void
     {
-        // If the user still has access to the folder, don't alter the user tree.
-        $hasAccess = $this->userHasPermissionService->check(PermissionsTable::FOLDER_ACO, $resource->id, $userId);
+        // If the user still has access to the resource, don't alter the user tree.
+        $hasAccess = $this->userHasPermissionService->check(PermissionsTable::RESOURCE_ACO, $resource->id, $userId);
         if ($hasAccess) {
             return;
         }
@@ -374,7 +377,7 @@ class ResourcesShareService
 
                 // Don't commit the transaction.
                 return false;
-            }
+            },
         );
 
         // Extract the users that will require the secrets to be encrypted for.

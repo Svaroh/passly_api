@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace App\Service\AuthenticationTokens;
 
+use App\Error\Exception\CustomValidationException;
 use App\Model\Entity\AuthenticationToken;
 use Cake\ORM\Locator\LocatorAwareTrait;
 
@@ -36,23 +37,28 @@ class AuthenticationTokenConsumeService
      * @param string|null $expiry expiry, expressed in max duration, ex. "30 days". Default to values in config.
      * @return \App\Model\Entity\AuthenticationToken
      * @throws \Cake\Http\Exception\NotFoundException if token is not found
-     * @throws \App\Error\Exception\CustomValidationException if the token is expired or inactive
+     * @throws \App\Error\Exception\CustomValidationException if the token is expired, inactive, or lost a concurrent-consume race
      * @throws \Cake\Http\Exception\BadRequestException if token id is not a valid uuid
      */
     public function consumeActiveNotExpiredOrFail(
         string $token,
         string $userId,
         string $type,
-        ?string $expiry = null
+        ?string $expiry = null,
     ): AuthenticationToken {
         $authenticationToken = (new AuthenticationTokenGetService())
             ->getActiveNotExpiredOrFail($token, $userId, $type, $expiry);
 
-        if ($authenticationToken->isActive()) {
-            /** @var \App\Model\Table\AuthenticationTokensTable $authTokensTable */
-            $authTokensTable = $this->fetchTable('AuthenticationTokens');
-            $authTokensTable->setInactive($authenticationToken->token);
+        /** @var \App\Model\Table\AuthenticationTokensTable $authTokensTable */
+        $authTokensTable = $this->fetchTable('AuthenticationTokens');
+        if (!$authTokensTable->setInactive($authenticationToken->token)) {
+            // Lost the concurrent-consume race — mirror `getActiveOrFail`'s "already consumed" contract.
+            $error = ['token' => ['isActive' => __('The token is already consumed.')]];
+            throw new CustomValidationException(__('The authentication token is not valid.'), $error);
         }
+
+        $authenticationToken->set('active', false);
+        $authenticationToken->setDirty('active', false);
 
         return $authenticationToken;
     }

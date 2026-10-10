@@ -183,11 +183,10 @@ class FoldersDeleteService
 
         // Phase 1: BFS collection — traverse the tree level by level.
         while (!empty($currentFolderIds)) {
-            $children = $this->foldersRelationsTable->find()
+            $children = $this->foldersRelationsTable->unhydratedFind()
                 ->select(['foreign_model', 'foreign_id'])
                 ->where(['folder_parent_id IN' => $currentFolderIds])
                 ->distinct(['foreign_model', 'foreign_id'])
-                ->disableHydration()
                 ->all()
                 ->toArray();
 
@@ -249,13 +248,14 @@ class FoldersDeleteService
                 [
                     'foreign_id IN' => $nonDeletableItemIds,
                     'folder_parent_id IN' => $allDeletedFolderIds,
-                ]
+                ],
             );
         }
 
         // Soft-delete resources individually to preserve afterSoftDelete event chain
         // which cleans up each resource's folder relations.
         if (!empty($deletableResourceIds)) {
+            /** @var array<\App\Model\Entity\Resource> $resources */
             $resources = $this->resourcesTable->find()
                 ->select(['Resources.id', 'Resources.resource_type_id', 'ResourceTypes.id', 'ResourceTypes.deleted'])
                 ->contain(['ResourceTypes'])
@@ -303,7 +303,7 @@ class FoldersDeleteService
             ->bind(':aroForeignKey', $userId);
 
         return $this->permissionsTable
-            ->find()
+            ->unhydratedFind()
             ->select(['aco_foreign_key'])
             ->distinct('aco_foreign_key')
             ->where([
@@ -311,7 +311,6 @@ class FoldersDeleteService
                 'aco_foreign_key IN' => $itemIds,
                 'type >=' => Permission::UPDATE,
             ])
-            ->disableHydration()
             ->all()
             ->extract('aco_foreign_key')
             ->toArray();

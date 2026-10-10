@@ -65,11 +65,11 @@ class ApplicationTest extends TestCase
             RoutingMiddleware::class,
             UuidParserMiddleware::class,
             ApiVersionMiddleware::class,
-            SessionPreventExtensionMiddleware::class,
             BodyParserMiddleware::class,
             SessionAuthPreventDeletedOrDisabledUsersMiddleware::class,
             AuthenticationMiddleware::class,
             SetUserIdentityInRequestMiddleware::class,
+            SessionPreventExtensionMiddleware::class,
             GpgAuthHeadersMiddleware::class,
             CsrfProtectionMiddleware::class,
         ];

@@ -89,5 +89,6 @@ class SecretRevisionsResourceGetControllerTest extends LogIntegrationTestCase
             ],
         ], $log['data']);
         $this->assertSame($user->id, $log['creator']['id']);
+        $this->assertArrayNotHasKey('last_logged_in', $log['creator']);
     }
 }

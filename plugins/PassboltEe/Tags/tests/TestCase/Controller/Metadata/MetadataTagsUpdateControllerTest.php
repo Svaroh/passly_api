@@ -119,7 +119,7 @@ class MetadataTagsUpdateControllerTest extends AppIntegrationTestCaseV5
      * @group tag
      * @group TagUpdate
      */
-    public function testMetadataTagsUpdateController_Success_Shared(): void
+    public function testMetadataTagsUpdateController_Success_SharedKeyMetadataOnPersonalTag(): void
     {
         MetadataTypesSettingsFactory::make()->v5()->persist();
         /** @var \App\Model\Entity\User $user */
@@ -159,14 +159,98 @@ class MetadataTagsUpdateControllerTest extends AppIntegrationTestCaseV5
         $this->assertSame($metadataToUpdate, $response['metadata']);
         $this->assertSame($metadataKey->get('id'), $response['metadata_key_id']);
         $this->assertSame('shared_key', $response['metadata_key_type']);
-        $this->assertTrue($response['is_shared']);
-        // Assert database values
+        $this->assertFalse($response['is_shared']);
+        // Assert database values — is_shared stays false; the field is ignored on update
         $tag = TagFactory::firstOrFail(['id' => $tagId]);
         $this->assertSame($metadataToUpdate, $tag->get('metadata'));
         $this->assertSame($metadataKey->get('id'), $tag->get('metadata_key_id'));
         $this->assertSame('shared_key', $tag->get('metadata_key_type'));
-        $this->assertTrue($tag->get('is_shared'));
+        $this->assertFalse($tag->get('is_shared'));
         $this->assertNull($tag->get('slug'));
+    }
+
+    /**
+     * @group pro
+     * @group tag
+     * @group TagUpdate
+     */
+    public function testMetadataTagsUpdateController_NonAdminCannotPromotePersonalTagToShared(): void
+    {
+        MetadataTypesSettingsFactory::make()->v5()->persist();
+        /** @var \App\Model\Entity\User $user */
+        $user = UserFactory::make()
+            ->with('Gpgkeys', GpgkeyFactory::make()->withAdaKey())
+            ->user()
+            ->active()
+            ->persist();
+        /** @var \App\Model\Entity\Resource $resource */
+        $resource = ResourceFactory::make()->withPermissionsFor([$user])->persist();
+        $clearTextMetadata = json_encode(['object_type' => 'PASSBOLT_TAG_METADATA', 'slug' => 'old']);
+        $metadata = $this->encryptForUser($clearTextMetadata, $user, $this->getAdaNoPassphraseKeyInfo());
+        $tag = TagFactory::make()
+            ->isPersonalFor($resource, $user)
+            ->v5Fields(['metadata' => $metadata, 'metadata_key_id' => $user->gpgkey->id])
+            ->persist();
+        $newMetadata = json_encode(['object_type' => 'PASSBOLT_TAG_METADATA', 'slug' => 'new']);
+        $metadataToUpdate = $this->encryptForUser($newMetadata, $user, $this->getAdaNoPassphraseKeyInfo());
+        $this->logInAs($user);
+
+        $tagId = $tag->get('id');
+        $this->putJson("/tags/{$tagId}.json?api-version=v2", [
+            'metadata' => $metadataToUpdate,
+            'metadata_key_id' => $user->gpgkey->id,
+            'metadata_key_type' => MetadataKey::TYPE_USER_KEY,
+            'is_shared' => true,
+        ]);
+
+        $this->assertSuccess();
+        $updatedTag = TagFactory::firstOrFail(['id' => $tagId]);
+        $this->assertFalse($updatedTag->get('is_shared'));
+    }
+
+    public static function metadataTagsUpdateControllerIsSharedProvider(): array
+    {
+        return [[true], [false]];
+    }
+
+    /**
+     * @group pro
+     * @group tag
+     * @group TagUpdate
+     * @dataProvider metadataTagsUpdateControllerIsSharedProvider
+     */
+    public function testMetadataTagsUpdateController_IsSharedFieldIgnoredOnUpdate(bool $isSharedPayload): void
+    {
+        MetadataTypesSettingsFactory::make()->v5()->persist();
+        /** @var \App\Model\Entity\User $user */
+        $user = UserFactory::make()
+            ->with('Gpgkeys', GpgkeyFactory::make()->withAdaKey())
+            ->user()
+            ->active()
+            ->persist();
+        /** @var \App\Model\Entity\Resource $resource */
+        $resource = ResourceFactory::make()->withPermissionsFor([$user])->persist();
+        $clearTextMetadata = json_encode(['object_type' => 'PASSBOLT_TAG_METADATA', 'slug' => 'old']);
+        $metadata = $this->encryptForUser($clearTextMetadata, $user, $this->getAdaNoPassphraseKeyInfo());
+        $tag = TagFactory::make()
+            ->isPersonalFor($resource, $user)
+            ->v5Fields(['metadata' => $metadata, 'metadata_key_id' => $user->gpgkey->id])
+            ->persist();
+        $newMetadata = json_encode(['object_type' => 'PASSBOLT_TAG_METADATA', 'slug' => 'new']);
+        $metadataToUpdate = $this->encryptForUser($newMetadata, $user, $this->getAdaNoPassphraseKeyInfo());
+        $this->logInAs($user);
+
+        $tagId = $tag->get('id');
+        $this->putJson("/tags/{$tagId}.json?api-version=v2", [
+            'metadata' => $metadataToUpdate,
+            'metadata_key_id' => $user->gpgkey->id,
+            'metadata_key_type' => MetadataKey::TYPE_USER_KEY,
+            'is_shared' => $isSharedPayload,
+        ]);
+
+        $this->assertSuccess();
+        $updatedTag = TagFactory::firstOrFail(['id' => $tagId]);
+        $this->assertFalse($updatedTag->get('is_shared'));
     }
 
     /**
@@ -467,7 +551,7 @@ class MetadataTagsUpdateControllerTest extends AppIntegrationTestCaseV5
         /** @var \App\Model\Entity\Resource $resource */
         $resource = ResourceFactory::make()->withPermissionsFor([$ada])->persist();
         $tag = TagFactory::make(['slug' => 'special'])->isPersonalFor($resource, $ada)->persist();
-        $dto = MetadataTagDto::fromArray($tag->toArray());
+        $dto = MetadataTagDto::createFromArray($tag->toArray());
         $clearTextMetadata = json_encode($dto->getClearTextMetadata());
         $metadata = $this->encryptForUser($clearTextMetadata, $ada, $this->getAdaNoPassphraseKeyInfo());
         // login
@@ -510,7 +594,7 @@ class MetadataTagsUpdateControllerTest extends AppIntegrationTestCaseV5
         /** @var \App\Model\Entity\Resource $resource */
         $resource = ResourceFactory::make()->withPermissionsFor([$ada])->persist();
         $tag = TagFactory::make(['slug' => 'special'])->isPersonalFor($resource, $ada)->persist();
-        $dto = MetadataTagDto::fromArray($tag->toArray());
+        $dto = MetadataTagDto::createFromArray($tag->toArray());
         $clearTextMetadata = json_encode($dto->getClearTextMetadata());
         $metadata = $this->encryptForUser($clearTextMetadata, $ada, $this->getAdaNoPassphraseKeyInfo());
         // login

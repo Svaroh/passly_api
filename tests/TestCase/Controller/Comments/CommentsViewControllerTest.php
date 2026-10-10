@@ -68,8 +68,10 @@ class CommentsViewControllerTest extends AppIntegrationTestCase
         // Expected content.
         $this->assertCommentAttributes($this->_responseJsonBody[0]);
         $this->assertObjectHasAttribute('modifier', $this->_responseJsonBody[0]);
+        $this->assertObjectNotHasAttribute('last_logged_in', $this->_responseJsonBody[0]->modifier);
         $this->assertUserAttributes($this->_responseJsonBody[0]->modifier);
         $this->assertObjectHasAttribute('creator', $this->_responseJsonBody[0]);
+        $this->assertObjectNotHasAttribute('last_logged_in', $this->_responseJsonBody[0]->creator);
         $this->assertUserAttributes($this->_responseJsonBody[0]->creator);
     }
 

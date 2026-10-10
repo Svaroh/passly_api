@@ -38,29 +38,44 @@ class RecoverCompleteService extends AbstractCompleteService implements RecoverC
      * @throws \Cake\Http\Exception\BadRequestException if the authentication token is expired or invalid
      * @throws \Cake\Http\Exception\BadRequestException if the OpenPGP key is not provided or not a valid OpenPGP key
      * @throws \Cake\Http\Exception\BadRequestException if the OpenPGP key does not belong to the user
-     * @throws \Cake\Http\Exception\InternalErrorException if something went wrong when updating the data
+     * @throws \App\Error\Exception\CustomValidationException if the token was already consumed by a concurrent request
      * @param string $userId uuid of the user
      * @return void
      */
     public function complete(string $userId): void
     {
-        $user = $this->validateData($userId);
-        $token = $this->buildAuthenticationTokenEntity($userId);
+        $this->AuthenticationTokens->getConnection()->transactional(function () use ($userId): void {
+            $user = $this->validateData($userId);
+            $token = $this->buildAuthenticationTokenEntity($userId);
 
-        if (!$this->AuthenticationTokens->save($token)) {
-            throw new ValidationException(
-                __('Could not update the authentication token data.'),
-                $token,
-                $this->AuthenticationTokens
-            );
-        }
+            $this->consumeTokenOrFail($token);
 
-        $this->dispatchEvent(RecoverCompleteServiceInterface::COMPLETE_SUCCESS_EVENT_NAME, [
-            'user' => $user,
-            'data' => $this->request->getData(),
-            'clientIp' => $this->request->clientIp(),
-            'userAgent' => $this->request->getEnv('HTTP_USER_AGENT'),
-        ]);
+            if (!$this->AuthenticationTokens->save($token)) {
+                throw new ValidationException(
+                    __('Could not update the authentication token data.'),
+                    $token,
+                    $this->AuthenticationTokens,
+                );
+            }
+
+            $this->dispatchEvent(RecoverCompleteServiceInterface::COMPLETE_SUCCESS_EVENT_NAME, [
+                'user' => $user,
+                'data' => $this->request->getData(),
+                'clientIp' => $this->request->clientIp(),
+                'userAgent' => $this->request->getEnv('HTTP_USER_AGENT'),
+            ]);
+        });
+    }
+
+    /**
+     * Extension seam: subclasses may attach associations that `complete()` will cascade-save.
+     *
+     * @param string $userId User ID
+     * @return \App\Model\Entity\AuthenticationToken
+     */
+    protected function buildAuthenticationTokenEntity(string $userId): AuthenticationToken
+    {
+        return $this->getAndAssertToken($userId, AuthenticationToken::TYPE_RECOVER);
     }
 
     /**
@@ -83,21 +98,6 @@ class RecoverCompleteService extends AbstractCompleteService implements RecoverC
         }
 
         return $user;
-    }
-
-    /**
-     * Method to be extended if saving additional settings
-     *
-     * @param string $userId User ID
-     * @return \App\Model\Entity\AuthenticationToken
-     */
-    protected function buildAuthenticationTokenEntity(string $userId): AuthenticationToken
-    {
-        $token = $this->getAndAssertToken($userId, AuthenticationToken::TYPE_RECOVER);
-        // Deactivate the authentication token
-        $token->active = false;
-
-        return $token;
     }
 
     /**

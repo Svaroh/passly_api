@@ -39,12 +39,14 @@ class ResourceTypesIndexController extends AppController
         $this->assertJson();
         $resourceTypes = $resourceTypesFinder->find();
         if (Configure::read('passbolt.v5.enabled')) {
-            $options = $this->QueryString->get([
-                'contain' => ['resources_count'],
-                'filter' => ['is-deleted'],
-            ]);
+            $isAdmin = $this->User->isAdmin();
+            $whitelist = ['contain' => ['resources_count']];
+            if ($isAdmin) {
+                $whitelist['filter'] = ['is-deleted'];
+            }
+            $options = $this->QueryString->get($whitelist);
             $resourceTypesFinder->filter($resourceTypes, $options);
-            if ($this->User->isAdmin()) {
+            if ($isAdmin) {
                 $resourceTypesFinder->contain($resourceTypes, $options);
             }
         } else {

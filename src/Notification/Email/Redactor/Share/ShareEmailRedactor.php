@@ -92,6 +92,7 @@ class ShareEmailRedactor implements SubscribedEmailRedactorInterface
         if (!empty($userIds)) {
             // Get the details of whoever did the changes
             $owner = $this->usersTable->findFirstForEmail($ownerId);
+            /** @var array<\App\Model\Entity\User> $users */
             $users = $this->getUserFromIds($userIds)->all()->toArray();
 
             if (empty($users)) {
@@ -101,7 +102,7 @@ class ShareEmailRedactor implements SubscribedEmailRedactorInterface
 
             foreach ($users as $user) {
                 $emailCollection->addEmail(
-                    $this->createShareEmail($user, $owner, $resource, $secrets[$user->id])
+                    $this->createShareEmail($user, $owner, $resource, $secrets[$user->id]),
                 );
             }
         }
@@ -132,7 +133,7 @@ class ShareEmailRedactor implements SubscribedEmailRedactorInterface
      */
     private function createShareEmail(User $recipient, User $owner, Resource $resource, string $secret): Email
     {
-        $resourceDto = MetadataResourceDto::fromArray($resource->toArray());
+        $resourceDto = MetadataResourceDto::createFromArray($resource->toArray());
         $isV5 = $resourceDto->isV5();
 
         $subject = (new LocaleService())->translateString(
@@ -144,7 +145,7 @@ class ShareEmailRedactor implements SubscribedEmailRedactorInterface
                 }
 
                 return $subject;
-            }
+            },
         );
 
         $data = [

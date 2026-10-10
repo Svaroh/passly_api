@@ -21,12 +21,11 @@ use App\Service\Setup\SetupCompleteServiceInterface;
 use Cake\Core\BasePlugin;
 use Cake\Core\ContainerInterface;
 use Cake\Core\PluginApplicationInterface;
-use Cake\ORM\TableRegistry;
 use Passbolt\AccountRecovery\Event\ContainAccountRecoveryUserSettings;
 use Passbolt\AccountRecovery\Event\ContainPendingAccountRecoveryRequest;
 use Passbolt\AccountRecovery\Event\DeleteAccountRecoveryInfoOnUserDelete;
 use Passbolt\AccountRecovery\Event\Metadata\MetadataKeysBuildRulesListener;
-use Passbolt\AccountRecovery\Model\Entity\AccountRecoveryRequest;
+use Passbolt\AccountRecovery\Event\UsersModelInitializeEventListener;
 use Passbolt\AccountRecovery\Notification\AccountRecoveryEmailRedactorPool;
 use Passbolt\AccountRecovery\Notification\AccountRecoveryNotificationSettingsDefinition;
 use Passbolt\AccountRecovery\Service\Setup\AccountRecoveryRecoverCompleteService;
@@ -44,7 +43,6 @@ class AccountRecoveryPlugin extends BasePlugin
     {
         parent::bootstrap($app);
         $this->registerListeners($app);
-        $this->addAssociationsToUsersTable();
     }
 
     /**
@@ -72,30 +70,12 @@ class AccountRecoveryPlugin extends BasePlugin
     public function registerListeners(PluginApplicationInterface $app): void
     {
         $app->getEventManager()
+            ->on(new UsersModelInitializeEventListener())
             ->on(new AccountRecoveryEmailRedactorPool())
             ->on(new AccountRecoveryNotificationSettingsDefinition())
             ->on(new ContainAccountRecoveryUserSettings())
             ->on(new ContainPendingAccountRecoveryRequest())
             ->on(new DeleteAccountRecoveryInfoOnUserDelete())
             ->on(new MetadataKeysBuildRulesListener());
-    }
-
-    /**
-     * Defines additional associations related to the plugin
-     *
-     * @return void
-     */
-    public function addAssociationsToUsersTable(): void
-    {
-        $UsersTable = TableRegistry::getTableLocator()->get('Users');
-        $UsersTable->hasOne('Passbolt/AccountRecovery.AccountRecoveryUserSettings');
-        $UsersTable->hasOne('Passbolt/AccountRecovery.AccountRecoveryPrivateKeys');
-        $UsersTable->hasOne('PendingAccountRecoveryRequests', [
-            'className' => 'Passbolt/AccountRecovery.AccountRecoveryRequests',
-            'foreignKey' => 'user_id',
-            'conditions' => [
-                'PendingAccountRecoveryRequests.status' => AccountRecoveryRequest::ACCOUNT_RECOVERY_REQUEST_PENDING,
-            ],
-        ]);
     }
 }

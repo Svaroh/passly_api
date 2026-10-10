@@ -45,6 +45,8 @@ class BaseSolutionBootstrapper
 
         $this->addFeaturePluginIfEnabled($app, 'JwtAuthentication');
 
+        $app->addPlugin('Passbolt/Edition', ['bootstrap' => true, 'routes' => true]);
+
         // Add webinstaller plugin if not configured.
         if (!WebInstallerMiddleware::isConfigured()) {
             $app->addPlugin('Passbolt/WebInstaller', ['bootstrap' => true, 'routes' => true]);
@@ -56,6 +58,7 @@ class BaseSolutionBootstrapper
         Configure::write('passbolt.plugins.metadata.enabled', Configure::read('passbolt.v5.enabled'));
         $this->addFeaturePluginIfEnabled($app, 'Metadata');
         $this->addFeaturePluginIfEnabled($app, 'Rbacs');
+        $this->addFeaturePluginIfEnabled($app, 'OfflineMode');
         $app->addPlugin('Passbolt/AccountSettings', ['bootstrap' => true, 'routes' => true]);
         $app->addPlugin('Passbolt/Import', ['bootstrap' => true, 'routes' => true]);
         $app->addPlugin('Passbolt/InFormIntegration', ['bootstrap' => true, 'routes' => false]);
@@ -77,7 +80,7 @@ class BaseSolutionBootstrapper
             $app,
             'MultiFactorAuthentication',
             ['bootstrap' => true, 'routes' => true],
-            true
+            true,
         );
 
         $logEnabled = Configure::read('passbolt.plugins.log.enabled');
@@ -118,7 +121,7 @@ class BaseSolutionBootstrapper
         PluginApplicationInterface $app,
         string $name,
         array $config = [],
-        bool|callable $isEnabledByDefault = false
+        bool|callable $isEnabledByDefault = false,
     ): self {
         $config = array_merge(['bootstrap' => true, 'routes' => true], $config);
 

@@ -92,9 +92,11 @@ class ResourcesIndexControllerTest extends AppIntegrationTestCase
         // Contain creator.
         $this->assertObjectHasAttribute('creator', $this->_responseJsonBody[0]);
         $this->assertUserAttributes($this->_responseJsonBody[0]->creator);
+        $this->assertObjectNotHasAttribute('last_logged_in', $this->_responseJsonBody[0]->creator);
         // Contain modifier.
         $this->assertObjectHasAttribute('modifier', $this->_responseJsonBody[0]);
         $this->assertUserAttributes($this->_responseJsonBody[0]->modifier);
+        $this->assertObjectNotHasAttribute('last_logged_in', $this->_responseJsonBody[0]->modifier);
         // Contain permission.
         $this->assertObjectHasAttribute('permission', $this->_responseJsonBody[0]);
         $this->assertPermissionAttributes($this->_responseJsonBody[0]->permission);

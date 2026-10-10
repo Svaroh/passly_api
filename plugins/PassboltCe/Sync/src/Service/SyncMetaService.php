@@ -38,7 +38,7 @@ class SyncMetaService
             self::PROTOCOL,
             $this->epoch(),
             self::MAX_PAGE_SIZE,
-            (new SyncLogRetentionService())->retentionDays()
+            (new SyncLogRetentionService())->retentionDays(),
         );
     }
 

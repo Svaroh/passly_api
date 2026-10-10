@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace App\Test\TestCase\Controller\Roles;
 
+use App\Model\Entity\Role;
 use App\Service\Roles\RolesUpdateService;
 use App\Test\Factory\RoleFactory;
 use App\Test\Factory\UserFactory;
@@ -148,5 +149,35 @@ class RolesUpdateControllerTest extends RbacsIntegrationTestCase
         $this->logInAsAdmin();
         $this->postJson('/roles.json', ['name']);
         $this->assertResponseCode(400);
+    }
+
+    public function testRolesUpdateController_ErrorRenamingReservedRole(): void
+    {
+        $adminRole = RoleFactory::make()->admin()->persist();
+        $this->logInAsAdmin();
+
+        $this->putJson("/roles/$adminRole->id.json", ['name' => 'foobar']);
+
+        $this->assertResponseCode(400);
+        $this->assertResponseContains('A reserved role cannot be renamed.');
+        // DB row unchanged.
+        $reloaded = RoleFactory::get($adminRole->id);
+        $this->assertSame(Role::ADMIN, $reloaded->name);
+    }
+
+    public function testRolesUpdateController_Error_Name_InvisibleCharacters(): void
+    {
+        $role = RoleFactory::make(['name' => 'sales'])->persist();
+        $this->logInAsAdmin();
+
+        $this->putJson("/roles/$role->id.json", ['name' => "grow\u{00A0}th"]);
+
+        $this->assertResponseCode(400);
+        $response = $this->getResponseBodyAsArray();
+        $this->assertSame(
+            'The string should not contain invisible characters.',
+            $response['name']['noInvisibleCharacters'],
+        );
+        $this->assertSame('sales', RoleFactory::get($role->id)->name);
     }
 }

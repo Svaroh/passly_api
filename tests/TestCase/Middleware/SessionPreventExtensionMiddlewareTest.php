@@ -36,16 +36,18 @@ class SessionPreventExtensionMiddlewareTest extends TestCase
     public function testSessionPreventExtensionMiddleware_StoreSessionAccessTimeWhenNotPreventingSessionExtension()
     {
         $request = new ServerRequest();
-        $request = $request->withAttribute('params', ['controller' => 'AuthLoginController', 'action' => 'loginGet']);
+        $request = $request
+            ->withAttribute('params', ['controller' => 'AuthLoginController', 'action' => 'loginGet'])
+            ->withAttribute('identity', 'foo');
         $handler = $this->createMock(RequestHandlerInterface::class);
 
         $middleware = new SessionPreventExtensionMiddleware();
         $middleware->process($request, $handler);
 
         // The time of the request is stored in session as new middleware session time reference
-        $this->assertNotNull($_SESSION['SessionPreventExtensionMiddleware']['time']);
+        $this->assertNotNull($request->getSession()->read('SessionPreventExtensionMiddleware.time'));
         // The Cakephp time reference is not altered by the middleware
-        $this->assertArrayNotHasKey('Config', $_SESSION);
+        $this->assertNull($request->getSession()->read('Config'));
     }
 
     /**
@@ -55,7 +57,36 @@ class SessionPreventExtensionMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function testSessionPreventExtensionMiddleware_ReuseSessionAccessTimeWhenNotPreventingSessionExtension()
+    public function testSessionPreventExtensionMiddleware_ReuseSessionAccessTimeWhenPreventingSessionExtension()
+    {
+        $request = new ServerRequest();
+        $request = $request
+            ->withAttribute('params', ['controller' => 'AuthIsAuthenticated', 'action' => 'isAuthenticated'])
+            ->withAttribute('identity', 'foo');
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        // Insert a fake time reference in session.
+        $requestSession = $request->getSession();
+        $timeReference = 1234;
+        $requestSession->write(['SessionPreventExtensionMiddleware.time' => $timeReference]);
+
+        $middleware = new SessionPreventExtensionMiddleware();
+        $middleware->process($request, $handler);
+
+        // The middleware session time reference is not altered with the current request time.
+        $this->assertSame($timeReference, $request->getSession()->read('SessionPreventExtensionMiddleware.time'));
+        // The Cakephp time reference is altered with the previously stored middleware session time reference.
+        $this->assertSame($timeReference, $request->getSession()->read('Config.time'));
+    }
+
+    /**
+     * Ensure the middleware does not write in the session while requesting /auth/is-authenticated and the user is logged-out
+     * - The middleware session time reference is not altered with the current request time.
+     * - The Cakephp time reference is altered with the previously stored middleware session time reference.
+     *
+     * @return void
+     */
+    public function testSessionPreventExtensionMiddleware_DoNotReuseSessionAccessTimeOnIsAuthenticatedWhileNotLoggedIn()
     {
         $request = new ServerRequest();
         $request = $request->withAttribute('params', ['controller' => 'AuthIsAuthenticated', 'action' => 'isAuthenticated']);
@@ -68,9 +99,9 @@ class SessionPreventExtensionMiddlewareTest extends TestCase
         $middleware = new SessionPreventExtensionMiddleware();
         $middleware->process($request, $handler);
 
-        // The middleware session time reference is not altered with the current request time.
-        $this->assertEquals($timeReference, $_SESSION['SessionPreventExtensionMiddleware']['time']);
-        // The Cakephp time reference is altered with the previously stored middleware session time reference.
-        $this->assertEquals($timeReference, $_SESSION['Config']['time']);
+        // The time of the request is untouched (although in production the session would be empty)
+        $this->assertSame($timeReference, $request->getSession()->read('SessionPreventExtensionMiddleware.time'));
+        // The Cakephp time reference is not altered by the middleware
+        $this->assertNull($request->getSession()->read('Config'));
     }
 }

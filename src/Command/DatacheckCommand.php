@@ -41,16 +41,6 @@ class DatacheckCommand extends PassboltCommand
     use FeaturePluginAwareTrait;
 
     /**
-     * @var \Cake\Console\Arguments
-     */
-    private Arguments $args;
-
-    /**
-     * @var \Cake\Console\ConsoleIo
-     */
-    private ConsoleIo $io;
-
-    /**
      * @inheritDoc
      */
     public static function getCommandDescription(): string

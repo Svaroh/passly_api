@@ -65,7 +65,7 @@ class SyncLogRetentionServiceTest extends TestCase
                 'entity_id' => true,
                 'op' => true,
                 'created' => true,
-            ]]
+            ]],
         );
         $this->SyncLog->saveOrFail($entity);
     }

@@ -31,6 +31,565 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Adds the Nix development shell for local API tooling
 - Aligns Composer audit strict branch handling for the Passly fork
 
+## [5.16.0] - 2026-09-16
+### Added
+- PB-52633 Add support for Offline Mode
+
+### Fixed
+- PB-54100 Fix account recovery notifications are sent to deleted admins
+- PB-54504 Fix MissingTemplateException on .json endpoints when X-Requested-With: XMLHttpRequest is set
+- PB-54574 Fix lock-wait-timeout on DELETE during group edit that removes a user
+
+### Security
+- PB-54489 Upgrade phpseclib/phpseclib to 3.0.57 (CVE-2026-84308, AIKIDO-2026-730961)
+- PB-54532 Small upgrade for js-yaml
+
+### Maintenance
+- PB-49136 Update cakephp/migrations package to improve compatibility with PHP 8.5
+- PB-53658 Use Request to DTO Mapping to automatic mapping of request data
+- PB-53925 Add tests to assert session data do not trigger any code
+- PB-54144 Update the Passbolt logo
+- Renovate: Update adminer:standalone Docker digest
+- Renovate: Update dependency cakephp/cakephp to v5.4.2
+- Renovate: Update dependency composer/composer to v2.10.3
+- Renovate: Update dependency league/flysystem to v3.35.3
+
+## [5.16.0-test.1] - 2026-09-11
+### Added
+- PB-52633 Add support for Offline Mode
+
+### Fixed
+- PB-54100 Fix account recovery notifications are sent to deleted admins
+- PB-54504 Fix MissingTemplateException on .json endpoints when X-Requested-With: XMLHttpRequest is set
+- PB-54574 Fix lock-wait-timeout on DELETE during group edit that removes a user
+
+### Security
+- PB-54489 Upgrade phpseclib/phpseclib to 3.0.57 (CVE-2026-84308, AIKIDO-2026-730961)
+- PB-54532 Small upgrade for js-yaml
+
+### Maintenance
+- PB-49136 Update cakephp/migrations package to improve compatibility with PHP 8.5
+- PB-53658 Use Request to DTO Mapping to automatic mapping of request data
+- PB-53925 Add tests to assert session data do not trigger any code
+- PB-54144 Update the Passbolt logo
+- Renovate: Update adminer:standalone Docker digest
+- Renovate: Update dependency cakephp/cakephp to v5.4.2
+- Renovate: Update dependency composer/composer to v2.10.3
+- Renovate: Update dependency league/flysystem to v3.35.3
+
+## [5.15.0] - 2026-08-20
+### Added
+- PB-53238 Adds a healthcheck to warn users about PHP 8.2 end of life
+- PB-53302 Adds a V5150CreateSessionsTable migration to support database session storage
+- PB-53303 Adds a PurgeSessions command to prune expired database sessions
+- PB-53547 Adds a V5150AddSessionsModifiedIndex migration to speed up session cleanup
+- PB-53548 Adds a healthcheck entry reporting which session provider the application is using
+- PB-53639 Adds a healthcheck warning admins the SSO egress guard is off and will default on in the next version
+- PB-53885 Adds an allowDeleteAdministrators configuration to guard SCIM administrator deletion
+
+### Fixed
+- PB-44325 Hides the "last logged in" timestamp for non-admins from the API
+- PB-49590 Extends the admin-deletion email notification to also fire when a non-admin user is deleted
+- PB-52221 HTML-escapes SMTP trace data in the webinstaller before rendering
+- PB-52453 Closes personal-folder sharing bypass via blank metadata_key_type (Aikido#31150196)
+- PB-52454 Blocks non-admin promotion of a V5 personal tag to shared via PUT /tags/{id} (Aikido#31150196)
+- PB-52456 Blocks non-owner from unlinking shared V5 tags via POST /resources/{id}/tags (Aikido#31150196)
+- PB-53146 Removes stack traces from missing-route exception responses
+- PB-53180 Preserves historical permission levels in the activity log by no longer overwriting permissions_history on update
+- PB-53260 Preserves resource tags and favorite information when one of a user's accesses is revoked but not all
+- PB-53561 Rejects JWT tokens for disabled users
+- PB-53563 Excludes sessions from the SQL dump command
+- PB-53567 Rejects invisible characters in role names
+- PB-53725 Fixes SessionPreventExtensionMiddleware creating a phantom session row for unauthenticated requests when SESSION_DEFAULTS=database
+- PB-53815 Rejects invisible characters in group names, profile fields, resource names, folder names, and tag slugs
+
+### Security
+- PB-53111 Makes single-use authentication-token consumption atomic to prevent concurrent replay
+- PB-53210 Fixes security vulnerability advisories affecting the guzzlehttp/guzzle package (AIKIDO-2026-231561, GHSA-wm3w-8rrp-j577, AIKIDO-2026-793560, GHSA-94pj-82f3-465w)
+- PB-53215 Fixes SSO Provider URL allowing private-network SSRF (MFK-01)
+- PB-53223 Fixes stored XSS in the Account-Recovery Policy Update email (MFK-06)
+- PB-53357 Upgrades js-yaml (GCVE-0-2026-59869)
+- PB-53780 Upgrades squizlabs/php_codesniffer to 3.13.6 (CVE-2026-67434)
+- PB-53952 Upgrades js-yaml (GHSA-5p4m-2wfm-xmqj)
+
+### Maintenance
+- PB-51984 Removes remaining differences in the Webinstaller between CE and PRO repositories (MEP WP 7.2)
+- PB-53119 Migrates SettingsIndexController logic into a dedicated Service layer
+- PB-53270 Updates release version in file headers of the new user finders/tests (HLL)
+- PB-53407 Upgrades CakePHP to v5.4.1
+- PB-53453 Upgrades guzzlehttp/guzzle to 7.15.2
+- PB-53655 Removes the config/schema/sessions.sql file
+- PB-53874 Wires plugin table associations via Model.initialize instead of plugin bootstrap()
+- Renovate: Update dependency phpstan/phpstan to v1.12.34
+- Renovate: Update dependency duosecurity/duo_universal_php to v1.2.0
+- Renovate: Update dependency cakephp/authentication to v3.3.7
+- Renovate: Update dependency league/flysystem to v3.35.2
+- Renovate: Update dependency league/oauth2-client to v2.9.0
+- Renovate: Update dependency ramsey/uuid to v4.9.3
+- Renovate: Update dependency spomky-labs/otphp to v11.5.0
+- Renovate: Update dependency firebase/php-jwt to v7.1.0
+- Renovate: Update adminer:standalone Docker digest
+
+## [5.15.0-test.1] - 2026-08-18
+### Added
+- PB-53238 Adds a healthcheck to warn users about PHP 8.2 end of life
+- PB-53302 Adds a V5150CreateSessionsTable migration to support database session storage
+- PB-53303 Adds a PurgeSessions command to prune expired database sessions
+- PB-53547 Adds a V5150AddSessionsModifiedIndex migration to speed up session cleanup
+- PB-53548 Adds a healthcheck entry reporting which session provider the application is using
+- PB-53639 Adds a healthcheck warning admins the SSO egress guard is off and will default on in the next version
+- PB-53885 Adds an allowDeleteAdministrators configuration to guard SCIM administrator deletion
+
+### Fixed
+- PB-44325 Hides the "last logged in" timestamp for non-admins from the API
+- PB-49590 Extends the admin-deletion email notification to also fire when a non-admin user is deleted
+- PB-52221 HTML-escapes SMTP trace data in the webinstaller before rendering
+- PB-52453 Closes personal-folder sharing bypass via blank metadata_key_type (Aikido#31150196)
+- PB-52454 Blocks non-admin promotion of a V5 personal tag to shared via PUT /tags/{id} (Aikido#31150196)
+- PB-52456 Blocks non-owner from unlinking shared V5 tags via POST /resources/{id}/tags (Aikido#31150196)
+- PB-53146 Removes stack traces from missing-route exception responses
+- PB-53180 Preserves historical permission levels in the activity log by no longer overwriting permissions_history on update
+- PB-53260 Preserves resource tags and favorite information when one of a user's accesses is revoked but not all
+- PB-53561 Rejects JWT tokens for disabled users
+- PB-53563 Excludes sessions from the SQL dump command
+- PB-53567 Rejects invisible characters in role names
+- PB-53725 Fixes SessionPreventExtensionMiddleware creating a phantom session row for unauthenticated requests when SESSION_DEFAULTS=database
+- PB-53815 Rejects invisible characters in group names, profile fields, resource names, folder names, and tag slugs
+
+### Security
+- PB-53111 Makes single-use authentication-token consumption atomic to prevent concurrent replay
+- PB-53210 Fixes security vulnerability advisories affecting the guzzlehttp/guzzle package (AIKIDO-2026-231561, GHSA-wm3w-8rrp-j577, AIKIDO-2026-793560, GHSA-94pj-82f3-465w)
+- PB-53215 Fixes SSO Provider URL allowing private-network SSRF (MFK-01)
+- PB-53223 Fixes stored XSS in the Account-Recovery Policy Update email (MFK-06)
+- PB-53357 Upgrades js-yaml (GCVE-0-2026-59869)
+- PB-53780 Upgrades squizlabs/php_codesniffer to 3.13.6 (CVE-2026-67434)
+- PB-53952 Upgrades js-yaml (GHSA-5p4m-2wfm-xmqj)
+
+### Maintenance
+- PB-51984 Removes remaining differences in the Webinstaller between CE and PRO repositories (MEP WP 7.2)
+- PB-53119 Migrates SettingsIndexController logic into a dedicated Service layer
+- PB-53270 Updates release version in file headers of the new user finders/tests (HLL)
+- PB-53407 Upgrades CakePHP to v5.4.1
+- PB-53453 Upgrades guzzlehttp/guzzle to 7.15.2
+- PB-53655 Removes the config/schema/sessions.sql file
+- PB-53874 Wires plugin table associations via Model.initialize instead of plugin bootstrap()
+- Renovate: Update dependency phpstan/phpstan to v1.12.34
+- Renovate: Update dependency duosecurity/duo_universal_php to v1.2.0
+- Renovate: Update dependency cakephp/authentication to v3.3.7
+- Renovate: Update dependency league/flysystem to v3.35.2
+- Renovate: Update dependency league/oauth2-client to v2.9.0
+- Renovate: Update dependency ramsey/uuid to v4.9.3
+- Renovate: Update dependency spomky-labs/otphp to v11.5.0
+- Renovate: Update dependency firebase/php-jwt to v7.1.0
+- Renovate: Update adminer:standalone Docker digest
+
+## [5.14.3] - 2026-08-06
+### Fixed
+- PB-53457 Fix env()-backed config flags to enforce strict boolean type
+- PB-53498 Fix CSRF cookie not working over HTTP deployments
+
+## [5.14.3-test.1] - 2026-08-04
+### Fixed
+- PB-53457 Fix env()-backed config flags to enforce strict boolean type
+- PB-53498 Fix CSRF cookie not working over HTTP deployments
+
+## [5.14.0] - 2026-07-20
+### Added
+- PB-49943 Add a model cache health check service
+- PB-50621 Add recover flow support for OAuth2 & ADFS SSO providers
+- PB-52153 Add a command to insert dummy data into the email_queue table
+- PB-52421 Add more verbose logs when an SSO provider response is in an incorrect format
+
+### Fixed
+- PB-48004 Fix deprecation warnings in makeCsrfCookieSecureIfRequestIsSsl
+- PB-52585 Fix resource sharing after inserting dummy data
+- PB-52727 Fix typo in SSO settings activated email
+- PB-52952 Return 400 instead of 409 when the email is not found in the expected place from a SCIM IdP
+- PB-52592 Fix account recovery response email not being sent to custom RBAC roles
+- PB-53118 Fix unsuspend action using LDAP with AD is not working as expected
+
+### Security
+- PB-29515 Fix MFA remember me policy bypass (INC-2046)
+- PB-32421 Validate and filter user-edit request data via a modeless form instead of `UsersEditController::_validateRequestData`
+- PB-51819 Upgrade composer/composer (AIKIDO-2026-688935)
+- PB-52440 Fix a disabled TOTP provider still being able to mint an MFA verification cookie via non-JSON `/mfa/verify/totp`
+- PB-52441 Fix refresh-token rotation being replayable concurrently due to non-atomic consumption
+- PB-52452 Harden secret revocation on share
+- PB-52457 Block renaming of reserved roles to close a delete-protection bypass
+- PB-52461 Fix last-resource-type guard incorrectly counting soft-deleted rows
+- PB-52463 Restrict `filter[is-deleted]` on the resource-types index to admins only
+- PB-52538 Upgrade js-yaml
+- PB-52599 Upgrade spomky-labs/otphp (GHSA-g7m4-839x-ch6v, GHSA-2jx3-65f3-xr8r)
+- PB-52687 Fix composer security advisory affecting the cakephp/authentication package (CVE-2026-55590)
+- PB-52695 Fix Aikido advisory in the guzzlehttp/guzzle library (AIKIDO-2026-646305)
+- PB-52696 Upgrade phpseclib/phpseclib (GHSA-m557-wrgg-6rp4)
+- PB-53143 Update CakePHP version to 5.3.7
+
+### Maintenance
+- PB-50620 Move the SSO Azure `stage3.php` template to `success/stage3.php`
+- PB-52146 Allow additional database drivers to be registered in the healthcheck via dependency injection
+- PB-52285 Add test to verify JWT refresh token behaviour with a suspended user
+- PB-52553 Add PostgreSQL support to the create_passbolt_db script
+- Renovate: Update dependency bacon/bacon-qr-code to v3.1.1
+- Renovate: Update dependency cakephp/debug_kit to v5.2.4
+- Renovate: Update dependency cakephp/plugin-installer to v2.0.2
+- Renovate: Update dependency composer/composer to v2.10.2
+- Renovate: Update dependency directorytree/ldaprecord to v3.8.6
+- Renovate: Update dependency donatj/phpuseragentparser to v1.12.0
+- Renovate: Update dependency ergebnis/phpunit-slow-test-detector to v2.24.0
+- Renovate: Update dependency imagine/imagine to v1.5.4
+- Renovate: Update dependency phpstan/phpstan to v1.12.33
+- Renovate: Update dependency phpunit/phpunit to v11.5.55
+- Renovate: Update dependency psalm/phar to v6.16.1
+- Renovate: Update dependency seec/phpunit-consecutive-params to v1.2
+
+## [5.14.0-test.5] - 2026-07-27
+### Added
+- PB-49943 Add a model cache health check service
+- PB-50621 Add recover flow support for OAuth2 & ADFS SSO providers
+- PB-52153 Add a command to insert dummy data into the email_queue table
+- PB-52421 Add more verbose logs when an SSO provider response is in an incorrect format
+
+### Fixed
+- PB-48004 Fix deprecation warnings in makeCsrfCookieSecureIfRequestIsSsl
+- PB-52585 Fix resource sharing after inserting dummy data
+- PB-52727 Fix typo in SSO settings activated email
+- PB-52952 Return 400 instead of 409 when the email is not found in the expected place from a SCIM IdP
+- PB-52592 Fix account recovery response email not being sent to custom RBAC roles
+- PB-53118 Fix unsuspend action using LDAP with AD is not working as expected
+
+### Security
+- PB-29515 Fix MFA remember me policy bypass (INC-2046)
+- PB-32421 Validate and filter user-edit request data via a modeless form instead of `UsersEditController::_validateRequestData`
+- PB-51819 Upgrade composer/composer (AIKIDO-2026-688935)
+- PB-52440 Fix a disabled TOTP provider still being able to mint an MFA verification cookie via non-JSON `/mfa/verify/totp`
+- PB-52441 Fix refresh-token rotation being replayable concurrently due to non-atomic consumption
+- PB-52452 Harden secret revocation on share
+- PB-52457 Block renaming of reserved roles to close a delete-protection bypass
+- PB-52461 Fix last-resource-type guard incorrectly counting soft-deleted rows
+- PB-52463 Restrict `filter[is-deleted]` on the resource-types index to admins only
+- PB-52538 Upgrade js-yaml
+- PB-52599 Upgrade spomky-labs/otphp (GHSA-g7m4-839x-ch6v, GHSA-2jx3-65f3-xr8r)
+- PB-52687 Fix composer security advisory affecting the cakephp/authentication package (CVE-2026-55590)
+- PB-52695 Fix Aikido advisory in the guzzlehttp/guzzle library (AIKIDO-2026-646305)
+- PB-52696 Upgrade phpseclib/phpseclib (GHSA-m557-wrgg-6rp4)
+- PB-53143 Update CakePHP version to 5.3.7
+
+### Maintenance
+- PB-50620 Move the SSO Azure `stage3.php` template to `success/stage3.php`
+- PB-52146 Allow additional database drivers to be registered in the healthcheck via dependency injection
+- PB-52285 Add test to verify JWT refresh token behaviour with a suspended user
+- PB-52553 Add PostgreSQL support to the create_passbolt_db script
+- Renovate: Update dependency bacon/bacon-qr-code to v3.1.1
+- Renovate: Update dependency cakephp/debug_kit to v5.2.4
+- Renovate: Update dependency cakephp/plugin-installer to v2.0.2
+- Renovate: Update dependency composer/composer to v2.10.2
+- Renovate: Update dependency directorytree/ldaprecord to v3.8.6
+- Renovate: Update dependency donatj/phpuseragentparser to v1.12.0
+- Renovate: Update dependency ergebnis/phpunit-slow-test-detector to v2.24.0
+- Renovate: Update dependency imagine/imagine to v1.5.4
+- Renovate: Update dependency phpstan/phpstan to v1.12.33
+- Renovate: Update dependency phpunit/phpunit to v11.5.55
+- Renovate: Update dependency psalm/phar to v6.16.1
+- Renovate: Update dependency seec/phpunit-consecutive-params to v1.2
+
+## [5.14.0-test.4] - 2026-07-16
+### Added
+- PB-49943 Add a model cache health check service
+- PB-50621 Add recover flow support for OAuth2 & ADFS SSO providers
+- PB-52153 Add a command to insert dummy data into the email_queue table
+- PB-52421 Add more verbose logs when an SSO provider response is in an incorrect format
+
+### Fixed
+- PB-48004 Fix deprecation warnings in makeCsrfCookieSecureIfRequestIsSsl
+- PB-52585 Fix resource sharing after inserting dummy data
+- PB-52727 Fix typo in SSO settings activated email
+- PB-52952 Return 400 instead of 409 when the email is not found in the expected place from a SCIM IdP
+- PB-52592 Fix account recovery response email not being sent to custom RBAC roles
+- PB-53118 Fix unsuspend action using LDAP with AD is not working as expected
+
+### Security
+- PB-29515 Fix MFA remember me policy bypass (INC-2046)
+- PB-32421 Validate and filter user-edit request data via a modeless form instead of `UsersEditController::_validateRequestData`
+- PB-51819 Upgrade composer/composer (AIKIDO-2026-688935)
+- PB-52440 Fix a disabled TOTP provider still being able to mint an MFA verification cookie via non-JSON `/mfa/verify/totp`
+- PB-52441 Fix refresh-token rotation being replayable concurrently due to non-atomic consumption
+- PB-52452 Harden secret revocation on share
+- PB-52457 Block renaming of reserved roles to close a delete-protection bypass
+- PB-52461 Fix last-resource-type guard incorrectly counting soft-deleted rows
+- PB-52463 Restrict `filter[is-deleted]` on the resource-types index to admins only
+- PB-52538 Upgrade js-yaml
+- PB-52599 Upgrade spomky-labs/otphp (GHSA-g7m4-839x-ch6v, GHSA-2jx3-65f3-xr8r)
+- PB-52687 Fix composer security advisory affecting the cakephp/authentication package (CVE-2026-55590)
+- PB-52695 Fix Aikido advisory in the guzzlehttp/guzzle library (AIKIDO-2026-646305)
+- PB-52696 Upgrade phpseclib/phpseclib (GHSA-m557-wrgg-6rp4)
+- PB-53143 Update CakePHP version to 5.3.7
+
+### Maintenance
+- PB-50620 Move the SSO Azure `stage3.php` template to `success/stage3.php`
+- PB-52146 Allow additional database drivers to be registered in the healthcheck via dependency injection
+- PB-52285 Add test to verify JWT refresh token behaviour with a suspended user
+- PB-52553 Add PostgreSQL support to the create_passbolt_db script
+- Renovate: Update dependency bacon/bacon-qr-code to v3.1.1
+- Renovate: Update dependency cakephp/debug_kit to v5.2.4
+- Renovate: Update dependency cakephp/plugin-installer to v2.0.2
+- Renovate: Update dependency composer/composer to v2.10.2
+- Renovate: Update dependency directorytree/ldaprecord to v3.8.6
+- Renovate: Update dependency donatj/phpuseragentparser to v1.12.0
+- Renovate: Update dependency ergebnis/phpunit-slow-test-detector to v2.24.0
+- Renovate: Update dependency imagine/imagine to v1.5.4
+- Renovate: Update dependency phpstan/phpstan to v1.12.33
+- Renovate: Update dependency phpunit/phpunit to v11.5.55
+- Renovate: Update dependency psalm/phar to v6.16.1
+- Renovate: Update dependency seec/phpunit-consecutive-params to v1.2
+
+## [5.14.0-test.3] - 2026-07-15
+### Added
+- PB-49943 Add a model cache health check service
+- PB-50621 Add recover flow support for OAuth2 & ADFS SSO providers
+- PB-52153 Add a command to insert dummy data into the email_queue table
+- PB-52421 Add more verbose logs when an SSO provider response is in an incorrect format
+
+### Fixed
+- PB-48004 Fix deprecation warnings in makeCsrfCookieSecureIfRequestIsSsl
+- PB-52585 Fix resource sharing after inserting dummy data
+- PB-52727 Fix typo in SSO settings activated email
+- PB-52952 Return 400 instead of 409 when the email is not found in the expected place from a SCIM IdP
+- PB-52592 Fix account recovery response email not being sent to custom RBAC roles
+- PB-53118 Fix unsuspend action using LDAP with AD is not working as expected
+
+### Security
+- PB-29515 Fix MFA remember me policy bypass (INC-2046)
+- PB-32421 Validate and filter user-edit request data via a modeless form instead of `UsersEditController::_validateRequestData`
+- PB-51819 Upgrade composer/composer (AIKIDO-2026-688935)
+- PB-52440 Fix a disabled TOTP provider still being able to mint an MFA verification cookie via non-JSON `/mfa/verify/totp`
+- PB-52441 Fix refresh-token rotation being replayable concurrently due to non-atomic consumption
+- PB-52452 Harden secret revocation on share
+- PB-52457 Block renaming of reserved roles to close a delete-protection bypass
+- PB-52461 Fix last-resource-type guard incorrectly counting soft-deleted rows
+- PB-52463 Restrict `filter[is-deleted]` on the resource-types index to admins only
+- PB-52538 Upgrade js-yaml
+- PB-52599 Upgrade spomky-labs/otphp (GHSA-g7m4-839x-ch6v, GHSA-2jx3-65f3-xr8r)
+- PB-52687 Fix composer security advisory affecting the cakephp/authentication package (CVE-2026-55590)
+- PB-52695 Fix Aikido advisory in the guzzlehttp/guzzle library (AIKIDO-2026-646305)
+- PB-52696 Upgrade phpseclib/phpseclib (GHSA-m557-wrgg-6rp4)
+- PB-53143 Update CakePHP version to 5.3.7
+
+### Maintenance
+- PB-50620 Move the SSO Azure `stage3.php` template to `success/stage3.php`
+- PB-52146 Allow additional database drivers to be registered in the healthcheck via dependency injection
+- PB-52285 Add test to verify JWT refresh token behaviour with a suspended user
+- PB-52553 Add PostgreSQL support to the create_passbolt_db script
+- Renovate: Update dependency bacon/bacon-qr-code to v3.1.1
+- Renovate: Update dependency cakephp/debug_kit to v5.2.4
+- Renovate: Update dependency cakephp/plugin-installer to v2.0.2
+- Renovate: Update dependency composer/composer to v2.10.2
+- Renovate: Update dependency directorytree/ldaprecord to v3.8.6
+- Renovate: Update dependency donatj/phpuseragentparser to v1.12.0
+- Renovate: Update dependency ergebnis/phpunit-slow-test-detector to v2.24.0
+- Renovate: Update dependency imagine/imagine to v1.5.4
+- Renovate: Update dependency phpstan/phpstan to v1.12.33
+- Renovate: Update dependency phpunit/phpunit to v11.5.55
+- Renovate: Update dependency psalm/phar to v6.16.1
+- Renovate: Update dependency seec/phpunit-consecutive-params to v1.2
+
+## [5.14.0-test.2] - 2026-07-14
+### Added
+- PB-49943 Add a model cache health check service
+- PB-50621 Add recover flow support for OAuth2 & ADFS SSO providers
+- PB-52153 Add a command to insert dummy data into the email_queue table
+- PB-52421 Add more verbose logs when an SSO provider response is in an incorrect format
+
+### Fixed
+- PB-48004 Fix deprecation warnings in makeCsrfCookieSecureIfRequestIsSsl
+- PB-52585 Fix resource sharing after inserting dummy data
+- PB-52727 Fix typo in SSO settings activated email
+- PB-52952 Return 400 instead of 409 when the email is not found in the expected place from a SCIM IdP
+- PB-52592 Fix account recovery response email not being sent to custom RBAC roles
+
+### Security
+- PB-29515 Fix MFA remember me policy bypass (INC-2046)
+- PB-32421 Validate and filter user-edit request data via a modeless form instead of `UsersEditController::_validateRequestData`
+- PB-51819 Upgrade composer/composer (AIKIDO-2026-688935)
+- PB-52440 Fix a disabled TOTP provider still being able to mint an MFA verification cookie via non-JSON `/mfa/verify/totp`
+- PB-52441 Fix refresh-token rotation being replayable concurrently due to non-atomic consumption
+- PB-52452 Harden secret revocation on share
+- PB-52457 Block renaming of reserved roles to close a delete-protection bypass
+- PB-52461 Fix last-resource-type guard incorrectly counting soft-deleted rows
+- PB-52463 Restrict `filter[is-deleted]` on the resource-types index to admins only
+- PB-52538 Upgrade js-yaml
+- PB-52599 Upgrade spomky-labs/otphp (GHSA-g7m4-839x-ch6v, GHSA-2jx3-65f3-xr8r)
+- PB-52687 Fix composer security advisory affecting the cakephp/authentication package (CVE-2026-55590)
+- PB-52695 Fix Aikido advisory in the guzzlehttp/guzzle library (AIKIDO-2026-646305)
+- PB-52696 Upgrade phpseclib/phpseclib (GHSA-m557-wrgg-6rp4)
+- PB-53143 Update CakePHP version to 5.3.7
+
+### Maintenance
+- PB-50620 Move the SSO Azure `stage3.php` template to `success/stage3.php`
+- PB-52146 Allow additional database drivers to be registered in the healthcheck via dependency injection
+- PB-52285 Add test to verify JWT refresh token behaviour with a suspended user
+- PB-52553 Add PostgreSQL support to the create_passbolt_db script
+- Renovate: Update dependency bacon/bacon-qr-code to v3.1.1
+- Renovate: Update dependency cakephp/debug_kit to v5.2.4
+- Renovate: Update dependency cakephp/plugin-installer to v2.0.2
+- Renovate: Update dependency composer/composer to v2.10.2
+- Renovate: Update dependency directorytree/ldaprecord to v3.8.6
+- Renovate: Update dependency donatj/phpuseragentparser to v1.12.0
+- Renovate: Update dependency ergebnis/phpunit-slow-test-detector to v2.24.0
+- Renovate: Update dependency imagine/imagine to v1.5.4
+- Renovate: Update dependency phpstan/phpstan to v1.12.33
+- Renovate: Update dependency phpunit/phpunit to v11.5.55
+- Renovate: Update dependency psalm/phar to v6.16.1
+- Renovate: Update dependency seec/phpunit-consecutive-params to v1.2
+
+## [5.14.0-test.1] - 2026-07-10
+### Added
+- PB-49943 Add a model cache health check service
+- PB-50621 Add recover flow support for OAuth2 & ADFS SSO providers
+- PB-52153 Add a command to insert dummy data into the email_queue table
+- PB-52421 Add more verbose logs when an SSO provider response is in an incorrect format
+
+### Fixed
+- PB-48004 Fix deprecation warnings in makeCsrfCookieSecureIfRequestIsSsl
+- PB-52585 Fix resource sharing after inserting dummy data
+- PB-52727 Fix typo in SSO settings activated email
+- PB-52952 Return 400 instead of 409 when the email is not found in the expected place from a SCIM IdP
+- PB-52592 Fix account recovery response email not being sent to custom RBAC roles
+
+### Security
+- PB-29515 Fix MFA remember me policy bypass (INC-2046)
+- PB-32421 Validate and filter user-edit request data via a modeless form instead of `UsersEditController::_validateRequestData`
+- PB-51819 Upgrade composer/composer (AIKIDO-2026-688935)
+- PB-52440 Fix a disabled TOTP provider still being able to mint an MFA verification cookie via non-JSON `/mfa/verify/totp`
+- PB-52441 Fix refresh-token rotation being replayable concurrently due to non-atomic consumption
+- PB-52452 Harden secret revocation on share
+- PB-52457 Block renaming of reserved roles to close a delete-protection bypass
+- PB-52461 Fix last-resource-type guard incorrectly counting soft-deleted rows
+- PB-52463 Restrict `filter[is-deleted]` on the resource-types index to admins only
+- PB-52538 Upgrade js-yaml
+- PB-52599 Upgrade spomky-labs/otphp (GHSA-g7m4-839x-ch6v, GHSA-2jx3-65f3-xr8r)
+- PB-52687 Fix composer security advisory affecting the cakephp/authentication package (CVE-2026-55590)
+- PB-52695 Fix Aikido advisory in the guzzlehttp/guzzle library (AIKIDO-2026-646305)
+- PB-52696 Upgrade phpseclib/phpseclib (GHSA-m557-wrgg-6rp4)
+- PB-53143 Update CakePHP version to 5.3.7
+
+### Maintenance
+- PB-50620 Move the SSO Azure `stage3.php` template to `success/stage3.php`
+- PB-52146 Allow additional database drivers to be registered in the healthcheck via dependency injection
+- PB-52285 Add test to verify JWT refresh token behaviour with a suspended user
+- PB-52553 Add PostgreSQL support to the create_passbolt_db script
+- Renovate: Update dependency bacon/bacon-qr-code to v3.1.1
+- Renovate: Update dependency cakephp/debug_kit to v5.2.4
+- Renovate: Update dependency cakephp/plugin-installer to v2.0.2
+- Renovate: Update dependency composer/composer to v2.10.2
+- Renovate: Update dependency directorytree/ldaprecord to v3.8.6
+- Renovate: Update dependency donatj/phpuseragentparser to v1.12.0
+- Renovate: Update dependency ergebnis/phpunit-slow-test-detector to v2.24.0
+- Renovate: Update dependency imagine/imagine to v1.5.4
+- Renovate: Update dependency phpstan/phpstan to v1.12.33
+- Renovate: Update dependency phpunit/phpunit to v11.5.55
+- Renovate: Update dependency psalm/phar to v6.16.1
+- Renovate: Update dependency seec/phpunit-consecutive-params to v1.2
+
+## [5.13.0] - 2026-06-11
+### Added
+- PB-42980 As an administrator I can upgrade my Passbolt CE instance to a Pro edition from the product
+- PB-42980 As an administrator I can downgrade my Passbolt Pro instance back to CE from the product
+- PB-51980 Adds a healthcheck that reports the edition currently served by the instance
+- PB-51533 As an admin I can contain my_group_user in PUT /groups.json
+- PB-52020 As an administrator I can run the healthcheck command if the DB is not reachable
+- PB-51039 Extends the /healthcheck/status.json endpoint to verify additional components such as the cache
+
+### Fixed
+- PB-51161 Stops folder cycle detection at the personal folder boundary
+- PB-50013 Fixes user session being destroyed in Safari when fetching avatar images from the web application
+- PB-52027 Fixes SCIM endpoints returning non-standard HTTP status codes
+- PB-51646 Fixes missing spaces in the email sent when a user lost their key/passphrase and recovery is aborted
+
+### Security
+- PB-52135 Upgrades mobiledetect/mobiledetectlib
+- PB-51940 Fixes qs security vulnerability advisory GHSA-q8mj-m7cp-5q26 (Medium)
+- PB-51639 Fixes PKSA-pwvr-3754-v57r security vulnerability advisory affecting composer/composer package
+- PB-51194 PBL-15-006: Fixes internal UUID still disclosed in SCIM user creation conflict response (Low)
+
+### Maintenance
+- PB-51650 Introduces ScimSettingsDto for the ScimGetSettingsService::getSettings()
+- PB-51647 Adds unit tests for GroupsUsersTable::isManager()
+- PB-52010 Removes cakephp/bake from composer dev requirements
+- PB-52126 Upgrades symfony/string to 7.4.13
+- PB-51570 Upgrades CakePHP to v5.3.6 and replaces _execute() calls with process() to fix deprecations
+- PB-52070 Fixes "Use expr() instead of newExpr()" deprecation warning after CakePHP upgrade
+- PB-48002 Removes security.prompt from the SSO configuration
+- PB-49755 Removes GitLab CI definition (moved to the ci-definitions repository)
+- PB-49425 Refactors DirectorySync controller tests using fixture factories
+- PB-35955 Refactors /healthcheck/status.json endpoint to use a pluggable default status strategy
+
+## [5.13.0-test.2] - 2026-06-10
+### Added
+- PB-42980 As an administrator I can upgrade my Passbolt CE instance to a Pro edition from the product
+- PB-42980 As an administrator I can downgrade my Passbolt Pro instance back to CE from the product
+- PB-51980 Adds a healthcheck that reports the edition currently served by the instance
+- PB-51533 As an admin I can contain my_group_user in PUT /groups.json
+- PB-52020 As an administrator I can run the healthcheck command if the DB is not reachable
+- PB-51039 Extends the /healthcheck/status.json endpoint to verify additional components such as the cache
+
+### Fixed
+- PB-51161 Stops folder cycle detection at the personal folder boundary
+- PB-50013 Fixes user session being destroyed in Safari when fetching avatar images from the web application
+- PB-52027 Fixes SCIM endpoints returning non-standard HTTP status codes
+- PB-51646 Fixes missing spaces in the email sent when a user lost their key/passphrase and recovery is aborted
+
+### Security
+- PB-52135 Upgrades mobiledetect/mobiledetectlib
+- PB-51940 Fixes qs security vulnerability advisory GHSA-q8mj-m7cp-5q26 (Medium)
+- PB-51639 Fixes PKSA-pwvr-3754-v57r security vulnerability advisory affecting composer/composer package
+- PB-51194 PBL-15-006: Fixes internal UUID still disclosed in SCIM user creation conflict response (Low)
+
+### Maintenance
+- PB-51650 Introduces ScimSettingsDto for the ScimGetSettingsService::getSettings()
+- PB-51647 Adds unit tests for GroupsUsersTable::isManager()
+- PB-52010 Removes cakephp/bake from composer dev requirements
+- PB-52126 Upgrades symfony/string to 7.4.13
+- PB-51570 Upgrades CakePHP to v5.3.6 and replaces _execute() calls with process() to fix deprecations
+- PB-52070 Fixes "Use expr() instead of newExpr()" deprecation warning after CakePHP upgrade
+- PB-48002 Removes security.prompt from the SSO configuration
+- PB-49755 Removes GitLab CI definition (moved to the ci-definitions repository)
+- PB-49425 Refactors DirectorySync controller tests using fixture factories
+- PB-35955 Refactors /healthcheck/status.json endpoint to use a pluggable default status strategy
+
+## [5.13.0-test.1] - 2026-06-09
+### Added
+- PB-42980 As an administrator I can upgrade my Passbolt CE instance to a Pro edition from the product
+- PB-42980 As an administrator I can downgrade my Passbolt Pro instance back to CE from the product
+- PB-51980 Adds a healthcheck that reports the edition currently served by the instance
+- PB-51533 As an admin I can contain my_group_user in PUT /groups.json
+- PB-52020 As an administrator I can run the healthcheck command if the DB is not reachable
+- PB-51039 Extends the /healthcheck/status.json endpoint to verify additional components such as the cache
+
+### Fixed
+- PB-51161 Stops folder cycle detection at the personal folder boundary
+- PB-50013 Fixes user session being destroyed in Safari when fetching avatar images from the web application
+- PB-52027 Fixes SCIM endpoints returning non-standard HTTP status codes
+- PB-51646 Fixes missing spaces in the email sent when a user lost their key/passphrase and recovery is aborted
+
+### Security
+- PB-52135 Upgrades mobiledetect/mobiledetectlib
+- PB-51940 Fixes qs security vulnerability advisory GHSA-q8mj-m7cp-5q26 (Medium)
+- PB-51639 Fixes PKSA-pwvr-3754-v57r security vulnerability advisory affecting composer/composer package
+- PB-51194 PBL-15-006: Fixes internal UUID still disclosed in SCIM user creation conflict response (Low)
+
+### Maintenance
+- PB-51650 Introduces ScimSettingsDto for the ScimGetSettingsService::getSettings()
+- PB-51647 Adds unit tests for GroupsUsersTable::isManager()
+- PB-52010 Removes cakephp/bake from composer dev requirements
+- PB-52126 Upgrades symfony/string to 7.4.13
+- PB-51570 Upgrades CakePHP to v5.3.6 and replaces _execute() calls with process() to fix deprecations
+- PB-52070 Fixes "Use expr() instead of newExpr()" deprecation warning after CakePHP upgrade
+- PB-48002 Removes security.prompt from the SSO configuration
+- PB-49755 Removes GitLab CI definition (moved to the ci-definitions repository)
+- PB-49425 Refactors DirectorySync controller tests using fixture factories
+- PB-35955 Refactors /healthcheck/status.json endpoint to use a pluggable default status strategy
+
 ## [5.12.0] - 2026-05-12
 ### Added
 - PB-51081 Adds pin code resource type
@@ -100,6 +659,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - PB-50914 Homogenize CE and Pro codebase
 - PB-51243 Fix activity logging breaking after instance reset while executing Selenium tests
 - PB-51428 Fix dev test data inserting empty definitions for v5 resource types
+
+## [5.12.0-test.1] - 2026-04-30
+### Added
+- PB-50963 Test package with PRO dependencies
 
 ## [5.12.0-test.1] - 2026-04-30
 ### Added

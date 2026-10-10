@@ -93,7 +93,7 @@ class ResourcesAddService
         if (!$this->shouldBypassV5ResourceCreationPolicy($resourceDto)) {
             $this->assertCreationAllowedByMetadataSettings(
                 $resourceDto->isV5(),
-                MetadataTypesSettingsDto::ENTITY_RESOURCE
+                MetadataTypesSettingsDto::ENTITY_RESOURCE,
             );
         }
 
@@ -224,7 +224,7 @@ class ResourcesAddService
     public function afterSave(
         Resource $resource,
         UserAccessControl $uac,
-        MetadataResourceDto $resourceDto
+        MetadataResourceDto $resourceDto,
     ): void {
         $this->handleValidationError($resource);
         $user = $this->Users->findFirstForEmail($uac->getId());
@@ -252,9 +252,9 @@ class ResourcesAddService
                 $this->afterSave(
                     $resource,
                     $uac,
-                    $resourceDto
+                    $resourceDto,
                 );
-            }
+            },
         );
     }
 }

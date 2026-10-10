@@ -66,11 +66,13 @@ class GroupsIndexControllerTest extends AppIntegrationTestCase
         $this->assertObjectHasAttribute('modifier', $this->_responseJsonBody[0]);
         $this->assertUserAttributes($this->_responseJsonBody[0]->modifier);
         $this->assertObjectHasAttribute('profile', $this->_responseJsonBody[0]->modifier);
+        $this->assertObjectNotHasAttribute('last_logged_in', $this->_responseJsonBody[0]->modifier);
         $this->assertProfileAttributes($this->_responseJsonBody[0]->modifier->profile);
         $this->assertObjectHasAttribute('users', $this->_responseJsonBody[0]);
         $this->assertUserAttributes($this->_responseJsonBody[0]->users[0]);
         $this->assertObjectHasAttribute('groups_users', $this->_responseJsonBody[0]);
         $this->assertGroupUserAttributes($this->_responseJsonBody[0]->groups_users[0]);
+        $this->assertObjectNotHasAttribute('last_logged_in', $this->_responseJsonBody[0]->users[0]);
 
         // A group Hedy is not member
         $groupA = array_reduce($this->_responseJsonBody, function ($carry, $item) use ($groupAId) {

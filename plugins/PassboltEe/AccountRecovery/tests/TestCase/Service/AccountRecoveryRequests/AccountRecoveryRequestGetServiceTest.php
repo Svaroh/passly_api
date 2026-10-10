@@ -36,7 +36,7 @@ class AccountRecoveryRequestGetServiceTest extends AccountRecoveryTestCase
     public function setUp(): void
     {
         parent::setUp();
-        (new AccountRecoveryPlugin())->addAssociationsToUsersTable();
+        (new AccountRecoveryPlugin())->bootstrap($this->stubApp());
     }
 
     public function testAccountRecoveryRequestGetService_Success_PendingStatus()

@@ -90,6 +90,7 @@ class AccountRecoveryRequestsIndexControllerTest extends AccountRecoveryIntegrat
     {
         $this->logInAsAdmin();
 
+        $user = UserFactory::make(['id' => UuidFactory::uuid('user.id.ada')])->persist();
         AccountRecoveryPrivateKeyFactory::make()
             ->setField('id', UuidFactory::uuid('acr.private_key.ada.id'))
             ->setField('user_id', UuidFactory::uuid('user.id.ada'))
@@ -101,7 +102,7 @@ class AccountRecoveryRequestsIndexControllerTest extends AccountRecoveryIntegrat
             ->setField('recipient_foreign_model', AccountRecoveryPrivateKeyPassword::RECIPIENT_FOREIGN_MODEL_ORGANIZATION_KEY)
             ->persist();
 
-        AccountRecoveryRequestFactory::make()
+        AccountRecoveryRequestFactory::make(['created_by' => $user->get('id')])
             ->setField('status', AccountRecoveryRequest::ACCOUNT_RECOVERY_REQUEST_APPROVED)
             ->setField('user_id', UuidFactory::uuid('user.id.ada'))
             ->with('AccountRecoveryResponses', AccountRecoveryResponseFactory::make()->patchData([
@@ -113,6 +114,7 @@ class AccountRecoveryRequestsIndexControllerTest extends AccountRecoveryIntegrat
             ->persist();
 
         $options = '?contain[armored_key]=1';
+        $options .= '&contain[creator]=1';
         $options .= '&contain[account_recovery_private_key_passwords]=1';
         $options .= '&contain[account_recovery_request_responses]=1';
         $this->getJson('/account-recovery/requests.json' . $options);
@@ -164,6 +166,9 @@ class AccountRecoveryRequestsIndexControllerTest extends AccountRecoveryIntegrat
         $this->assertTrue(!isset($r->data));
         $this->assertTrue(isset($r->created));
         $this->assertTrue(isset($r->modified));
+
+        // Check creator
+        $this->assertObjectNotHasAttribute('last_logged_in', $r1->creator);
     }
 
     public function testAccountRecoveryRequestsIndexController_Success_FilterHasUsersWithValidSearchString()

@@ -199,6 +199,7 @@ class AccountRecoveryRequestsViewControllerTest extends AccountRecoveryIntegrati
         $this->assertTrue(isset($this->_responseJsonBody->creator->profile));
         $this->assertTrue(isset($this->_responseJsonBody->creator->profile->avatar));
         $this->assertTrue(Validation::uuid($this->_responseJsonBody->creator->id));
+        $this->assertObjectNotHasAttribute('last_logged_in', $this->_responseJsonBody->creator);
 
         // Required to clear up associations
         $this->clearPlugins();

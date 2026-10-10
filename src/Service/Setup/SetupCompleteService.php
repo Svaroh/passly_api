@@ -49,9 +49,13 @@ class SetupCompleteService extends AbstractCompleteService implements SetupCompl
      */
     public function complete(string $userId, ?array $saveOptions = []): User
     {
-        $user = $this->buildUserEntity($userId);
+        return $this->AuthenticationTokens->getConnection()->transactional(
+            function () use ($userId, $saveOptions): User {
+                $user = $this->buildUserEntity($userId);
 
-        return $this->saveUserEntity($user, $saveOptions);
+                return $this->saveUserEntity($user, $saveOptions);
+            },
+        );
     }
 
     /**
@@ -74,7 +78,7 @@ class SetupCompleteService extends AbstractCompleteService implements SetupCompl
         //  Will break compat on recover for non compliant keys
         PublicKeyValidationService::parseAndValidatePublicKey(
             $gpgkey->armored_key,
-            PublicKeyValidationService::getStrictRules()
+            PublicKeyValidationService::getStrictRules(),
         );
 
         // Check business rules before saving
@@ -94,9 +98,10 @@ class SetupCompleteService extends AbstractCompleteService implements SetupCompl
             }
         }
 
+        // Consume atomically before the user save so a losing concurrent request never reaches persistence.
+        $this->consumeTokenOrFail($token);
+
         $user->active = true;
-        $token->active = false;
-        $user->authentication_tokens = [$token];
         $user->gpgkey = $gpgkey;
 
         return $user;
@@ -113,10 +118,6 @@ class SetupCompleteService extends AbstractCompleteService implements SetupCompl
     protected function saveUserEntity(User $user, ?array $saveOptions = []): User
     {
         $this->Users->save($user, $saveOptions);
-
-        if ($user->authentication_tokens[0]->hasErrors()) {
-            throw new InternalErrorException('Could not update the authentication token data.');
-        }
 
         if ($user->gpgkey->hasErrors()) {
             throw new InternalErrorException('Could not save the OpenPGP key data.');

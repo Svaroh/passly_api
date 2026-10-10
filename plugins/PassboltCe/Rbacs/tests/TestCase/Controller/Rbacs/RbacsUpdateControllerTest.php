@@ -79,7 +79,9 @@ class RbacsUpdateControllerTest extends RbacsIntegrationTestCase
     public function testRbacsUpdateController_Success(): void
     {
         $this->setupDefaultRbacs();
+        /** @var \Passbolt\Rbacs\Model\Entity\Rbac $uiActionRbac */
         $uiActionRbac = RbacFactory::find()->where(['foreign_model' => Rbac::FOREIGN_MODEL_UI_ACTION])->firstOrFail();
+        /** @var \Passbolt\Rbacs\Model\Entity\Rbac $actionRbac */
         $actionRbac = RbacFactory::find()->where(['foreign_model' => Rbac::FOREIGN_MODEL_ACTION])->firstOrFail();
 
         $this->logInAsAdmin();
@@ -137,11 +139,11 @@ class RbacsUpdateControllerTest extends RbacsIntegrationTestCase
         $this->assertCount(1, $result);
         $this->assertSame(
             Rbac::CONTROL_FUNCTION_ALLOW_IF_GROUP_MANAGER_IN_ONE_GROUP,
-            $result[0]->control_function
+            $result[0]->control_function,
         );
         $this->assertSame(
             Rbac::FOREIGN_MODEL_UI_ACTION,
-            $result[0]->foreign_model
+            $result[0]->foreign_model,
         );
     }
 

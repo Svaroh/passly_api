@@ -85,4 +85,45 @@ class SecretsViewControllerTest extends AppIntegrationTestCase
 
         $this->assertResponseCode(404);
     }
+
+    public function testSecretsViewController_RefusesUserWithoutCurrentResourcePermission(): void
+    {
+        $user = UserFactory::make()->user()->persist();
+        $owner = UserFactory::make()->admin()->persist();
+
+        // Seed the stale-row scenario: user still has a Secrets row but no Permissions row on
+        // the resource — the state a broken cleanup would leave behind.
+        $resourceId = ResourceFactory::make()
+            ->withPermissionsFor([$owner], Permission::OWNER)
+            ->withSecretsFor([$user])
+            ->persist()
+            ->get('id');
+
+        $this->loginAs($user);
+        $this->getJson("/secrets/resource/$resourceId.json");
+
+        // NotFoundException, not ForbiddenException, to keep the shape identical to the
+        // "secret missing" path and not leak resource existence to a revoked user.
+        $this->assertError(404, 'The secret does not exist.');
+    }
+
+    public function testSecretsViewController_AllowsUserWithCurrentResourcePermission(): void
+    {
+        $user = UserFactory::make()->user()->persist();
+        $owner = UserFactory::make()->admin()->persist();
+
+        $resourceId = ResourceFactory::make()
+            ->withPermissionsFor([$owner], Permission::OWNER)
+            ->withPermissionsFor([$user], Permission::READ)
+            ->withSecretsFor([$user])
+            ->persist()
+            ->get('id');
+
+        $this->loginAs($user);
+        $this->getJson("/secrets/resource/$resourceId.json");
+
+        $this->assertSuccess();
+        $this->assertNotNull($this->_responseJsonBody);
+        $this->assertSecretAttributes($this->_responseJsonBody);
+    }
 }

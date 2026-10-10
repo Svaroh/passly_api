@@ -55,11 +55,11 @@ abstract class ScimBaseSettingsService
                 'setting_id' => Hash::get($data, 'setting_id'),
                 'scim_user_id' => Hash::get($data, 'scim_user_id'),
                 'expired' => Hash::get($data, 'expired'),
-                'created' => $setting->modified,
+                'created' => $setting->created,
                 'modified' => $setting->modified,
                 'created_by' => $setting->created_by,
                 'modified_by' => $setting->modified_by,
-            ]
+            ],
         );
 
         unset($renderedValue['secret_token']);

@@ -140,7 +140,7 @@ class V340MigrateASCIIFieldsEncodingTest extends TestCase
     public function isUuid(string $tableName, string $columnName): bool
     {
         // Some columns do not follow the general pattern and are not UUIDs
-        $exceptions = ['email_queue.id', 'gpgkeys.key_id'];
+        $exceptions = ['email_queue.id', 'gpgkeys.key_id', 'sessions.id'];
 
         if (in_array("$tableName.$columnName", $exceptions)) {
             return false;
@@ -175,6 +175,8 @@ class V340MigrateASCIIFieldsEncodingTest extends TestCase
         return [
             'gpgkeys.key_id',
             'gpgkeys.type',
+            // PHP session ids are case-sensitive opaque tokens; sessions.id is intentionally ascii_bin.
+            'sessions.id',
         ];
     }
 }

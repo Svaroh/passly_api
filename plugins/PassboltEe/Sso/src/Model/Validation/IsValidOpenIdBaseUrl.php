@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Passbolt\Sso\Model\Validation;
 
 use App\Model\Validation\PassboltValidationRule;
+use Passbolt\Sso\Utility\Http\SsoEgressGuard;
 
 class IsValidOpenIdBaseUrl extends PassboltValidationRule
 {
@@ -26,7 +27,7 @@ class IsValidOpenIdBaseUrl extends PassboltValidationRule
      */
     public function defaultErrorMessage($value, $context): string
     {
-        return __('The URL should start with https://');
+        return __('The URL should start with https:// and must not point to an internal address.');
     }
 
     /**
@@ -34,6 +35,23 @@ class IsValidOpenIdBaseUrl extends PassboltValidationRule
      */
     public function rule($value, $context): bool
     {
-        return substr($value, 0, 8) === 'https://';
+        if (!is_string($value) || substr($value, 0, 8) !== 'https://') {
+            return false;
+        }
+
+        $host = parse_url($value, PHP_URL_HOST);
+        if (!is_string($host) || $host === '') {
+            return false;
+        }
+
+        $host = trim($host, '[]');
+
+        // Reject IP-literal internal addresses at config time; hostname resolution is deferred to
+        // connect time (the HTTP-layer egress guard), so no DNS lookup happens during validation.
+        if (filter_var($host, FILTER_VALIDATE_IP) === false) {
+            return true;
+        }
+
+        return (new SsoEgressGuard())->getBlockReason($host) === null;
     }
 }

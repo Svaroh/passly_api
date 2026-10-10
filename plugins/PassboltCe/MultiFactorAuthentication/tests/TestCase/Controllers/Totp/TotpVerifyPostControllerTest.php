@@ -25,8 +25,11 @@ use Passbolt\JwtAuthentication\Service\RefreshToken\RefreshTokenAbstractService;
 use Passbolt\JwtAuthentication\Service\RefreshToken\RefreshTokenRenewalService;
 use Passbolt\Log\Test\Factory\ActionLogFactory;
 use Passbolt\MultiFactorAuthentication\Form\Totp\TotpVerifyForm;
+use Passbolt\MultiFactorAuthentication\Test\Factory\MfaAccountSettingFactory;
+use Passbolt\MultiFactorAuthentication\Test\Factory\MfaOrganizationSettingFactory;
 use Passbolt\MultiFactorAuthentication\Test\Lib\MfaIntegrationTestCase;
 use Passbolt\MultiFactorAuthentication\Test\Scenario\Totp\MfaTotpScenario;
+use Passbolt\MultiFactorAuthentication\Utility\MfaOtpFactory;
 use Passbolt\MultiFactorAuthentication\Utility\MfaVerifiedCookie;
 
 /**
@@ -238,5 +241,55 @@ class TotpVerifyPostControllerTest extends MfaIntegrationTestCase
         /** @var \App\Model\Entity\AuthenticationToken $updatedRefreshToken */
         $updatedRefreshToken = AuthenticationTokenFactory::find()->where(['token' => $refreshToken])->firstOrFail();
         $this->assertFalse($updatedRefreshToken->active);
+    }
+
+    /**
+     * @group mfa
+     * @group mfaVerify
+     * @group mfaVerifyPost
+     * @group mfaVerifyPostTotp
+     */
+    public function testTotpVerifyPostController_Error_DisabledTotpProviderDoesNotMintCookie(): void
+    {
+        $user = $this->logInAsUser();
+        $uri = MfaOtpFactory::generateTOTP($this->makeUac($user));
+        // User's MFA account settings for TOTP is present
+        MfaAccountSettingFactory::make()
+            ->setField('user_id', $user->id)
+            ->totp($uri)
+            ->persist();
+        // Only DUO provider is enabled
+        MfaOrganizationSettingFactory::make()->duo()->persist();
+        /** @var \OTPHP\TOTPInterface $otp */
+        $otp = Factory::loadFromProvisioningUri($uri);
+
+        $this->post('/mfa/verify/totp', ['totp' => $otp->now()]);
+
+        $this->assertRedirect('/');
+        $this->assertCookieNotSet(MfaVerifiedCookie::MFA_COOKIE_ALIAS);
+    }
+
+    /**
+     * @group mfa
+     * @group mfaVerify
+     * @group mfaVerifyPost
+     * @group mfaVerifyPostTotp
+     */
+    public function testTotpVerifyPostController_Error_DisabledTotpProviderJsonReturnsBadRequest(): void
+    {
+        $user = $this->logInAsUser();
+        $uri = MfaOtpFactory::generateTOTP($this->makeUac($user));
+        MfaAccountSettingFactory::make()
+            ->setField('user_id', $user->id)
+            ->totp($uri)
+            ->persist();
+        MfaOrganizationSettingFactory::make()->duo()->persist();
+        /** @var \OTPHP\TOTPInterface $otp */
+        $otp = Factory::loadFromProvisioningUri($uri);
+
+        $this->postJson('/mfa/verify/totp.json?api-version=v2', ['totp' => $otp->now()]);
+
+        $this->assertBadRequestError('No valid multi-factor authentication settings found for this provider.');
+        $this->assertCookieNotSet(MfaVerifiedCookie::MFA_COOKIE_ALIAS);
     }
 }

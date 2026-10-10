@@ -33,7 +33,7 @@ class TagsIndexController extends AppController
     {
         /** @var \Passbolt\Tags\Model\Table\TagsTable $tagsTable */
         $tagsTable = $this->fetchTable('Passbolt/Tags.Tags');
-        $tags = $tagsTable->findIndex($this->User->id())->disableHydration();
+        $tags = $tagsTable->findIndex($this->User->id())->enableHydration(false);
         $tags = (new MetadataTagsRenderService())->renderTags($tags->toArray());
         $this->success(__('The operation was successful.'), $tags);
     }

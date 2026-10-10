@@ -18,14 +18,10 @@ declare(strict_types=1);
 namespace Passbolt\Folders\Test\TestCase\Controller\Folders;
 
 use App\Model\Entity\Permission;
-use App\Model\Table\PermissionsTable;
 use App\Test\Factory\UserFactory;
 use App\Test\Lib\Model\PermissionsModelTrait;
 use App\Utility\UuidFactory;
-use Cake\Core\Configure;
-use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
-use Passbolt\Folders\Model\Table\FoldersRelationsTable;
 use Passbolt\Folders\Test\Factory\FolderFactory;
 use Passbolt\Folders\Test\Lib\FoldersIntegrationTestCase;
 use Passbolt\Folders\Test\Lib\Model\FoldersModelTrait;
@@ -42,30 +38,12 @@ class FoldersCreateControllerTest extends FoldersIntegrationTestCase
     use FoldersRelationsModelTrait;
     use PermissionsModelTrait;
 
-    public $FoldersRelations;
-    public $Permissions;
-
-    /**
-     * setUp method
-     *
-     * @return void
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-        Configure::write('passbolt.plugins.folders', ['enabled' => true]);
-        $config = TableRegistry::getTableLocator()->exists('FoldersRelations') ? [] : ['className' => FoldersRelationsTable::class];
-        $this->FoldersRelations = TableRegistry::getTableLocator()->get('FoldersRelations', $config);
-        $config = TableRegistry::getTableLocator()->exists('Permissions') ? [] : ['className' => PermissionsTable::class];
-        $this->Permissions = TableRegistry::getTableLocator()->get('Permissions', $config);
-    }
-
     public function testFoldersCreateFolder_PersoSuccess1_CreateFolder()
     {
         $userI = UserFactory::make()->user()->persist();
         $data = ['name' => 'A'];
         $this->logInAs($userI);
-        $this->postJson('/folders.json?api-version=2', $data);
+        $this->postJson('/folders.json?contain[creator]=1&contain[modifier]=1&api-version=2', $data);
         $this->assertSuccess();
 
         // Assert controller response
@@ -74,6 +52,8 @@ class FoldersCreateControllerTest extends FoldersIntegrationTestCase
         $this->assertEquals($data['name'], $folder->name);
         $this->assertEquals($userI->get('id'), $folder->created_by);
         $this->assertEquals($userI->get('id'), $folder->modified_by);
+        $this->assertObjectNotHasAttribute('last_logged_in', $folder->creator);
+        $this->assertObjectNotHasAttribute('last_logged_in', $folder->modifier);
     }
 
     public function testFoldersCreateFolder_PersoSuccess2_CreateInFolder()

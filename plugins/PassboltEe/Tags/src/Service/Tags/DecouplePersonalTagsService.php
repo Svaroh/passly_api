@@ -108,7 +108,7 @@ class DecouplePersonalTagsService
      */
     private function findPrivateTagsDecoupledByUserId(): array
     {
-        return $this->Tags->find()
+        return $this->Tags->unhydratedFind()
             ->select([
                 'Tags.id',
                 'Tags.slug',
@@ -128,7 +128,6 @@ class DecouplePersonalTagsService
                         'ResourcesTags.tag_id',
                     ]);
             })
-            ->disableHydration()
             ->all()
             ->toArray();
     }

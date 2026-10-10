@@ -82,8 +82,6 @@ class ShareControllerLogTest extends LogIntegrationTestCase
         $this->putJson("/share/resource/$resourceId.json", $data);
 
         $this->assertSuccess();
-        /** @var \App\Model\Entity\Secret $secret */
-        $secret = $this->Secrets->findByResourceIdAndUserId($resourceId, $edith->id)->first();
         // Assert action log is correct.
         $this->assertOneActionLog();
         $actionLog = $this->assertActionLogExists([
@@ -101,8 +99,7 @@ class ShareControllerLogTest extends LogIntegrationTestCase
         ]);
         // Assert secretHistory is correct.
         $this->assertSecretsHistoryCount(2);
-        $this->assertSecretHistoryExists([
-            'id' => $secret->id,
+        $secretHistory = $this->assertSecretHistoryExists([
             'resource_id' => $resourceId,
             'user_id' => $edith->id,
         ]);
@@ -117,7 +114,7 @@ class ShareControllerLogTest extends LogIntegrationTestCase
         $this->assertEntityHistoryExists([
             'action_log_id' => $actionLog['id'],
             'foreign_model' => 'SecretsHistory',
-            'foreign_key' => $secret->id,
+            'foreign_key' => $secretHistory['id'],
             'crud' => EntityHistory::CRUD_CREATE,
         ]);
     }
@@ -156,7 +153,6 @@ class ShareControllerLogTest extends LogIntegrationTestCase
         // Assert permissionHistory is correct.
         $this->assertOnePermissionHistory();
         $permissionHistory = $this->assertPermissionHistoryExists([
-            'id' => $permission->id,
             'aco_foreign_key' => $resourceId,
             'aro_foreign_key' => $betty->id,
             'type' => Permission::UPDATE,
@@ -205,7 +201,6 @@ class ShareControllerLogTest extends LogIntegrationTestCase
         // Assert permissionHistory is correct.
         $this->assertOnePermissionHistory();
         $permissionHistory = $this->assertPermissionHistoryExists([
-            'id' => $permission->id,
             'aco_foreign_key' => $resourceId,
             'aro_foreign_key' => $betty->id,
             'type' => Permission::OWNER,

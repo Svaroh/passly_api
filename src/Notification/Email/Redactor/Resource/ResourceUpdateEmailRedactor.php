@@ -121,8 +121,8 @@ class ResourceUpdateEmailRedactor implements SubscribedEmailRedactorInterface
                     $owner,
                     $resource,
                     $secretsDataById[$user->id] ?? null,
-                    $isV5
-                )
+                    $isV5,
+                ),
             );
         }
 
@@ -142,7 +142,7 @@ class ResourceUpdateEmailRedactor implements SubscribedEmailRedactorInterface
         User $owner,
         Resource $resource,
         ?string $armoredSecret,
-        bool $isV5
+        bool $isV5,
     ): Email {
         $subject = (new LocaleService())->translateString(
             $recipient->locale,
@@ -163,7 +163,7 @@ class ResourceUpdateEmailRedactor implements SubscribedEmailRedactorInterface
                 }
 
                 return $subject;
-            }
+            },
         );
 
         $data = [

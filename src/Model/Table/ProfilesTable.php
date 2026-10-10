@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace App\Model\Table;
 
+use App\Model\Validation\HasNoInvisibleCharactersValidationRule;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
@@ -81,13 +82,15 @@ class ProfilesTable extends Table
             ->requirePresence('first_name', 'create', __('A first name is required.'))
             ->notEmptyString('first_name', __('The first name should not be empty.'))
             ->utf8('first_name', __('The first name should be a valid BMP-UTF8 string.'))
-            ->maxLength('first_name', 255, __('The first name length should be maximum {0} characters.', 255));
+            ->maxLength('first_name', 255, __('The first name length should be maximum {0} characters.', 255))
+            ->add('first_name', 'noInvisibleCharacters', new HasNoInvisibleCharactersValidationRule());
 
         $validator
             ->requirePresence('last_name', 'create', __('A last name is required.'))
             ->notEmptyString('last_name', __('The last name should not be empty.'))
             ->utf8('last_name', __('The last name should be a valid BMP-UTF8 string.'))
-            ->maxLength('last_name', 255, __('The last name length should be maximum {0} characters.', 255));
+            ->maxLength('last_name', 255, __('The last name length should be maximum {0} characters.', 255))
+            ->add('last_name', 'noInvisibleCharacters', new HasNoInvisibleCharactersValidationRule());
 
         return $validator;
     }

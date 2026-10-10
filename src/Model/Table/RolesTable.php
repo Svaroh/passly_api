@@ -19,8 +19,10 @@ namespace App\Model\Table;
 use App\Model\Entity\Role;
 use App\Model\Rule\IsUniqueCaseInsensitive;
 use App\Model\Rule\Role\HasNoActiveUserAssociatedRule;
+use App\Model\Rule\Role\IsReservedRoleNameUnchangedRule;
 use App\Model\Rule\Role\IsReservedRoleRule;
 use App\Model\Rule\Role\MaximumNumberOfRolesAllowedRule;
+use App\Model\Validation\HasNoInvisibleCharactersValidationRule;
 use ArrayObject;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -117,7 +119,8 @@ class RolesTable extends Table
             ->add('name', 'reservedRole', [
                 'rule' => [$this, 'isReservedRole'],
                 'message' => __('The name should not be reserved role.'),
-            ]);
+            ])
+            ->add('name', 'noInvisibleCharacters', new HasNoInvisibleCharactersValidationRule());
 
         $validator
             ->utf8('description', __('The description should be a valid BMP-UTF8 string.'))
@@ -157,6 +160,10 @@ class RolesTable extends Table
         $rules->addCreate($rules->existsIn('created_by', 'Users'), 'creator_exists', ['allowNullableNulls' => true]);
         $rules->addCreate($rules->existsIn('modified_by', 'Users'), 'modifier_exists', ['allowNullableNulls' => true]);
 
+        $rules->addUpdate(new IsReservedRoleNameUnchangedRule(), 'isReservedRoleNameUnchanged', [
+            'errorField' => 'name',
+            'message' => __('A reserved role cannot be renamed.'),
+        ]);
         $rules->addUpdate($rules->existsIn('modified_by', 'Users'), 'modifier_exists', ['allowNullableNulls' => true]);
         $rules->addUpdate($rules->existsIn('deleted_by', 'Users'), 'remover_exists', ['allowNullableNulls' => true]);
 

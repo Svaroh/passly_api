@@ -158,7 +158,7 @@ class UpdateFolderEmailRedactor implements SubscribedEmailRedactorInterface
                 }
 
                 return $subject;
-            }
+            },
         );
 
         $data = [

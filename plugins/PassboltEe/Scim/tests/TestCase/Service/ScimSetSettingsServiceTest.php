@@ -342,7 +342,8 @@ class ScimSetSettingsServiceTest extends AppTestCase
         $this->assertArrayNotHasKey('secret_token', $settings);
         $this->assertStringContainsString('/scim/v2/' . $existingData['setting_id'], $settings['base_api_endpoint']);
 
-        $updatedScimSettings = ScimSettingFactory::find()->first();
+        /** @var \Passbolt\Scim\Model\Entity\ScimSetting $updatedScimSettings */
+        $updatedScimSettings = ScimSettingFactory::find()->firstOrFail();
         $gpg = OpenPGPBackendFactory::get();
         $gpg = $this->setDecryptKeyWithServerKey($gpg);
         $updatedData = json_decode($gpg->decrypt($updatedScimSettings->value), associative: true);
@@ -588,7 +589,8 @@ class ScimSetSettingsServiceTest extends AppTestCase
         $this->assertSame($expectedExpired, $settings['expired']);
 
         // Verify persisted in encrypted blob
-        $scimSettings = ScimSettingFactory::find()->first();
+        /** @var \Passbolt\Scim\Model\Entity\ScimSetting $scimSettings */
+        $scimSettings = ScimSettingFactory::find()->firstOrFail();
         $gpg = OpenPGPBackendFactory::get();
         $gpg = $this->setDecryptKeyWithServerKey($gpg);
         $storedData = json_decode($gpg->decrypt($scimSettings->value), associative: true);
@@ -634,8 +636,9 @@ class ScimSetSettingsServiceTest extends AppTestCase
 
     public function testScimSetSettingsService_SaveSettingsUpdate_TokenRotation_RecomputesExpired()
     {
+        // To prevent conflicts with assertion below so dattes cannot equal to the recomputed +6 months date
         /** @var \Passbolt\Scim\Model\Entity\ScimSetting $existingSettings */
-        $existingSettings = ScimSettingFactory::make()->default()->persist();
+        $existingSettings = ScimSettingFactory::make()->default(['expired' => Date::now()->modify('+1 year')->format('Y-m-d')])->persist();
         $gpg = OpenPGPBackendFactory::get();
         $gpg = $this->setDecryptKeyWithServerKey($gpg);
         $existingData = json_decode($gpg->decrypt($existingSettings->value), associative: true);
@@ -736,7 +739,8 @@ class ScimSetSettingsServiceTest extends AppTestCase
         $this->assertSame($existingData['expired'], $settings['expired']);
 
         // Verify the stored token was not overwritten with the dummy hash
-        $updatedSettings = ScimSettingFactory::find()->first();
+        /** @var \Passbolt\Scim\Model\Entity\ScimSetting $updatedSettings */
+        $updatedSettings = ScimSettingFactory::find()->firstOrFail();
         $gpg = OpenPGPBackendFactory::get();
         $gpg = $this->setDecryptKeyWithServerKey($gpg);
         $updatedData = json_decode($gpg->decrypt($updatedSettings->value), associative: true);

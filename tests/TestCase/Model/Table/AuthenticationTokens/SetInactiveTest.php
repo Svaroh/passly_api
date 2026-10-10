@@ -21,6 +21,7 @@ use App\Model\Entity\AuthenticationToken;
 use App\Test\Factory\UserFactory;
 use App\Test\Lib\AppTestCase;
 use App\Test\Lib\Model\AuthenticationTokenModelTrait;
+use App\Utility\UuidFactory;
 use Cake\ORM\TableRegistry;
 use InvalidArgumentException;
 
@@ -75,5 +76,46 @@ class SetInactiveTest extends AppTestCase
         $this->assertTrue($result);
         $t = $this->AuthenticationTokens->get($t->id);
         $this->assertFalse($t->active);
+    }
+
+    /**
+     * @group model
+     * @group AuthenticationTokens
+     * @group AuthenticationTokenSetInactive
+     */
+    public function testAuthenticationTokensSetInactive_ConcurrentConsume_OnlyOneSucceeds()
+    {
+        $user = UserFactory::make()->persist();
+        $t = $this->AuthenticationTokens->generate($user->id, AuthenticationToken::TYPE_REGISTER);
+
+        $winner = $this->AuthenticationTokens->setInactive($t->token);
+        $loser = $this->AuthenticationTokens->setInactive($t->token);
+
+        $this->assertTrue($winner);
+        $this->assertFalse($loser);
+
+        $reloaded = $this->AuthenticationTokens->get($t->id);
+        $this->assertFalse($reloaded->active);
+    }
+
+    /**
+     * @group model
+     * @group AuthenticationTokens
+     * @group AuthenticationTokenSetInactive
+     */
+    public function testAuthenticationTokensSetInactive_DuplicateActiveRows_AllFlippedInOneCall()
+    {
+        [$userA, $userB] = UserFactory::make(2)->persist();
+        $sharedToken = UuidFactory::uuid();
+        $this->AuthenticationTokens->generate($userA->id, AuthenticationToken::TYPE_VERIFY_TOKEN, $sharedToken);
+        $this->AuthenticationTokens->generate($userB->id, AuthenticationToken::TYPE_VERIFY_TOKEN, $sharedToken);
+
+        $result = $this->AuthenticationTokens->setInactive($sharedToken);
+
+        $this->assertTrue($result);
+        $stillActive = $this->AuthenticationTokens->find()
+            ->where(['token' => $sharedToken, 'active' => true])
+            ->count();
+        $this->assertSame(0, $stillActive);
     }
 }

@@ -19,9 +19,9 @@ namespace Passbolt\Rbacs;
 use Cake\Core\BasePlugin;
 use Cake\Core\ContainerInterface;
 use Cake\Core\PluginApplicationInterface;
-use Cake\ORM\TableRegistry;
 use Passbolt\Rbacs\Event\ClearRbacsOnRoleDeleteListener;
 use Passbolt\Rbacs\Event\CreateRbacsOnRoleCreateListener;
+use Passbolt\Rbacs\Event\RbacsModelInitializeEventListener;
 use Passbolt\Rbacs\Service\ActionAccessControl\RbacsRoleActionAccessControlService;
 use Passbolt\Rbacs\Service\ActionAccessControl\RoleActionAccessControlServiceInterface;
 
@@ -34,8 +34,6 @@ class RbacsPlugin extends BasePlugin
     {
         parent::bootstrap($app);
         $this->registerListeners($app);
-        $this->addAssociationsToActionsTable();
-        $this->addAssociationsToRolesTable();
     }
 
     /**
@@ -49,7 +47,7 @@ class RbacsPlugin extends BasePlugin
     }
 
     /**
-     * Register Tags related listeners.
+     * Register Rbacs related listeners.
      *
      * @param \Cake\Core\PluginApplicationInterface $app App
      * @return void
@@ -59,36 +57,8 @@ class RbacsPlugin extends BasePlugin
         $eventManager = $app->getEventManager();
 
         $eventManager
+            ->on(new RbacsModelInitializeEventListener())
             ->on(new CreateRbacsOnRoleCreateListener())
             ->on(new ClearRbacsOnRoleDeleteListener());
-    }
-
-    /**
-     * @return void
-     */
-    public static function addAssociationsToActionsTable(): void
-    {
-        $table = TableRegistry::getTableLocator()->get('Actions');
-
-        $table->hasMany('Rbacs', [
-            'className' => 'Passbolt/Rbacs.Rbacs',
-            'foreignKey' => 'foreign_id',
-            'conditions' => [
-                'Rbacs.foreign_model' => 'Action',
-            ],
-        ]);
-    }
-
-    /**
-     * @return void
-     */
-    public static function addAssociationsToRolesTable(): void
-    {
-        $table = TableRegistry::getTableLocator()->get('Roles');
-
-        $table->hasMany('Rbacs', [
-            'className' => 'Passbolt/Rbacs.Rbacs',
-            'foreignKey' => 'role_id',
-        ]);
     }
 }

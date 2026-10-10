@@ -171,7 +171,41 @@ class FoldersViewControllerTest extends FoldersIntegrationTestCase
         $permission = $folder->permissions[0];
         $user = $permission->user;
         $this->assertObjectHasAttribute('profile', $user);
+        $this->assertObjectNotHasAttribute('last_logged_in', $user);
         $this->assertProfileAttributes($user->profile);
+    }
+
+    public function testFoldersViewSuccess_NotContainLastLoggedInFieldAsNonAdmin()
+    {
+        $userA = UserFactory::make()->persist();
+        $folder = FolderFactory::make(['created_by' => $userA->get('id'), 'modified_by' => $userA->get('id')])
+            ->withPermissionsFor([$userA])->withFoldersRelationsFor([$userA])->persist();
+        $this->logInAs($userA);
+        $this->getJson("/folders/{$folder->get('id')}.json?contain[creator]=1&contain[modifier]=1&api-version=2");
+
+        $this->assertSuccess();
+        /** @var \Passbolt\Folders\Model\Entity\Folder[] $result */
+        $folder = $this->_responseJsonBody;
+        $this->assertFolderAttributes($folder);
+        $this->assertObjectNotHasAttribute('last_logged_in', $folder->modifier);
+        $this->assertObjectNotHasAttribute('last_logged_in', $folder->creator);
+    }
+
+    public function testFoldersViewSuccess_NotContainLastLoggedInFieldAsAdmin()
+    {
+        $userA = UserFactory::make()->persist();
+        $admin = UserFactory::make()->admin()->persist();
+        $folder = FolderFactory::make(['created_by' => $userA->get('id'), 'modified_by' => $userA->get('id')])
+            ->withPermissionsFor([$userA, $admin])->withFoldersRelationsFor([$userA, $admin])->persist();
+        $this->logInAs($admin);
+        $this->getJson("/folders/{$folder->get('id')}.json?contain[creator]=1&contain[modifier]=1&api-version=2");
+
+        $this->assertSuccess();
+        /** @var \Passbolt\Folders\Model\Entity\Folder[] $result */
+        $folder = $this->_responseJsonBody;
+        $this->assertFolderAttributes($folder);
+        $this->assertObjectNotHasAttribute('last_logged_in', $folder->modifier);
+        $this->assertObjectNotHasAttribute('last_logged_in', $folder->creator);
     }
 
     public function testFoldersViewError_NotJson()

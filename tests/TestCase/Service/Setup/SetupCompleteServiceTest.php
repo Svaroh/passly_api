@@ -19,11 +19,13 @@ namespace App\Test\TestCase\Service\Setup;
 
 use App\Error\Exception\CustomValidationException;
 use App\Model\Entity\AuthenticationToken;
+use App\Model\Entity\User;
 use App\Service\Setup\SetupCompleteService;
 use App\Test\Factory\AuthenticationTokenFactory;
 use App\Test\Factory\UserFactory;
 use App\Test\Lib\AppTestCase;
 use Cake\Http\ServerRequest;
+use RuntimeException;
 
 class SetupCompleteServiceTest extends AppTestCase
 {
@@ -84,6 +86,45 @@ class SetupCompleteServiceTest extends AppTestCase
         $this->expectExceptionMessage('The authentication token is not valid.');
 
         (new SetupCompleteService($request))->complete($user->id);
+    }
+
+    public function testSetupCompleteService_TokenRemainsActiveWhenDownstreamSaveThrows(): void
+    {
+        $authToken = AuthenticationTokenFactory::make()->active()
+            ->with('Users', UserFactory::make()->user()->inactive())
+            ->type(AuthenticationToken::TYPE_REGISTER)
+            ->persist();
+        $user = $authToken->user;
+
+        $key = file_get_contents(FIXTURES . DS . 'Gpgkeys' . DS . 'ruth_public.key');
+        $request = new ServerRequest([
+            'post' => [
+                'authentication_token' => $authToken->toArray(),
+                'gpgkey' => ['armored_key' => $key],
+            ],
+            'environment' => ['REQUEST_METHOD' => 'POST'],
+        ]);
+
+        $service = new class ($request) extends SetupCompleteService {
+            protected function saveUserEntity(User $user, ?array $saveOptions = []): User
+            {
+                throw new RuntimeException('simulated downstream save failure');
+            }
+        };
+
+        try {
+            $service->complete($user->id);
+            $this->fail('Expected RuntimeException was not thrown.');
+        } catch (RuntimeException) {
+        }
+
+        $tokenAfterFailure = AuthenticationTokenFactory::get($authToken->id);
+        $this->assertTrue($tokenAfterFailure->active);
+
+        (new SetupCompleteService($request))->complete($user->id);
+        $tokenAfterRetry = AuthenticationTokenFactory::get($authToken->id);
+        $this->assertFalse($tokenAfterRetry->active);
+        $this->assertTrue(UserFactory::get($user->id)->active);
     }
 
     public function testSetupCompleteService_FailOnBadKey(): void

@@ -25,6 +25,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Passbolt\MultiFactorAuthentication\Event\UpdateMfaTokenSessionIdOnRefreshTokenCreated;
 use Passbolt\MultiFactorAuthentication\Service\IsMfaAuthenticationRequiredService;
+use Passbolt\MultiFactorAuthentication\Service\MfaPolicies\RememberAMonthSettingInterface;
 use Passbolt\MultiFactorAuthentication\Utility\MfaSettings;
 use Passbolt\MultiFactorAuthentication\Utility\MfaVerifiedCookie;
 use Psr\Http\Message\ResponseInterface;
@@ -56,7 +57,7 @@ class MfaRequiredCheckMiddleware implements MiddlewareInterface
      */
     public function process(
         ServerRequestInterface $request,
-        RequestHandlerInterface $handler
+        RequestHandlerInterface $handler,
     ): ResponseInterface {
         /** @var \Cake\Http\ServerRequest $request */
         if ($this->isMfaCheckRequired($request)) {
@@ -99,14 +100,18 @@ class MfaRequiredCheckMiddleware implements MiddlewareInterface
         }
 
         $isMfaAuthenticationRequiredService = new IsMfaAuthenticationRequiredService();
+        $container = $this->getContainer($request);
         /** @var \App\Authenticator\SessionIdentificationServiceInterface $sessionService */
-        $sessionService = $this->getContainer($request)->get(SessionIdentificationServiceInterface::class);
+        $sessionService = $container->get(SessionIdentificationServiceInterface::class);
+        /** @var \Passbolt\MultiFactorAuthentication\Service\MfaPolicies\RememberAMonthSettingInterface $rememberMeForAMonthSetting */
+        $rememberMeForAMonthSetting = $container->get(RememberAMonthSettingInterface::class);
 
         return $isMfaAuthenticationRequiredService->isMfaCheckRequired(
             $request,
             MfaSettings::get($uac),
             $uac,
-            $sessionService
+            $sessionService,
+            $rememberMeForAMonthSetting,
         );
     }
 

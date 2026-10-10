@@ -448,8 +448,6 @@ return [
      * To define a custom session handler, save it at src/Http/Session/<name>.php.
      * Make sure the class implements PHP's `SessionHandlerInterface` and set
      * Session.handler to <name>
-     *
-     * To use database sessions, load the SQL file located at config/schema/sessions.sql
      */
     'Session' => [
         'cookie' => env('SESSION_COOKIE', 'passbolt_session'),

@@ -19,6 +19,7 @@ namespace Passbolt\Tags\Model\Table;
 use App\Error\Exception\CustomValidationException;
 use App\Model\Traits\Query\CaseSensitiveCompareValueTrait;
 use App\Model\Validation\ArmoredMessage\IsParsableMessageValidationRule;
+use App\Model\Validation\HasNoInvisibleCharactersValidationRule;
 use App\ORM\Association\PassboltBelongsToMany;
 use App\Utility\UserAccessControl;
 use ArrayObject;
@@ -118,7 +119,8 @@ class TagsTable extends Table
             ->notEmptyString('slug', __('The tag should not be empty.'))
             ->requirePresence('slug', 'create', __('A tag is required.'))
             ->utf8Extended('slug', __('The tag should be a valid BMP-UTF8 string.'))
-            ->maxLength('slug', 128, __('The tag length should be maximum {0} characters.', 128));
+            ->maxLength('slug', 128, __('The tag length should be maximum {0} characters.', 128))
+            ->add('slug', 'noInvisibleCharacters', new HasNoInvisibleCharactersValidationRule());
 
         $validator
             ->boolean('is_shared', __('The shared status should be a valid boolean.'))
@@ -161,7 +163,7 @@ class TagsTable extends Table
             ->allowEmptyString('metadata_key_type')
             ->inList('metadata_key_type', ['user_key', 'shared_key'], __(
                 'The metadata key type should be one of the following: {0}.',
-                implode(', ', ['user_key', 'shared_key'])
+                implode(', ', ['user_key', 'shared_key']),
             ));
 
         return $validator;
@@ -219,9 +221,9 @@ class TagsTable extends Table
         EventInterface $event,
         EntityInterface $entity,
         ArrayObject $options,
-        string $operation
+        string $operation,
     ): void {
-        $dto = MetadataTagDto::fromArray($entity->toArray());
+        $dto = MetadataTagDto::createFromArray($entity->toArray());
 
         if (!$dto->isV5()) {
             // This is little hack to not call `buildRulesV5` rules,
@@ -257,7 +259,7 @@ class TagsTable extends Table
              ->where([
                  'OR' => [
                      'ResourcesTags.user_id' => $userId,
-                     $query->newExpr()->isNull('ResourcesTags.user_id'),
+                     $query->expr()->isNull('ResourcesTags.user_id'),
                  ],
              ]);
          $this->Resources->filterResourcesByPermissions($query, $userId);
@@ -281,7 +283,7 @@ class TagsTable extends Table
                 return $q->where([
                     'OR' => [
                         'ResourcesTags.user_id' => $uac->getId(),
-                        $q->newExpr()->isNull('ResourcesTags.user_id'),
+                        $q->expr()->isNull('ResourcesTags.user_id'),
                     ],
                 ]);
             })
@@ -337,7 +339,7 @@ class TagsTable extends Table
                                 $tag = is_object($tag) ? $tag->toArray() : $tag;
 
                                 try {
-                                    $tagDto = MetadataTagDto::fromArray($tag);
+                                    $tagDto = MetadataTagDto::createFromArray($tag);
                                     $isV5 = $tagDto->isV5();
                                 } catch (Exception $e) {
                                     if (Configure::read('debug')) {
@@ -413,7 +415,7 @@ class TagsTable extends Table
                 $tag = ['slug' => $tag];
             }
 
-            $dto = MetadataTagDto::fromArray($tag);
+            $dto = MetadataTagDto::createFromArray($tag);
 
             try {
                 $collection[$i] = $this->buildEntityOrFail($dto);
@@ -425,7 +427,7 @@ class TagsTable extends Table
                 }
                 $collection[$i]['_joinData'] = $this->ResourcesTags->newEntity(
                     ['user_id' => $resourceTagUserId],
-                    ['accessibleFields' => ['user_id' => true]]
+                    ['accessibleFields' => ['user_id' => true]],
                 );
             } catch (CustomValidationException $e) {
                 $errors[$i] = $e->getErrors();
@@ -567,7 +569,7 @@ class TagsTable extends Table
      */
     public function findMetadataUpgradeIndex(array $options): Query
     {
-        $query = $this->find('v4')->disableHydration();
+        $query = $this->unhydratedFind('v4');
 
         $query->contain('ResourcesTags');
 
@@ -618,7 +620,7 @@ class TagsTable extends Table
     public function findV4(Query $query): Query
     {
         return $query->where([
-            $query->newExpr()->isNull($this->aliasField('metadata')),
+            $query->expr()->isNull($this->aliasField('metadata')),
         ]);
     }
 
@@ -629,18 +631,17 @@ class TagsTable extends Table
      */
     public function findMetadataRotateKeyIndex(): Query
     {
-        $query = $this->find();
+        $query = $this->unhydratedFind();
 
         return $query
             ->where([
                 'Tags.metadata_key_type' => MetadataKey::TYPE_SHARED_KEY,
-                $query->newExpr()->isNotNull('Tags.metadata'),
-                $query->newExpr()->isNotNull('Tags.metadata_key_id'),
+                $query->expr()->isNotNull('Tags.metadata'),
+                $query->expr()->isNotNull('Tags.metadata_key_id'),
             ])
             ->innerJoin(['MetadataKeys' => 'metadata_keys'], [
                 'MetadataKeys.id' => new IdentifierExpression('Tags.metadata_key_id'),
-                $query->newExpr()->isNotNull('MetadataKeys.expired'),
-            ])
-            ->disableHydration();
+                $query->expr()->isNotNull('MetadataKeys.expired'),
+            ]);
     }
 }

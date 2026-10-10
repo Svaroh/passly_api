@@ -87,7 +87,7 @@ class EmailControllerTest extends WebInstallerIntegrationTestCase
         $this->assertMailContainsAt(0, 'Congratulations!');
         $this->assertMailContainsAt(
             0,
-            'If you receive this email, it means that your passly smtp configuration is working fine.'
+            'If you receive this email, it means that your passly smtp configuration is working fine.',
         );
     }
 
@@ -156,6 +156,38 @@ class EmailControllerTest extends WebInstallerIntegrationTestCase
         $this->assertMailCount(0);
     }
 
+    public function testWebInstallerEmailPostError_EscapesHtmlInTraceAndError(): void
+    {
+        $postData = [
+            'sender_name' => 'Passbolt Test',
+            'sender_email' => 'test@passbolt.com',
+            'host' => 'unreachable_host',
+            'tls' => true,
+            'port' => 587,
+            'authentication_method' => 'username_and_password',
+            'username' => 'test@passbolt.com',
+            'password' => 'password',
+            'send_test_email' => true,
+            'email_test_to' => 'test@passbolt.com',
+        ];
+        $payload = '<script>alert(1)</script>'; // malicious
+        $trace = [[
+            'cmd' => $payload,
+            'response' => [['code' => 500, 'message' => $payload]],
+        ]];
+        $errorMessage = 'boom <img src=x onerror=alert(2)>';
+        $this->mockSmtpSettingsSendTestEmailServiceFail($trace, $errorMessage);
+
+        $this->post('/install/email', $postData);
+
+        $this->assertResponseOk();
+        $this->assertResponseNotContains($payload);
+        $this->assertResponseNotContains('<img src=x onerror=alert(2)>');
+        // Assert HTML is escaped
+        $this->assertResponseContains('&lt;script&gt;alert(1)&lt;/script&gt;');
+        $this->assertResponseContains('&lt;img src=x onerror=alert(2)&gt;');
+    }
+
     public function testWebInstallerEmailPostSuccess_UsernameOnly(): void
     {
         $postData = [
@@ -210,6 +242,26 @@ class EmailControllerTest extends WebInstallerIntegrationTestCase
         $this->post('/install/email', $postData);
         $this->assertRedirectContains('install/account_creation');
         $this->assertMailCount(0);
+    }
+
+    public function testWebInstallerEmailPostSuccess_RedirectsToSubscriptionWhenAdminAlreadyExists(): void
+    {
+        // Admin already in DB → skip account_creation. Subscription is the
+        // next step on every edition (WP 7.4).
+        $this->session(['webinstaller' => ['initialized' => true, 'hasAdmin' => true]]);
+
+        $this->post('/install/email', [
+            'sender_name' => 'Passbolt Test',
+            'sender_email' => 'test@passbolt.com',
+            'host' => 'unreachable_host',
+            'tls' => true,
+            'port' => 123,
+            'authentication_method' => 'username_and_password',
+            'username' => 'test@passbolt.com',
+            'password' => 'password',
+        ]);
+
+        $this->assertRedirectContains('/install/subscription');
     }
 
     public function testWebInstallerEmailPostError_Oauth2MissingFields(): void

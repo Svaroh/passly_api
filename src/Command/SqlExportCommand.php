@@ -38,11 +38,23 @@ class SqlExportCommand extends PassboltCommand
     public const CACHE_DATABASE_DIRECTORY = CACHE . 'database' . DS;
 
     /**
+     * Tables whose row data is stripped from the dump. Schema is preserved.
+     *
+     * @var array<int, string>
+     */
+    public const EXCLUDED_DATA_TABLES = [
+        'sessions',
+    ];
+
+    /**
      * @inheritDoc
      */
     public static function getCommandDescription(): string
     {
+        $excluded = implode(', ', self::EXCLUDED_DATA_TABLES);
+
         return __('Utility to export SQL database backups.') .
+            ' ' . __('Security-sensitive tables (currently: {0}) are exported schema-only.', $excluded) .
             ' ' . __('Replaces the deprecated mysql_export command.');
     }
 
@@ -134,6 +146,12 @@ class SqlExportCommand extends PassboltCommand
     protected function dump(Connection $connection, string $dir, string $file, ConsoleIo $io): bool
     {
         $io->info('Saving backup file: ' . $dir . $file);
+        $io->info(__('Excluding data of table(s): {0}.', implode(', ', self::EXCLUDED_DATA_TABLES)));
+
+        $existingExcluded = array_values(array_intersect(
+            self::EXCLUDED_DATA_TABLES,
+            $connection->getSchemaCollection()->listTables(),
+        ));
 
         $driver = $connection->getDriver();
         if ($driver instanceof Mysql) {
@@ -142,9 +160,9 @@ class SqlExportCommand extends PassboltCommand
             $isMariadbDump = ($driver->isMariaDb() && version_compare($driver->version(), '10.4.6', '>='));
 
             if (!$isMariadbDump) {
-                $status = $this->mysqlDump($connection->config(), $dir, $file);
+                $status = $this->mysqlDump($connection->config(), $dir, $file, $existingExcluded);
             } else {
-                $status = $this->mariaDbDump($connection->config(), $dir, $file);
+                $status = $this->mariaDbDump($connection->config(), $dir, $file, $existingExcluded);
             }
         } elseif ($driver instanceof Postgres) {
             $status = $this->postgresDump($connection->config(), $dir, $file);
@@ -167,47 +185,75 @@ class SqlExportCommand extends PassboltCommand
     }
 
     /**
-     * MySQL dump
+     * MySQL dump.
      *
      * @param array $config Database config
      * @param string $dir Target directory
      * @param string $file Target file
+     * @param array<int, string> $existingExcluded Excluded tables that exist on the source (schema-only in dump)
      * @return int
      */
-    protected function mysqlDump(array $config, string $dir, string $file): int
+    protected function mysqlDump(array $config, string $dir, string $file, array $existingExcluded = []): int
     {
-        $cmd = ['mysqldump', '-h', $config['host'], '-u', $config['username']];
-        if (!empty($config['password'])) {
-            // mysqldump expects password immediately after -p with no space: -p<password>
-            $cmd[] = '-p' . $config['password'];
-        }
-        $cmd[] = $config['database'];
-
-        return $this->runDumpCommand($cmd, $dir . $file);
+        return $this->mysqlLikeDump('mysqldump', $config, $dir, $file, $existingExcluded);
     }
 
     /**
-     * Mariadb dump.
+     * MariaDB dump.
      *
      * @param array $config Database configuration.
      * @param string $dir Target directory.
      * @param string $file Target file.
+     * @param array<int, string> $existingExcluded Excluded tables that exist on the source (schema-only in dump)
      * @return int
      */
-    protected function mariaDbDump(array $config, string $dir, string $file): int
+    protected function mariaDbDump(array $config, string $dir, string $file, array $existingExcluded = []): int
     {
-        $cmd = ['mariadb-dump', '-h', $config['host'], '-u', $config['username']];
-        if (!empty($config['password'])) {
-            // mariadb-dump expects password immediately after -p with no space: -p<password>
-            $cmd[] = '-p' . $config['password'];
-        }
-        $cmd[] = $config['database'];
-
-        return $this->runDumpCommand($cmd, $dir . $file);
+        return $this->mysqlLikeDump('mariadb-dump', $config, $dir, $file, $existingExcluded);
     }
 
     /**
-     * PostgreSQL dump
+     * Two-pass dump: pass 1 dumps all non-excluded tables (via `--ignore-table`);
+     * pass 2 appends schema-only CREATE TABLE for excluded tables that exist
+     * (via `--no-data`). Shared by mysqldump and mariadb-dump.
+     *
+     * @param string $binary Either "mysqldump" or "mariadb-dump".
+     * @param array $config Database config
+     * @param string $dir Target directory
+     * @param string $file Target file
+     * @param array<int, string> $existingExcluded Excluded tables present on the source.
+     * @return int
+     */
+    private function mysqlLikeDump(
+        string $binary,
+        array $config,
+        string $dir,
+        string $file,
+        array $existingExcluded,
+    ): int {
+        $baseCmd = [$binary, '-h', $config['host'], '-u', $config['username']];
+        if (!empty($config['password'])) {
+            // mysqldump / mariadb-dump expect password immediately after -p with no space: -p<password>
+            $baseCmd[] = '-p' . $config['password'];
+        }
+
+        $cmd = $baseCmd;
+        foreach (self::EXCLUDED_DATA_TABLES as $table) {
+            $cmd[] = '--ignore-table=' . $config['database'] . '.' . $table;
+        }
+        $cmd[] = $config['database'];
+        $status = $this->runDumpCommand($cmd, $dir . $file);
+        if ($status !== $this->successCode() || empty($existingExcluded)) {
+            return $status;
+        }
+
+        $cmd = array_merge($baseCmd, ['--no-data', $config['database']], $existingExcluded);
+
+        return $this->runDumpCommand($cmd, $dir . $file, null, true);
+    }
+
+    /**
+     * PostgreSQL dump.
      *
      * @param array $config Database config
      * @param string $dir Target directory
@@ -216,7 +262,12 @@ class SqlExportCommand extends PassboltCommand
      */
     protected function postgresDump(array $config, string $dir, string $file): int
     {
-        $cmd = ['pg_dump', '-h', $config['host'], '-U', $config['username'], '-d', $config['database']];
+        $cmd = ['pg_dump', '-h', $config['host'], '-U', $config['username']];
+        foreach (self::EXCLUDED_DATA_TABLES as $table) {
+            $cmd[] = '--exclude-table-data=' . $table;
+        }
+        $cmd[] = '-d';
+        $cmd[] = $config['database'];
         $env = ['PGPASSWORD' => $config['password']];
 
         return $this->runDumpCommand($cmd, $dir . $file, $env);
@@ -228,11 +279,12 @@ class SqlExportCommand extends PassboltCommand
      * @param array $cmd Command as array of arguments.
      * @param string $filePath Absolute path to the output file.
      * @param array|null $env Optional environment variables.
+     * @param bool $append Append to the file instead of truncating (used for multi-pass dumps).
      * @return int Exit code (0 = success).
      */
-    private function runDumpCommand(array $cmd, string $filePath, ?array $env = null): int
+    private function runDumpCommand(array $cmd, string $filePath, ?array $env = null, bool $append = false): int
     {
-        $fileHandle = fopen($filePath, 'w');
+        $fileHandle = fopen($filePath, $append ? 'a' : 'w');
         if ($fileHandle === false) {
             return $this->errorCode();
         }

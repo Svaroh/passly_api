@@ -24,16 +24,12 @@ use App\Notification\Email\Email;
 use App\Notification\Email\EmailCollection;
 use App\Notification\Email\SubscribedEmailRedactorInterface;
 use App\Notification\Email\SubscribedEmailRedactorTrait;
-use App\Utility\UuidFactory;
-use Cake\Collection\CollectionInterface;
 use Cake\Event\Event;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\ORM\Query;
 use Passbolt\AccountRecovery\Model\Entity\AccountRecoveryRequest;
 use Passbolt\AccountRecovery\Service\AccountRecoveryRequests\AccountRecoveryRequestCreateService;
 use Passbolt\Locale\Service\GetUserLocaleService;
 use Passbolt\Locale\Service\LocaleService;
-use Passbolt\Rbacs\Model\Entity\Rbac;
 use Passbolt\Rbacs\Service\Actions\RbacsControlledActionsInsertService;
 
 /**
@@ -92,18 +88,17 @@ class AccountRecoveryRequestCreatedAdminEmailRedactor implements SubscribedEmail
         /** @var \App\Model\Entity\User $user */
         $user = $this->Users->findFirstForEmail($request->user_id);
 
-        $admins = $this->Users->findAdmins()
+        $recipients = $this->Users
+            ->find('adminsOrRbacActionGrantees', rbacActionName: RbacsControlledActionsInsertService::NAME_ACCOUNT_RECOVERY_REQUESTS_VIEW) // phpcs:ignore
             ->find('notDisabled')
-            ->contain([
-                'Profiles' => AvatarsTable::addContainAvatar(),
-            ])->all();
+            ->find('activeNotDeleted')
+            ->where(['Users.id <>' => $user->id])
+            ->contain(['Profiles' => AvatarsTable::addContainAvatar()])
+            ->all();
 
-        // Notify users with the RBACS permission to view requests
-        $admins = $this->appendAccountRecoveryRequestsViewers($admins);
-
-        /** @var \App\Model\Entity\User $admin */
-        foreach ($admins as $admin) {
-            $emailCollection->addEmail($this->makeAdminEmail($admin, $user, $request));
+        /** @var \App\Model\Entity\User $recipient */
+        foreach ($recipients as $recipient) {
+            $emailCollection->addEmail($this->makeAdminEmail($recipient, $user, $request));
         }
 
         return $emailCollection;
@@ -122,7 +117,7 @@ class AccountRecoveryRequestCreatedAdminEmailRedactor implements SubscribedEmail
             $locale,
             function () use ($user) {
                 return __('{0} has initiated a recovery request', $user->profile->full_name);
-            }
+            },
         );
 
         $data = [
@@ -136,40 +131,5 @@ class AccountRecoveryRequestCreatedAdminEmailRedactor implements SubscribedEmail
         ];
 
         return new Email($admin, $subject, $data, self::ADMIN_TEMPLATE);
-    }
-
-    /**
-     * Appends non-admin users who have RBAC permission to view account recovery requests.
-     *
-     * @param \Cake\Collection\CollectionInterface $admins Collection of admin users
-     * @return \Cake\Collection\CollectionInterface Collection with additional users who have view permission via RBAC
-     */
-    protected function appendAccountRecoveryRequestsViewers(CollectionInterface $admins): CollectionInterface
-    {
-        if (!$this->Users->Roles->hasAssociation('Rbacs')) {
-            return $admins;
-        }
-
-        $accountRecoveryRequestsViewers = $this->Users
-            ->find('active')
-            ->find('notDisabled')
-            ->contain([
-                'Profiles' => AvatarsTable::addContainAvatar(),
-            ])
-            ->contain('Roles', function (Query $q) {
-                return $q->innerJoinWith('Rbacs', function (Query $q) {
-                    $actionId = UuidFactory::uuid(
-                        RbacsControlledActionsInsertService::NAME_ACCOUNT_RECOVERY_REQUESTS_VIEW
-                    );
-
-                    return $q->where([
-                        'foreign_model' => Rbac::FOREIGN_MODEL_ACTION,
-                        'foreign_id' => $actionId,
-                        'control_function' => Rbac::CONTROL_FUNCTION_ALLOW,
-                    ]);
-                });
-            });
-
-        return $admins->append($accountRecoveryRequestsViewers->all());
     }
 }

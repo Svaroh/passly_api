@@ -31,6 +31,7 @@ class TestDirectory implements DirectoryInterface
     protected $groups;
     protected $path;
     protected $directoryResults = null;
+    private string $directoryType = DirectoryInterface::TYPE_AD;
 
     /**
      * Constructor
@@ -125,6 +126,25 @@ class TestDirectory implements DirectoryInterface
         $this->directoryResults->initializeWithEntries([], $groups);
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDirectoryType(?string $domain = null): string
+    {
+        return $this->directoryType;
+    }
+
+    /**
+     * Override the directory type reported by this test double.
+     *
+     * @param string $directoryType Directory type (ad|openldap|freeipa)
+     * @return void
+     */
+    public function setDirectoryType(string $directoryType): void
+    {
+        $this->directoryType = $directoryType;
     }
 
     /**

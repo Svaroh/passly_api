@@ -18,9 +18,9 @@ declare(strict_types=1);
 namespace Passbolt\TestData\Lib;
 
 use App\Command\PassboltCommand;
-use Cake\Command\Helper\ProgressHelper;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
+use Cake\Console\Helper\ProgressHelper;
 use Cake\Core\Configure;
 use Cake\ORM\Table;
 use DateTime;
@@ -107,14 +107,14 @@ abstract class DataCommand extends PassboltCommand
      * Display the progress bar
      *
      * @param int $total Number total of tasks
-     * @return \Cake\Command\Helper\ProgressHelper
+     * @return \Cake\Console\Helper\ProgressHelper|null
      */
     public function displayProgressBar(int $total): ?ProgressHelper
     {
         $progress = null;
 
         if ($total > 1) {
-            /** @var \Cake\Command\Helper\ProgressHelper $progress */
+            /** @var \Cake\Console\Helper\ProgressHelper $progress */
             $progress = $this->io->helper('Progress');
             $progress->init([
                 'total' => $total,

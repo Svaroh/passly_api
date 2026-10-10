@@ -117,6 +117,11 @@ abstract class ScimApiIntegrationTestCase extends AppIntegrationTestCase
     public const FIXTURE_RESPONSE_USERS_ADD_CONFLICT_EXIST = 'Users' . DS . 'users_add_conflict_exist.json';
 
     /**
+     * Expected response for POST `/Users` endpoint when no work-typed email is provided
+     */
+    public const FIXTURE_RESPONSE_USERS_ADD_MISSING_WORK_EMAIL = 'Users' . DS . 'users_add_missing_work_email.json';
+
+    /**
      * Expected response for GET `/Users/<user_id>` endpoint with existing user
      */
     public const FIXTURE_RESPONSE_USERS_VIEW_SUCCESS = 'Users' . DS . 'users_view_success.json';
@@ -190,7 +195,7 @@ abstract class ScimApiIntegrationTestCase extends AppIntegrationTestCase
         $text = str_replace(
             self::PLACEHOLDER_API_URL,
             str_replace('"', '', json_encode(Router::url('/', full: true))),
-            $text
+            $text,
         );
 
         return str_replace(self::PLACEHOLDER_SETTING_ID, $this->settingId, $text);

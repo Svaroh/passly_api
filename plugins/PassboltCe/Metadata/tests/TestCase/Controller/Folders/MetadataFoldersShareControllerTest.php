@@ -107,7 +107,7 @@ class MetadataFoldersShareControllerTest extends AppIntegrationTestCaseV5
         $this->assertEventFiredWith(
             FoldersShareService::FOLDERS_SHARE_FOLDER_EVENT,
             'isV5',
-            true
+            true,
         );
     }
 
@@ -153,6 +153,41 @@ class MetadataFoldersShareControllerTest extends AppIntegrationTestCaseV5
         $this->assertArrayNotHasKey('metadata_key_id', $response);
         $this->assertArrayNotHasKey('metadata_key_type', $response);
         $this->assertSame(3, PermissionFactory::count());
+    }
+
+    public function testMetadataFoldersShareController_Error_TryToShareFolderWithBlankMetadataKeyType()
+    {
+        /** @var \App\Model\Entity\User $ada */
+        $ada = UserFactory::make()
+            ->with('Gpgkeys', GpgkeyFactory::make()->withAdaKey())
+            ->user()
+            ->active()
+            ->persist();
+        $clearTextMetadata = json_encode(['object_type' => 'PASSBOLT_FOLDER_METADATA', 'name' => 'marketing']);
+        $metadata = $this->encryptForUser($clearTextMetadata, $ada, $this->getAdaNoPassphraseKeyInfo());
+        /** @var \App\Model\Entity\User $betty */
+        $betty = UserFactory::make()->user()->active()->persist();
+        // v5 folder previously left with a blank metadata_key_type (simulates the pre-fix bypass)
+        $folder = FolderFactory::make()
+            ->withPermissionsFor([$ada])
+            ->withFoldersRelationsFor([$ada])
+            ->v5Fields([
+                'metadata' => $metadata,
+                'metadata_key_id' => $ada->gpgkey->id,
+                'metadata_key_type' => '',
+            ])
+            ->persist();
+        $this->logInAs($ada);
+
+        $data = [
+            'permissions' => [
+                ['aro' => PermissionsTable::USER_ARO, 'aro_foreign_key' => $betty->id, 'type' => Permission::READ],
+            ],
+        ];
+        $folderId = $folder->get('id');
+        $this->postJson("/share/folder/{$folderId}.json?api-version=2", $data);
+
+        $this->assertBadRequestError('Folder can not be shared');
     }
 
     public function testMetadataFoldersShareController_Error_TryToShareFolderWithUserKeyMetadataType()

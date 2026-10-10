@@ -26,6 +26,8 @@ use Cake\Http\ServerRequest;
 use Cake\Http\Session;
 use CakephpFixtureFactories\Scenario\ScenarioAwareTrait;
 use Passbolt\MultiFactorAuthentication\Middleware\MfaRequiredCheckMiddleware;
+use Passbolt\MultiFactorAuthentication\Service\MfaPolicies\DefaultRememberAMonthSettingService;
+use Passbolt\MultiFactorAuthentication\Service\MfaPolicies\RememberAMonthSettingInterface;
 use Passbolt\MultiFactorAuthentication\Test\Scenario\Totp\MfaTotpScenario;
 use Passbolt\MultiFactorAuthentication\Utility\MfaSettings;
 
@@ -74,6 +76,7 @@ class MfaRequiredCheckMiddlewareTest extends AppTestCase
         ]);
         $container = new Container();
         $container->add(SessionIdentificationServiceInterface::class, SessionIdentificationService::class);
+        $container->add(RememberAMonthSettingInterface::class, DefaultRememberAMonthSettingService::class);
         $request = $request->withAttribute('identity', $user);
         $request = $request->withAttribute('container', $container);
         $isMfaRequired = $this->middleware->isMfaCheckRequired($request);

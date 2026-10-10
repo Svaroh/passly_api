@@ -41,7 +41,7 @@ class AccountRecoveryUserDeleteServiceTest extends AccountRecoveryTestCase
     public function setUp(): void
     {
         parent::setUp();
-        (new AccountRecoveryPlugin())->addAssociationsToUsersTable();
+        (new AccountRecoveryPlugin())->bootstrap($this->stubApp());
     }
 
     public function testAccountRecoveryUserDeleteService_Error_InvalidId(): void

@@ -18,7 +18,10 @@ declare(strict_types=1);
 namespace App\Controller\Secrets;
 
 use App\Controller\AppController;
+use App\Model\Entity\Permission;
 use App\Model\Entity\Secret;
+use App\Model\Table\PermissionsTable;
+use App\Model\Table\ResourcesTable;
 use App\Model\Table\SecretsTable;
 use App\Utility\UserAccessControl;
 use Cake\Http\Exception\BadRequestException;
@@ -38,12 +41,18 @@ class SecretsViewController extends AppController
     protected SecretsTable $Secrets;
 
     /**
+     * @var \App\Model\Table\ResourcesTable
+     */
+    protected ResourcesTable $Resources;
+
+    /**
      * @inheritDoc
      */
     public function initialize(): void
     {
         parent::initialize();
         $this->Secrets = $this->fetchTable('Secrets');
+        $this->Resources = $this->fetchTable('Resources');
     }
 
     /**
@@ -51,6 +60,7 @@ class SecretsViewController extends AppController
      *
      * @param string $resourceId uuid Identifier of the resource
      * @throws \Cake\Http\Exception\BadRequestException if the resource id is not a uuid
+     * @throws \Cake\Http\Exception\NotFoundException if the user has no current READ access on the resource
      * @throws \Cake\Http\Exception\NotFoundException if the user does not have a secret for the resource
      * @return void
      */
@@ -63,8 +73,20 @@ class SecretsViewController extends AppController
             throw new BadRequestException(__('The resource identifier should be a valid UUID.'));
         }
 
-        // Retrieve the secret.
         $uac = $this->User->getAccessControl();
+
+        // Defence in depth: reject the read if the caller no longer has permission on the resource
+        $hasAccess = $this->Resources->Permissions->hasAccess(
+            PermissionsTable::RESOURCE_ACO,
+            $resourceId,
+            $uac->getId(),
+            Permission::READ,
+        );
+        if (!$hasAccess) {
+            throw new NotFoundException(__('The secret does not exist.'));
+        }
+
+        // Retrieve the secret.
         /** @var \App\Model\Entity\Secret $secret */
         $secret = $this->Secrets->findByResourceUser($resourceId, $uac->getId())->first();
         if (empty($secret)) {

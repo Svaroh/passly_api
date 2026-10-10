@@ -34,7 +34,7 @@ echo $this->element('Email/module/avatar',[
 ]);
 
 $text = '<h3>' . __('Account Recovery Updated') . '</h3><br/>';
-$text .= $subject;
+$text .= Purifier::clean($subject);
 echo $this->element('Email/module/text', [
     'text' => $text
 ]);

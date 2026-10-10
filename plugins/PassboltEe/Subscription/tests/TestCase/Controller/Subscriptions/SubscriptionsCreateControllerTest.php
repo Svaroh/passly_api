@@ -21,16 +21,16 @@ use Passbolt\Subscription\Error\Exception\Subscriptions\SubscriptionSignatureExc
 use Passbolt\Subscription\Test\SubscriptionControllerTestCase;
 
 /**
- * Class SubscriptionsViewControllerTest
+ * Class SubscriptionsCreateControllerTest
  *
  * @package Passbolt\Ee\Test\TestCase\Controller\Subscriptions
- * @covers \Passbolt\Subscription\Controller\Subscriptions\SubscriptionsViewController::view
- * @uses \Passbolt\Subscription\Controller\Subscriptions\SubscriptionsCreateController
+ * @covers \Passbolt\Subscription\Controller\Subscriptions\SubscriptionsUpdateController::update
+ * @uses \Passbolt\Subscription\Controller\Subscriptions\SubscriptionsUpdateController
  */
 class SubscriptionsCreateControllerTest extends SubscriptionControllerTestCase
 {
     /**
-     * @covers \Passbolt\Subscription\Controller\Subscriptions\SubscriptionsViewController::view
+     * @covers \Passbolt\Subscription\Controller\Subscriptions\SubscriptionsUpdateController::update
      * @Given No user is logged in
      * @When accessing the endpoint
      * @Then an authentication error is returned
@@ -42,7 +42,7 @@ class SubscriptionsCreateControllerTest extends SubscriptionControllerTestCase
     }
 
     /**
-     * @covers \Passbolt\Subscription\Controller\Subscriptions\SubscriptionsCreateController::create
+     * @covers \Passbolt\Subscription\Controller\Subscriptions\SubscriptionsUpdateController::update
      * @Given a non admin user is logged in
      * @When accessing the endpoint
      * @Then an authentication error is returned
@@ -55,7 +55,7 @@ class SubscriptionsCreateControllerTest extends SubscriptionControllerTestCase
     }
 
     /**
-     * @covers \Passbolt\Subscription\Controller\Subscriptions\SubscriptionsCreateController::create
+     * @covers \Passbolt\Subscription\Controller\Subscriptions\SubscriptionsUpdateController::update
      * @Given An admin user is logged in
      * @When A valid subscription is created
      * @Then the response is successful and contains the required fields
@@ -72,7 +72,7 @@ class SubscriptionsCreateControllerTest extends SubscriptionControllerTestCase
     }
 
     /**
-     * @covers \Passbolt\Subscription\Controller\Subscriptions\SubscriptionsCreateController::create
+     * @covers \Passbolt\Subscription\Controller\Subscriptions\SubscriptionsUpdateController::update
      * @Given An admin user is logged in
      * @When An expired subscription is created
      * @Then a payment required error is returned
@@ -87,14 +87,14 @@ class SubscriptionsCreateControllerTest extends SubscriptionControllerTestCase
     }
 
     /**
-     * @covers \Passbolt\Subscription\Controller\Subscriptions\SubscriptionsCreateController::create
+     * @covers \Passbolt\Subscription\Controller\Subscriptions\SubscriptionsUpdateController::update
      * @Given An admin user is logged in
      * @When A non verified subscription is created
      * @Then An internal error is returned
      */
     public function testSubscriptionsCreateControllerError_GpgError()
     {
-        Configure::delete('passbolt.plugins.subscription.subscriptionKey.public');
+        Configure::delete('passbolt.plugins.edition.subscriptionKey.public');
         $this->authenticateAs('admin');
         $data = $this->getValidSubscriptionKey();
         $this->postJson('/ee/subscription/key.json', compact('data'));

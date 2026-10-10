@@ -19,6 +19,7 @@ namespace Passbolt\AccountRecovery\Test\TestCase\Service\Setup;
 
 use App\Error\Exception\CustomValidationException;
 use App\Model\Entity\AuthenticationToken;
+use App\Model\Entity\User;
 use App\Test\Factory\AuthenticationTokenFactory;
 use App\Test\Factory\GpgkeyFactory;
 use App\Test\Factory\UserFactory;
@@ -36,6 +37,7 @@ use Passbolt\AccountRecovery\Test\Factory\AccountRecoveryPrivateKeyFactory;
 use Passbolt\AccountRecovery\Test\Factory\AccountRecoveryPrivateKeyPasswordFactory;
 use Passbolt\AccountRecovery\Test\Factory\AccountRecoveryUserSettingFactory;
 use Passbolt\AccountRecovery\Test\Lib\AccountRecoveryTestCase;
+use RuntimeException;
 
 class AccountRecoverySetupCompleteServiceTest extends AccountRecoveryTestCase
 {
@@ -45,7 +47,7 @@ class AccountRecoverySetupCompleteServiceTest extends AccountRecoveryTestCase
     {
         parent::setUp();
 
-        (new AccountRecoveryPlugin())->addAssociationsToUsersTable();
+        (new AccountRecoveryPlugin())->bootstrap($this->stubApp());
     }
 
     /**
@@ -75,6 +77,46 @@ class AccountRecoverySetupCompleteServiceTest extends AccountRecoveryTestCase
         $this->assertSame(0, AccountRecoveryPrivateKeyPasswordFactory::count());
     }
 
+    public function testAccountRecoverySetupCompleteService_TokenRemainsActiveWhenSaveThrowsException(): void
+    {
+        AccountRecoveryOrganizationPolicyFactory::make()
+            ->optin()
+            ->withAccountRecoveryOrganizationPublicKey()
+            ->persist();
+        /** @var \App\Model\Entity\AuthenticationToken $token */
+        $token = AuthenticationTokenFactory::make()
+            ->with('Users', UserFactory::make()->user()->inactive())
+            ->type(AuthenticationToken::TYPE_REGISTER)
+            ->active()
+            ->persist();
+        $user = $token->user;
+
+        $request = (new ServerRequest())
+            ->withData('authenticationtoken.token', $token->token)
+            ->withData('gpgkey.armored_key', $this->getDummyPublicKey())
+            ->withData(
+                'account_recovery_user_setting.status',
+                AccountRecoveryUserSetting::ACCOUNT_RECOVERY_USER_SETTING_REJECTED,
+            );
+
+        $failingService = new class ($request) extends AccountRecoverySetupCompleteService {
+            protected function saveUserEntity(User $user, ?array $saveOptions = []): User
+            {
+                throw new RuntimeException('save failed');
+            }
+        };
+
+        try {
+            $failingService->complete($user->id);
+            $this->fail('Expected RuntimeException was not thrown.');
+        } catch (RuntimeException) {
+        }
+
+        // Make sure transaction rolled back so the token must be active
+        $tokenAfterFailure = AuthenticationTokenFactory::get($token->id);
+        $this->assertTrue($tokenAfterFailure->active);
+    }
+
     /**
      * If the user setting accepts the account recovery, the private key is saved
      */
@@ -84,7 +126,7 @@ class AccountRecoverySetupCompleteServiceTest extends AccountRecoveryTestCase
             ->optin()
             ->with(
                 'AccountRecoveryOrganizationPublicKeys',
-                AccountRecoveryOrganizationPublicKeyFactory::make()->rsa4096Key()
+                AccountRecoveryOrganizationPublicKeyFactory::make()->rsa4096Key(),
             )
             ->persist();
 
@@ -172,6 +214,7 @@ class AccountRecoverySetupCompleteServiceTest extends AccountRecoveryTestCase
         $this->assertSame(1, AccountRecoveryUserSettingFactory::count());
 
         $table = TableRegistry::getTableLocator()->get('Passbolt/AccountRecovery.AccountRecoveryUserSettings');
+        /** @var \Passbolt\AccountRecovery\Model\Entity\AccountRecoveryUserSetting $q */
         $q = $table->find()->contain(['Users'])->all()->first();
         $this->assertTrue($q->user->active);
         $this->assertTrue(isset($q->created));
@@ -409,7 +452,7 @@ class AccountRecoverySetupCompleteServiceTest extends AccountRecoveryTestCase
         AccountRecoveryOrganizationPolicyFactory::make()
             ->optin()
             ->withAccountRecoveryOrganizationPublicKey(
-                AccountRecoveryOrganizationPublicKeyFactory::make()->rsa4096Key()
+                AccountRecoveryOrganizationPublicKeyFactory::make()->rsa4096Key(),
             )
             ->persist();
 
@@ -773,7 +816,7 @@ class AccountRecoverySetupCompleteServiceTest extends AccountRecoveryTestCase
                 'deleted' => null,
             ]))
             ->persist();
-
+        /** @var \App\Model\Entity\AuthenticationToken $token */
         $token = AuthenticationTokenFactory::make()
             ->with('Users', UserFactory::make()->user()->inactive())
             ->type(AuthenticationToken::TYPE_REGISTER)

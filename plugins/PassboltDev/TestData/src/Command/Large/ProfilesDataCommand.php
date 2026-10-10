@@ -43,12 +43,12 @@ class ProfilesDataCommand extends DataCommand
             'modified' => date('Y-m-d H:i:s'),
         ];
         $profiles[] = [
-            'id' => UuidFactory::uuid('profile.id.anonymous'),
-            'user_id' => UuidFactory::uuid('user.id.anonymous'),
+            'id' => UuidFactory::uuid('profile.id.ada'),
+            'user_id' => UuidFactory::uuid('user.id.ada'),
             'gender' => 'm',
             'date_of_birth' => '1980-12-10',
             'title' => 'Mr',
-            'first_name' => 'Anonymous',
+            'first_name' => 'Ada',
             'last_name' => 'User',
             'created' => date('Y-m-d H:i:s'),
             'modified' => date('Y-m-d H:i:s'),

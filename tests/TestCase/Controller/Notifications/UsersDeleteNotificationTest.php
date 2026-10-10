@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace App\Test\TestCase\Controller\Notifications;
 
-use App\Notification\Email\Redactor\User\AdminDeleteEmailRedactor;
+use App\Notification\Email\Redactor\User\UserDeleteAdminEmailRedactor;
 use App\Test\Factory\GroupFactory;
 use App\Test\Factory\RoleFactory;
 use App\Test\Factory\UserFactory;
@@ -41,7 +41,7 @@ class UsersDeleteNotificationTest extends AppIntegrationTestCase
             ->withGroupsManagersFor([$userA])
             ->withGroupsUsersFor([$ursula])
             ->persist();
-        Configure::write(AdminDeleteEmailRedactor::CONFIG_KEY_EMAIL_ENABLED, false);
+        Configure::write(UserDeleteAdminEmailRedactor::CONFIG_KEY_EMAIL_ENABLED, false);
 
         $this->logInAsAdmin();
         $this->deleteJson('/users/' . $ursula->get('id') . '.json');

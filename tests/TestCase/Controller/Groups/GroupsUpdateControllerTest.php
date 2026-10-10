@@ -94,6 +94,7 @@ hcciUFw5
         $this->putJson("/groups/$groupId.json", ['groups_users' => $changes]);
         $this->assertSuccess();
 
+        $this->assertObjectNotHasAttribute('last_logged_in', $this->_responseJsonBody->groups_users[0]->user);
         $this->assertUserIsAdmin($groupId, $newGroupMember->id);
         $this->assertEmailQueueCount(2);
 
@@ -441,7 +442,7 @@ hcciUFw5
             ->with(
                 'Permissions',
                 PermissionFactory::make()
-                    ->with('Resources', ResourceFactory::make())
+                    ->with('Resources', ResourceFactory::make()),
             )
             ->persist();
         $groupId = $group->id;
@@ -490,8 +491,8 @@ hcciUFw5
             'GroupsUsers',
             GroupsUserFactory::make(2)->with(
                 'Users',
-                UserFactory::make()
-            )
+                UserFactory::make(),
+            ),
         )->persist();
         $groupId = $group->id;
         $groupUserK = $group->groups_users[0];
@@ -665,6 +666,55 @@ hcciUFw5
         // The user userK should still be member of the group
         $groupUser = GroupsUserFactory::find()->where(['user_id' => $UserKId, 'group_id' => $groupId])->first();
         $this->assertnotEmpty($groupUser);
+    }
+
+    public function testGroupsUpdateController_Success_ContainMyGroupUser_WhenUserIsNotMember(): void
+    {
+        $group = GroupFactory::make()->withGroupsManagersFor([UserFactory::make()->user()->persist()])->persist();
+        $groupId = $group->id;
+
+        $this->logInAsAdmin();
+        $this->putJson("/groups/$groupId.json?contain[my_group_user]=1", ['name' => 'New name']);
+        $this->assertSuccess();
+
+        $response = $this->_responseJsonBody;
+        $this->assertObjectHasAttribute('my_group_user', $response);
+        $this->assertNull($response->my_group_user);
+    }
+
+    public function testGroupsUpdateController_Success_ContainMyGroupUser_WhenUserIsMember(): void
+    {
+        $admin = UserFactory::make()->admin()->persist();
+        $group = GroupFactory::make()
+            ->withGroupsManagersFor([$admin])
+            ->withGroupsUsersFor([UserFactory::make()->user()->persist()])
+            ->persist();
+        $groupId = $group->id;
+        $adminGroupsUserId = $group->groups_users[0]->id;
+
+        $this->logInAs($admin);
+        $this->putJson("/groups/$groupId.json?contain[my_group_user]=1", ['name' => 'New name']);
+        $this->assertSuccess();
+
+        $response = $this->_responseJsonBody;
+        $this->assertObjectHasAttribute('my_group_user', $response);
+        $this->assertNotNull($response->my_group_user);
+        $this->assertEquals($adminGroupsUserId, $response->my_group_user->id);
+        $this->assertEquals($admin->id, $response->my_group_user->user_id);
+        $this->assertEquals($groupId, $response->my_group_user->group_id);
+        $this->assertTrue($response->my_group_user->is_admin);
+    }
+
+    public function testGroupsUpdateController_Success_DoNotContainMyGroupUserByDefault(): void
+    {
+        $groupId = GroupFactory::make()->persist()->id;
+
+        $this->logInAsAdmin();
+        $this->putJson("/groups/$groupId.json", ['name' => 'New name']);
+        $this->assertSuccess();
+
+        $response = $this->_responseJsonBody;
+        $this->assertObjectNotHasAttribute('my_group_user', $response);
     }
 
     public function testGroupsUpdateController_Error_NotValidGroupId(): void

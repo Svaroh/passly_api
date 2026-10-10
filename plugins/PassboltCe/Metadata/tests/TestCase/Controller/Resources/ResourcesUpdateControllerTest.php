@@ -90,7 +90,7 @@ class ResourcesUpdateControllerTest extends AppIntegrationTestCaseV5
         ])->persist()->get('id');
         $metadataKeyId = $metadataKey->get('id');
         $resource = ResourceFactory::make(['resource_type_id' => $v4ResourceTypeId])->withPermissionsFor([$user, $userWithPermission])->persist();
-        $resourceDto = MetadataResourceDto::fromArray($resource->toArray());
+        $resourceDto = MetadataResourceDto::createFromArray($resource->toArray());
         $clearTextMetadata = json_encode($resourceDto->getClearTextMetadata());
         $metadata = $this->encryptForMetadataKey($clearTextMetadata);
         $metadataKeyType = 'shared_key';
@@ -121,7 +121,7 @@ class ResourcesUpdateControllerTest extends AppIntegrationTestCaseV5
         $this->assertEventFiredWith(
             ResourcesUpdateService::UPDATE_SUCCESS_EVENT_NAME,
             'isV5',
-            true
+            true,
         );
         $this->assertEmailQueueCount(1);
         $this->assertEmailWithRecipientIsInNotQueue($user->username);
@@ -147,7 +147,7 @@ class ResourcesUpdateControllerTest extends AppIntegrationTestCaseV5
             ->v5Fields()
             ->withPermissionsFor([$user])
             ->persist();
-        $resourceDto = MetadataResourceDto::fromArray($resource->toArray());
+        $resourceDto = MetadataResourceDto::createFromArray($resource->toArray());
         $clearTextMetadata = json_encode($resourceDto->getClearTextMetadata(false));
         $metadata = $this->encryptForUser($clearTextMetadata, $user, $this->getAdaNoPassphraseKeyInfo());
         $metadataKeyType = 'user_key';
@@ -191,7 +191,7 @@ class ResourcesUpdateControllerTest extends AppIntegrationTestCaseV5
             ->v5Fields()
             ->withPermissionsFor([$user])
             ->persist();
-        $resourceDto = MetadataResourceDto::fromArray($resource->toArray());
+        $resourceDto = MetadataResourceDto::createFromArray($resource->toArray());
         $clearTextMetadata = json_encode($resourceDto->getClearTextMetadata(false));
         $metadata = $this->encryptForUser($clearTextMetadata, $user, $this->getAdaNoPassphraseKeyInfo());
         $metadataKeyType = 'user_key';
@@ -282,7 +282,7 @@ class ResourcesUpdateControllerTest extends AppIntegrationTestCaseV5
             ->v5Fields()
             ->withPermissionsFor([$user])
             ->persist();
-        $resourceDto = MetadataResourceDto::fromArray($resource->toArray());
+        $resourceDto = MetadataResourceDto::createFromArray($resource->toArray());
         $clearTextMetadata = json_encode($resourceDto->getClearTextMetadata(false));
         $metadata = $this->encryptForUser($clearTextMetadata, $user, $this->getAdaNoPassphraseKeyInfo());
         $metadataKeyType = MetadataKey::TYPE_USER_KEY;
@@ -344,7 +344,7 @@ class ResourcesUpdateControllerTest extends AppIntegrationTestCaseV5
             ->v5Fields()
             ->withPermissionsFor([$user])
             ->persist();
-        $resourceDto = MetadataResourceDto::fromArray($resource->toArray());
+        $resourceDto = MetadataResourceDto::createFromArray($resource->toArray());
         $clearTextMetadata = json_encode($resourceDto->getClearTextMetadata(false));
         $metadata = $this->encryptForUser($clearTextMetadata, $user, $this->getAdaNoPassphraseKeyInfo());
         $metadataKeyType = 'user_key';
@@ -429,7 +429,7 @@ class ResourcesUpdateControllerTest extends AppIntegrationTestCaseV5
             ->active()
             ->persist();
         $resource = ResourceFactory::make(['resource_type_id' => $v4ResourceType->get('id')])->withPermissionsFor([$user])->persist();
-        $dto = MetadataResourceDto::fromArray($resource->toArray());
+        $dto = MetadataResourceDto::createFromArray($resource->toArray());
         $metadataArray = $dto->getClearTextMetadata();
         $metadata = $this->encryptForUser(json_encode($metadataArray), $user, $this->getAdaNoPassphraseKeyInfo());
         $this->logInAs($user);
@@ -463,7 +463,7 @@ class ResourcesUpdateControllerTest extends AppIntegrationTestCaseV5
             ->persist();
         /** @var \App\Model\Entity\Resource $resource */
         $resource = ResourceFactory::make(['resource_type_id' => $v4ResourceType->get('id')])->withPermissionsFor([$user])->persist();
-        $dto = MetadataResourceDto::fromArray($resource->toArray());
+        $dto = MetadataResourceDto::createFromArray($resource->toArray());
         $metadataArray = $dto->getClearTextMetadata();
         $metadata = $this->encryptForUser(json_encode($metadataArray), $user, $this->getAdaNoPassphraseKeyInfo());
         $this->logInAs($user);
@@ -488,5 +488,21 @@ class ResourcesUpdateControllerTest extends AppIntegrationTestCaseV5
         $this->assertNull($updatedResource->username);
         $this->assertNull($updatedResource->uri);
         $this->assertNull($updatedResource->description);
+    }
+
+    /**
+     * The resource identifier assertion runs before the request is mapped to the DTO.
+     *
+     * @retrun void
+     */
+    public function testResourcesUpdateController_Error_NotValidIdWithIncompleteV5Payload(): void
+    {
+        MetadataTypesSettingsFactory::make()->v5()->persist();
+        $user = UserFactory::make()->user()->persist();
+        $this->logInAs($user);
+
+        $this->putJson('/resources/not-a-uuid.json', ['metadata' => '-----BEGIN PGP MESSAGE-----']);
+
+        $this->assertBadRequestError('The resource identifier should be a valid UUID.');
     }
 }

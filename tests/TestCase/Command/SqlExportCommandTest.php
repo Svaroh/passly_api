@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace App\Test\TestCase\Command;
 
 use App\Command\SqlExportCommand;
+use App\Test\Factory\SessionFactory;
 use App\Test\Lib\AppTestCase;
 use App\Test\Lib\Utility\PassboltCommandTestTrait;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
@@ -143,6 +144,39 @@ class SqlExportCommandTest extends AppTestCase
 
         // Cleanup
         $this->emptyDirectory($testDir);
+    }
+
+    public function testSqlExportCommand_ExcludesConfiguredTablesData_KeepsSchema()
+    {
+        $isPostgres = ConnectionManager::get('default')->getDriver() instanceof Postgres;
+
+        // Seed one row per excluded table with a recognisable payload. Add a
+        // factory line here for every new entry in EXCLUDED_DATA_TABLES.
+        $sentinels = [];
+        $sentinels['sessions'] = 'sentinel-sessions-' . uniqid();
+        SessionFactory::make(['data' => $sentinels['sessions']])->persist();
+
+        $testDir = SqlExportCommand::CACHE_DATABASE_DIRECTORY;
+        $this->emptyDirectory($testDir);
+        $testFile = 'exclude-test.sql';
+
+        $this->exec("passbolt sql_export --dir {$testDir} --file {$testFile} --force");
+        $this->assertExitSuccess();
+        $this->assertOutputContains(
+            'Excluding data of table(s): ' . implode(', ', SqlExportCommand::EXCLUDED_DATA_TABLES),
+        );
+
+        $dump = file_get_contents($testDir . DS . $testFile);
+        foreach (SqlExportCommand::EXCLUDED_DATA_TABLES as $table) {
+            if ($isPostgres) {
+                $this->assertMatchesRegularExpression("/CREATE TABLE .*{$table}/", $dump);
+                $this->assertStringNotContainsString("COPY public.{$table}", $dump);
+            } else {
+                $this->assertStringContainsString("CREATE TABLE `{$table}`", $dump);
+                $this->assertStringNotContainsString("INSERT INTO `{$table}`", $dump);
+            }
+            $this->assertStringNotContainsString($sentinels[$table], $dump);
+        }
     }
 
     public function testMysqlExportCommandHelp()
