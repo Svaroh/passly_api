@@ -854,7 +854,7 @@ class UsersDeleteControllerTest extends AppIntegrationTestCase
             $operator->username,
         );
         $this->assertEmailInBatchContains(
-            "The administrator {$adminFullName} ({$adminDeleted->username}) is now deleted from the passbolt organisation.",
+            "The administrator {$adminFullName} ({$adminDeleted->username}) is now deleted from the passly organisation.",
             $operator->username,
         );
         $this->assertEmailInBatchContains(
@@ -886,7 +886,7 @@ class UsersDeleteControllerTest extends AppIntegrationTestCase
             $operator->username,
         );
         $this->assertEmailInBatchContains(
-            "The user {$userFullName} ({$userDeleted->username}) is now deleted from the passbolt organisation.",
+            "The user {$userFullName} ({$userDeleted->username}) is now deleted from the passly organisation.",
             $operator->username,
         );
         $this->assertEmailInBatchContains(
@@ -894,7 +894,7 @@ class UsersDeleteControllerTest extends AppIntegrationTestCase
             $otherAdmin->username,
         );
         $this->assertEmailInBatchContains(
-            "The user {$userFullName} ({$userDeleted->username}) is now deleted from the passbolt organisation.",
+            "The user {$userFullName} ({$userDeleted->username}) is now deleted from the passly organisation.",
             $otherAdmin->username,
         );
         // Operator (the one who did the delete) does not see the "get in touch" suspicion prompt.

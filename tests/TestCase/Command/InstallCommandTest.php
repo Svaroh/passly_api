@@ -194,13 +194,13 @@ class InstallCommandTest extends AppTestCase
     public function testInstallCommandNormalForceWithAdminData()
     {
         $faker = Factory::create();
-        $userName = $faker->email();
-        $firstName = $faker->firstNameFemale();
-        $lastName = $faker->lastName();
+        $userName = preg_replace('/[^a-zA-Z0-9._@-]/', '', $faker->email());
+        $firstName = preg_replace('/[^a-zA-Z]/', '', $faker->firstNameFemale()) ?: 'Ada';
+        $lastName = preg_replace('/[^a-zA-Z]/', '', $faker->lastName()) ?: 'Lovelace';
         $cmd = 'passbolt install --force --backup -q ';
-        $cmd .= ' --admin-first-name ' . $firstName;
-        $cmd .= ' --admin-last-name ' . $lastName;
-        $cmd .= ' --admin-username ' . $userName;
+        $cmd .= ' --admin-first-name "' . $firstName . '"';
+        $cmd .= ' --admin-last-name "' . $lastName . '"';
+        $cmd .= ' --admin-username "' . $userName . '"';
         $cmd .= ' -d test';
 
         $this->exec($cmd);
