@@ -1,17 +1,43 @@
-Passly 6.0.0 is the first stable API release from the Svaroh Passly fork.
+Passly 6.1.0 introduces perpetual offline mode support, delta synchronization endpoints, recoverable resource trash API, and CakePHP 5.4 framework upgrades.
 
-This release completes the visible Passly rebrand, ships the Team Shield assets across the API bundle, and adds the GitHub automation needed to publish releases and trigger packaging from tags.
-
-It also includes the browser first-login relay used by Android to help set up the browser extension, the new passkey resource type, notification self-settings restored in the API bundle, and dependency/security maintenance carried forward from the fork.
+This release delivers the backend capabilities for offline vault access with perpetual defaults (unlimited session duration, data retention, and item counts), high-efficiency sync endpoints (/sync/meta and /sync/changes) with change journaling, and recoverable trash for resources.
 
 ## Highlights
-The API now exposes browser first-login relay endpoints for the mobile to browser setup flow, including encrypted private key handoff support.
+Perpetual offline mode defaults are enabled, supporting unlimited session duration, unlimited data retention, and unlimited items.
 
-Passkey support is available as a v5 resource type, with follow-up handling for v4 metadata settings.
+Delta synchronization endpoints (/sync/meta and /sync/changes) and change journal logging are introduced to accelerate client sync.
 
-The product-facing API assets and wording now use Passly branding, including the Passly Team Shield logo in static and inline bundles.
+Recoverable resource trash API allows moving resources to trash and restoring them.
 
-Release, packaging, CI, and coverage workflows are now available in GitHub Actions for the fork.
+Framework upgraded to CakePHP 5.4 with automatic Request to DTO mapping and refreshed upstream CE core logic.
+
+## [6.1.0] - 2026-10-15
+### Added
+- Add perpetual offline mode settings and defaults for unlimited session duration, retention, and items
+- Add sync plugin with change journal and /sync/meta and /sync/changes endpoints
+- Add recoverable resource trash API for soft deletion and restoration
+- Add sync log pruning command and retention service
+
+### Changed
+- Update API core and dependencies to upstream Passbolt CE
+- Upgrade framework to CakePHP 5.4 with automatic Request to DTO mapping
+- Load JwtSubject identifier in JwtAuthenticationService
+
+### Fixed
+- Fix nested transaction error in V601 and V602 offline settings migrations
+- Ensure fallback system admin ID and clean migration execution in V601 and V602
+- Fix delete notification assertions, install CLI quoting, and coverage metadata
+- Fix offline feature check and email branding
+
+### Security
+- Upgrade phpseclib/phpseclib to 3.0.57 (CVE-2026-84308, AIKIDO-2026-730961)
+- Update dependencies to resolve security advisories
+
+### Maintenance
+- Update dependency cakephp/cakephp to v5.4.2
+- Update dependency composer/composer to v2.10.3
+- Update dependency league/flysystem to v3.35.3
+- Update dependency squizlabs/php_codesniffer to 3.13.6
 
 ## [6.0.0] - 2026-06-07
 ### Added
