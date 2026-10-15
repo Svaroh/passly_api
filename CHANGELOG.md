@@ -2,6 +2,34 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.1.0] - 2026-10-15
+### Added
+- Add perpetual offline mode settings and defaults for unlimited session duration, retention, and items
+- Add sync plugin with change journal and /sync/meta and /sync/changes endpoints
+- Add recoverable resource trash API for soft deletion and restoration
+- Add sync log pruning command and retention service
+
+### Changed
+- Update API core and dependencies to upstream Passbolt CE
+- Upgrade framework to CakePHP 5.4 with automatic Request to DTO mapping
+- Load JwtSubject identifier in JwtAuthenticationService
+
+### Fixed
+- Fix nested transaction error in V601 and V602 offline settings migrations
+- Ensure fallback system admin ID and clean migration execution in V601 and V602
+- Fix delete notification assertions, install CLI quoting, and coverage metadata
+- Fix offline feature check and email branding
+
+### Security
+- Upgrade phpseclib/phpseclib to 3.0.57 (CVE-2026-84308, AIKIDO-2026-730961)
+- Update dependencies to resolve security advisories
+
+### Maintenance
+- Update dependency cakephp/cakephp to v5.4.2
+- Update dependency composer/composer to v2.10.3
+- Update dependency league/flysystem to v3.35.3
+- Update dependency squizlabs/php_codesniffer to 3.13.6
+
 ## [6.0.0] - 2026-06-07
 ### Added
 - Adds browser first login relay endpoints for secure Android to browser setup
