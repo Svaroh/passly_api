@@ -46,6 +46,7 @@ class ActionLogResultsParser
     public const TYPE_PERMISSIONS_UPDATED = 'Permissions.updated';
     public const TYPE_SECRETS_READ = 'Resource.Secrets.read';
     public const TYPE_SECRETS_UPDATED = 'Resource.Secrets.updated';
+    public const TYPE_SECRETS_SYNC = 'Resource.Secrets.sync';
     public const TYPE_RESOURCE_CREATED = 'Resources.created';
     public const TYPE_RESOURCE_UPDATED = 'Resources.updated';
     public const TYPE_RESOURCE_DELETED = 'Resources.deleted';
@@ -316,10 +317,24 @@ class ActionLogResultsParser
                 ];
 
                 if ($entityHistory->crud === EntityHistory::CRUD_CREATE) {
-                    $this->_addEntry(self::TYPE_SECRETS_READ, $data, $actionLog);
+                    $type = $this->isSyncAction($actionLog) ? self::TYPE_SECRETS_SYNC : self::TYPE_SECRETS_READ;
+                    $this->_addEntry($type, $data, $actionLog);
                 }
             }
         }
+    }
+
+    /**
+     * Whether the action log corresponds to a synchronisation action.
+     *
+     * @param \Passbolt\Log\Model\Entity\ActionLog $actionLog
+     * @return bool
+     */
+    protected function isSyncAction(ActionLog $actionLog): bool
+    {
+        $actionName = $actionLog->action->name ?? ($actionLog->get('action')?->get('name') ?? '');
+
+        return str_starts_with($actionName, 'Sync');
     }
 
     /**

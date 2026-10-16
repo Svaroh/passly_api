@@ -83,4 +83,27 @@ class ActionLogsFinderSecretAccessesTest extends LogIntegrationTestCase
         $this->assertTrue(isset($actionLogs[0]['data']['resource']));
         $this->assertEquals($actionLogs[0]['data']['resource']['id'], $resourceA->id);
     }
+
+    public function testAuditLogsActionLogsFinderSecretAccessSync(): void
+    {
+        /** @var \App\Model\Entity\User $userA */
+        $userA = UserFactory::make()->user()->persist();
+        /** @var \App\Model\Entity\Resource $resourceA */
+        $resourceA = ResourceFactory::make()
+            ->withPermissionsFor([$userA])
+            ->withSecretsFor([$userA])
+            ->persist();
+        $uac = new UserAccessControl(Role::USER, $userA->id);
+        $this->simulateSyncResourceGetWithSecrets($uac, [$resourceA->id]);
+
+        $ActionLogsFinder = new ResourceActionLogsFinder();
+        $actionLogs = $ActionLogsFinder->find($uac, $resourceA->id);
+        $actionLogs = (new ActionLogResultsParser($actionLogs->all(), ['resources' => [$resourceA->id]]))->parse();
+
+        $this->assertCount(1, $actionLogs);
+        $this->assertEquals('Resource.Secrets.sync', $actionLogs[0]['type']);
+        $this->assertTrue(isset($actionLogs[0]['data']));
+        $this->assertTrue(isset($actionLogs[0]['data']['resource']));
+        $this->assertEquals($resourceA->id, $actionLogs[0]['data']['resource']['id']);
+    }
 }

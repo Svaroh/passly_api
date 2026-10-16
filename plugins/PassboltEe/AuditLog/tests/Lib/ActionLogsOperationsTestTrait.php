@@ -186,4 +186,53 @@ trait ActionLogsOperationsTestTrait
             $EntitiesHistory->create($entityHistory, $userAction);
         }
     }
+
+    /**
+     * Simulate sync resource get with secrets.
+     *
+     * @param \App\Utility\UserAccessControl $uac user
+     * @param array<string> $resourceIds resource ids
+     * @param string $action action name
+     * @param string $uri uri
+     * @return void
+     * @throws \Exception in case the secret cannot be retrieved.
+     */
+    public function simulateSyncResourceGetWithSecrets(
+        UserAccessControl $uac,
+        array $resourceIds,
+        string $action = 'SyncBootstrap.get',
+        string $uri = 'GET /sync/bootstrap.json',
+    ): void {
+        /** @var \Passbolt\Log\Model\Table\ActionLogsTable $ActionLogs */
+        $ActionLogs = TableRegistry::getTableLocator()->get('Passbolt/Log.ActionLogs');
+        /** @var \Passbolt\Log\Model\Table\EntitiesHistoryTable $EntitiesHistory */
+        $EntitiesHistory = TableRegistry::getTableLocator()->get('Passbolt/Log.EntitiesHistory');
+        /** @var \Passbolt\Log\Model\Table\SecretAccessesTable $SecretAccesses */
+        $SecretAccesses = TableRegistry::getTableLocator()->get('Passbolt/Log.SecretAccesses');
+        $Secrets = TableRegistry::getTableLocator()->get('Secrets');
+
+        $userAction = UserAction::getInstance($uac, $action, $uri);
+        $ActionLogs->create($userAction, 1);
+
+        foreach ($resourceIds as $resourceId) {
+            /** @var \App\Model\Entity\Secret|null $secret */
+            $secret = $Secrets->find()->where([
+                'resource_id' => $resourceId,
+                'user_id' => $uac->getId(),
+            ])->first();
+
+            if (!$secret) {
+                throw new Exception('Could not retrieve the secret for the given resource and user');
+            }
+
+            $sa = $SecretAccesses->createFromSecretEntity($uac, $secret);
+
+            $entityHistory = [
+                'foreign_model' => 'SecretAccesses',
+                'foreign_key' => $sa->get('id'),
+                'crud' => EntityHistory::CRUD_CREATE,
+            ];
+            $EntitiesHistory->create($entityHistory, $userAction);
+        }
+    }
 }

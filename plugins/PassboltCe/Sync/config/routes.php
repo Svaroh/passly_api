@@ -26,4 +26,10 @@ $routes->plugin('Passbolt/Sync', ['path' => '/sync'], function (RouteBuilder $ro
 
     $routes->connect('/changes', ['controller' => 'SyncChanges', 'action' => 'get'])
         ->setMethods(['GET']);
+
+    $routes->connect('/bootstrap', ['controller' => 'SyncBootstrap', 'action' => 'get'])
+        ->setMethods(['GET']);
+
+    $routes->connect('/manifest', ['controller' => 'SyncManifest', 'action' => 'get'])
+        ->setMethods(['GET']);
 });
