@@ -48,6 +48,8 @@ class ActionLogsUsernameQueryStrategy extends ActionLogsAbstractQueryStrategy
         'AuthLogout.logout' => ['name' => 'user_logout', 'details' => ' logout'],
         'AuthLogin.loginPost' => ['name' => 'user_login', 'details' => ' login'],
         'Share.share' => ['name' => 'share', 'details' => ' shared password'],
+        'SyncBootstrap.get' => ['name' => 'password_sync', 'details' => ' synchronized password'],
+        'SyncChanges.get' => ['name' => 'password_sync', 'details' => ' synchronized password'],
     ];
 
     /**
@@ -78,6 +80,8 @@ class ActionLogsUsernameQueryStrategy extends ActionLogsAbstractQueryStrategy
                 case 'ResourcesAdd.add':
                 case 'ResourcesDelete.delete':
                 case 'ResourcesUpdate.update':
+                case 'SyncBootstrap.get':
+                case 'SyncChanges.get':
                     $extraDetails = $this->getResourceDetails($actionLog->id);
                     break;
                 case 'Share.share':

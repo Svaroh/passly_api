@@ -21,6 +21,7 @@ use Cake\Http\Exception\GoneException;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Passbolt\Sync\Model\Dto\SyncChangesDto;
 use Passbolt\Sync\Model\Table\SyncLogTable;
+use Passbolt\Sync\Utility\SyncSecretAccessLoggerTrait;
 
 /**
  * Turns journal events into the delta a specific user is allowed to see.
@@ -33,6 +34,7 @@ use Passbolt\Sync\Model\Table\SyncLogTable;
 class SyncChangesService
 {
     use LocatorAwareTrait;
+    use SyncSecretAccessLoggerTrait;
 
     /**
      * @param string $userId Caller.
@@ -174,11 +176,15 @@ class SyncChangesService
             return [];
         }
 
-        return $this->fetchTable('Secrets')
+        $secrets = $this->fetchTable('Secrets')
             ->find()
             ->select(['id', 'resource_id', 'data', 'modified'])
             ->where(['user_id' => $userId, 'resource_id IN' => $visibleIds])
             ->disableHydration()
             ->toArray();
+
+        $this->logSecretAccesses($userId, $secrets);
+
+        return $secrets;
     }
 }

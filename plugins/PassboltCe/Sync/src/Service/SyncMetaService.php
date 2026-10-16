@@ -54,7 +54,7 @@ class SyncMetaService
      *
      * @return string
      */
-    private function epoch(): string
+    public function epoch(): string
     {
         $fingerprint = (string)Configure::read('passbolt.gpg.serverKey.fingerprint');
         $baseUrl = (string)Configure::read('App.fullBaseUrl');

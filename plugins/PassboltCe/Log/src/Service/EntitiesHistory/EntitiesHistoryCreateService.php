@@ -174,6 +174,20 @@ class EntitiesHistoryCreateService
                 ],
             ],
         ],
+        'SyncBootstrap.get' => [
+            'models' => [
+                'SecretAccesses' => [
+                    EntityHistory::CRUD_CREATE,
+                ],
+            ],
+        ],
+        'SyncChanges.get' => [
+            'models' => [
+                'SecretAccesses' => [
+                    EntityHistory::CRUD_CREATE,
+                ],
+            ],
+        ],
     ];
 
     /**
