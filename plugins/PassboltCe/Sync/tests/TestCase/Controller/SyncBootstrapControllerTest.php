@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Passbolt\Sync\Test\TestCase\Controller;
 
 use App\Test\Factory\ResourceFactory;
+use App\Test\Factory\RoleFactory;
 use App\Test\Factory\UserFactory;
 use App\Test\Lib\AppIntegrationTestCase;
 use Cake\ORM\TableRegistry;
@@ -33,6 +34,7 @@ class SyncBootstrapControllerTest extends AppIntegrationTestCase
     {
         parent::setUp();
         $this->enableFeaturePlugin(SyncPlugin::class);
+        RoleFactory::make()->guest()->persist();
         /** @var \Passbolt\Sync\Model\Table\SyncLogTable $syncLog */
         $syncLog = TableRegistry::getTableLocator()->get('Passbolt/Sync.SyncLog');
         $this->SyncLog = $syncLog;
