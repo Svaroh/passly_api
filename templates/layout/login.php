@@ -33,5 +33,15 @@ use Cake\Core\Configure;
 </div>
 <?= $this->element('Footer/default'); ?>
 </div>
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+            .catch(function(err) {
+                console.debug('ServiceWorker registration error: ', err);
+            });
+    });
+}
+</script>
 </body>
 </html>
