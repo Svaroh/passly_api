@@ -11,7 +11,7 @@
  * @link          https://passly.svaroh.net Passly
  */
 
-const CACHE_NAME = 'passly-app-shell-v2';
+const CACHE_NAME = 'passly-app-shell-v3';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -26,6 +26,7 @@ const PRECACHE_ASSETS = [
   '/favicon_128.png',
   '/favicon_192.png',
   '/favicon_228.png',
+  '/js/app/service-worker-register.js',
   '/js/app/stylesheet.js',
   '/js/app/api-vendors.js',
   '/js/app/api-triage.js',

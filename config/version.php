@@ -1,8 +1,8 @@
 <?php
 return [
     'passbolt' => [
-        'version' => '6.1.2',
-        'name' => 'Passly 6.1.2',
+        'version' => '6.1.3',
+        'name' => 'Passly 6.1.3',
         'edition' => 'ce',
     ],
     'php' => [

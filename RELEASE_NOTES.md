@@ -1,15 +1,15 @@
-Passly 6.1.0 introduces perpetual offline mode support, delta synchronization endpoints, recoverable resource trash API, and CakePHP 5.4 framework upgrades.
+Passly 6.1.3 delivers standalone Service Worker registration conforming to strict Content Security Policies, App Shell precache enhancements, and offline resilience improvements.
 
-This release delivers the backend capabilities for offline vault access with perpetual defaults (unlimited session duration, data retention, and item counts), high-efficiency sync endpoints (/sync/meta and /sync/changes) with change journaling, and recoverable trash for resources.
+## [6.1.3] - 2026-10-26
+### Fixed
+- Fix CSP violation by extracting Service Worker registration into standalone `/js/app/service-worker-register.js`
+- Bump App Shell cache to `passly-app-shell-v3` with precache registration script
 
-## Highlights
-Perpetual offline mode defaults are enabled, supporting unlimited session duration, unlimited data retention, and unlimited items.
-
-Delta synchronization endpoints (/sync/meta and /sync/changes) and change journal logging are introduced to accelerate client sync.
-
-Recoverable resource trash API allows moving resources to trash and restoring them.
-
-Framework upgraded to CakePHP 5.4 with automatic Request to DTO mapping and refreshed upstream CE core logic.
+## [6.1.2] - 2026-10-25
+### Added
+- Enhance App Shell Service Worker v2 with complete precache suite (api-vendors, api-triage, api-app, stylesheets)
+- Implement quick network timeout and instant App Shell fallback to eliminate ERR_INTERNET_DISCONNECTED
+- Register Service Worker across all layouts including login and default templates
 
 ## [6.1.0] - 2026-10-15
 ### Added
