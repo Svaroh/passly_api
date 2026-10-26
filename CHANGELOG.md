@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.1.3] - 2026-10-26
+### Fixed
+- Fix CSP violation by extracting Service Worker registration into standalone `/js/app/service-worker-register.js`
+- Bump App Shell cache to `passly-app-shell-v3` with precache registration script
+
+## [6.1.2] - 2026-10-25
+### Added
+- Enhance App Shell Service Worker v2 with complete precache suite (api-vendors, api-triage, api-app, stylesheets)
+- Implement quick network timeout and instant App Shell fallback to eliminate ERR_INTERNET_DISCONNECTED
+- Register Service Worker across all layouts including login and default templates
+
 ## [6.1.0] - 2026-10-15
 ### Added
 - Add perpetual offline mode settings and defaults for unlimited session duration, retention, and items

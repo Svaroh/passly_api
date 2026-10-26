@@ -30,5 +30,6 @@ use Cake\Core\Configure;
 <?php echo $this->fetch('content'); ?>
 </div>
 <?php echo $this->fetch('scriptBottom'); ?>
+<script src="/js/app/service-worker-register.js?v=6.1.3"></script>
 </body>
 </html>

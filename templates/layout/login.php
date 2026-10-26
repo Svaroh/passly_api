@@ -33,5 +33,6 @@ use Cake\Core\Configure;
 </div>
 <?= $this->element('Footer/default'); ?>
 </div>
+<script src="/js/app/service-worker-register.js?v=6.1.3"></script>
 </body>
 </html>

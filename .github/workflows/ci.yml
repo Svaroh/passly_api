@@ -237,6 +237,8 @@ jobs:
           done
           mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" -e "ALTER USER '$DATASOURCES_TEST_USERNAME'@'%' IDENTIFIED BY '$DATASOURCES_TEST_PASSWORD';"
           mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" -e "GRANT ALL ON *.* TO '$DATASOURCES_TEST_USERNAME'@'%';"
+          mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" -e "GRANT PROCESS ON *.* TO '$DATASOURCES_TEST_USERNAME'@'%';"
+          mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" -e "FLUSH PRIVILEGES;"
           mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MYSQL_ROOT_PASSWORD" -e "SET GLOBAL log_bin_trust_function_creators = 1;"
         env:
           MYSQL_ROOT_PASSWORD: testing-password2
@@ -547,6 +549,7 @@ jobs:
           mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MARIADB_ROOT_PASSWORD" -e "ALTER USER '$DATASOURCES_TEST_USERNAME'@'%' IDENTIFIED BY '$DATASOURCES_TEST_PASSWORD';"
           mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MARIADB_ROOT_PASSWORD" -e "GRANT ALL ON *.* TO '$DATASOURCES_TEST_USERNAME'@'%';"
           mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MARIADB_ROOT_PASSWORD" -e "GRANT PROCESS ON *.* TO '$DATASOURCES_TEST_USERNAME'@'%';"
+          mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MARIADB_ROOT_PASSWORD" -e "FLUSH PRIVILEGES;"
           mysql -h "$DATASOURCES_TEST_HOST" -u root -p"$MARIADB_ROOT_PASSWORD" -e "SET GLOBAL log_bin_trust_function_creators = 1;"
         env:
           MARIADB_ROOT_PASSWORD: testing-password2
